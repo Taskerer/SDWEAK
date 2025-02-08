@@ -49,6 +49,9 @@ texts["ru_script_continue"]="Скрипт продолжает выполнен�
 texts["en_optimization_start"]="Starting SteamOS optimization..."
 texts["ru_optimization_start"]="Начинается оптимизация SteamOS."
 
+texts["en_copable"]="SDWEAK is compatible with Steam Deck only!"
+texts["ru_copable"]="SDWEAK совместим только со Steam Deck!"
+
 texts["en_pacman_keys"]="Pacman keys successfully initialized."
 texts["ru_pacman_keys"]="Ключи pacman-key успешно инициализированы."
 
@@ -100,6 +103,13 @@ texts["en_batt_success"]="Power efficiency prioritization successfully installed
 texts["ru_batt_success"]="Приоритет энергоэффективности успешно установлен."
 texts["en_batt_promt"]="Prioritize power efficiency?"
 texts["ru_batt_promt"]="Установить приоритет энергоэффективности?"
+
+texts["en_audio_install"]="Starting to install the sound driver fix..."
+texts["ru_audio_install"]="Начинается установка фикса звукового драйвера..."
+texts["en_audio_success"]="Sound driver fix successfully installed."
+texts["ru_audio_success"]="Фикс звукового драйвера успешно установлен."
+texts["en_audio_promt"]="Install sound driver fix?(only if there are problems!)"
+texts["ru_audio_promt"]="Установить фикс звукового драйвера?(только при проблемах!)"
 
 texts["en_tweaks_applied"]="Tweaks successfully installed."
 texts["ru_tweaks_applied"]="Твики успешно установлены."
@@ -183,6 +193,7 @@ green_msg "$(print_text script_continue)"
 clear
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
 MODEL=$(cat /sys/class/dmi/id/board_name)
+BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
 logo "
 
 >>====================================================<<
@@ -193,7 +204,14 @@ logo "
 || ███████║██████╔╝╚███╔███╔╝███████╗██║  ██║██║  ██╗ ||
 || ╚══════╝╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ||
 >>====================================================<<
+TG: @biddbb
+TG GROUP: @steamdeckoverclock
 "
+if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
+    red_msg "$(print_text copable)"
+    sleep 5
+    exit 1
+fi
 green_msg "$(print_text optimization_start)"
 # pacman
 sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf &>/dev/null
@@ -269,8 +287,9 @@ kernel-3.7() {
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             red_msg "$(print_text kernel_install)"
-            sudo pacman -U --noconfirm ./packages/linux-neptune-611-SDWEAK.pkg.tar.zst &>/dev/null
-            sudo pacman -U --noconfirm ./packages/linux-neptune-611-headers-SDWEAK.pkg.tar.zst &>/dev/null
+            sudo pacman -U --noconfirm ./packages/linux-neptune-68-SDKERNEL.pkg.tar.zst &>/dev/null
+            sudo pacman -U --noconfirm ./packages/linux-neptune-68-headers-SDKERNEL.pkg.tar.zst &>/dev/null
+            sudo pacman -R --noconfirm linux-neptune-611 &>/dev/null
             sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             green_msg "$(print_text kernel_success)"
             break
@@ -293,8 +312,6 @@ fix() {
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text fix_install)"
             sudo sed -i "s/ENABLE_GAMESCOPE_WSI=1/ENABLE_GAMESCOPE_WSI=0/g" /usr/bin/gamescope-session &>/dev/null
-            sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
-            sudo pacman -U --noconfirm ./packages/lib32-vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
             green_msg "$(print_text fix_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
@@ -379,6 +396,28 @@ rebooot() {
     done
 }
 
+# audio fix
+audio() {
+    while true; do
+        tput setaf 3
+        read -p "$(print_text audio_promt) [y/N]: " answer
+        tput sgr0
+        answer=${answer:-n}
+        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
+            green_msg "$(print_text audio_install)"
+            sudo sed -i "s/main/3.5/g" /etc/pacman.conf &>/dev/null
+            sudo pacman -S --noconfirm steamdeck-dsp &>/dev/null
+            sudo sed -i "s/3.5/main/g" /etc/pacman.conf &>/dev/null
+            green_msg "$(print_text audio_success)"
+            break
+        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
+            break
+        else
+            red_msg "$(print_text invalid_input)"
+        fi
+    done
+}
+
 # call zswap function
 zswap_en
 
@@ -386,15 +425,30 @@ zswap_en
 sudo systemctl daemon-reload &>/dev/null
 sudo systemctl enable --now tweak.service &>/dev/null
 
-# kernel
+# kernel and audio fix
 if [ $steamos_version = 3.7 ]; then
     kernel-3.7
-    battery
+    audio
+fi
+
+# battery
+if [ "$steamos_version" = "3.7" ]; then
+    if [ "$MODEL" = "Galileo" ]; then
+        battery
+    elif [ "$MODEL" = "Jupiter" ] && [ "$BIOS_VERSION" = "F7A0131" ]; then
+        battery
+    fi
 fi
 
 # FRAMETIME FIX LCD
 if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ]; }; then
     fix
+fi
+
+# vulkan fix
+if { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ]; }; then
+    sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
+    sudo pacman -S --noconfirm lib32-vulkan-radeon &>/dev/null
 fi
 
 # 70Hz LCD

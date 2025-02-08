@@ -206,6 +206,7 @@ logo "
 >>====================================================<<
 TG: @biddbb
 TG GROUP: @steamdeckoverclock
+DONAT: https://www.tinkoff.ru/cf/8HHVDNi8VMS
 "
 if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
     red_msg "$(print_text copable)"
@@ -242,11 +243,12 @@ green_msg "$(print_text daem_irq)"
 
 # tweaks enable
 sudo mkdir -p /home/deck/.local/tweak/
+sudo rm /home/deck/.local/tweak/SDWEAK.sh &>/dev/null
 sudo rm /home/deck/.local/tweak/SDOC-TWEAKS.sh &>/dev/null
-sudo cp ./home/deck/.local/tweak/SDOC-TWEAKS.sh /home/deck/.local/tweak/SDOC-TWEAKS.sh
+sudo cp ./home/deck/.local/tweak/SDWEAK.sh /home/deck/.local/tweak/SDWEAK.sh
 sudo rm /etc/systemd/system/tweak.service &>/dev/null
 sudo cp ./etc/systemd/system/tweak.service /etc/systemd/system/tweak.service
-sudo chmod 777 /home/deck/.local/tweak/SDOC-TWEAKS.sh
+sudo chmod 777 /home/deck/.local/tweak/SDWEAK.sh
 
 # Enable ZSWAP function
 zswap_en() {
@@ -262,11 +264,11 @@ zswap_en() {
             backup_file /usr/lib/systemd/zram-generator.conf &>/dev/null
             sudo rm /etc/systemd/zram-generator.conf &>/dev/null
             sudo rm /usr/lib/systemd/zram-generator.conf &>/dev/null
-            sudo echo "# ZSWAP" >> /home/deck/.local/tweak/SDOC-TWEAKS.sh
-            sudo echo "write /sys/module/zswap/parameters/enabled 1" >> /home/deck/.local/tweak/SDOC-TWEAKS.sh
-            sudo echo "write /sys/module/zswap/parameters/compressor lz4" >> /home/deck/.local/tweak/SDOC-TWEAKS.sh
-            sudo echo "write /sys/module/zswap/parameters/zpool z3fold" >> /home/deck/.local/tweak/SDOC-TWEAKS.sh
-            sudo echo "write /sys/module/zswap/parameters/max_pool_percent 25" >> /home/deck/.local/tweak/SDOC-TWEAKS.sh
+            sudo echo "# ZSWAP" >> /home/deck/.local/tweak/SDWEAK.sh
+            sudo echo "write /sys/module/zswap/parameters/enabled 1" >> /home/deck/.local/tweak/SDWEAK.sh
+            sudo echo "write /sys/module/zswap/parameters/compressor lz4" >> /home/deck/.local/tweak/SDWEAK.sh
+            sudo echo "write /sys/module/zswap/parameters/zpool z3fold" >> /home/deck/.local/tweak/SDWEAK.sh
+            sudo echo "write /sys/module/zswap/parameters/max_pool_percent 25" >> /home/deck/.local/tweak/SDWEAK.sh
             green_msg "$(print_text zswap_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
@@ -326,9 +328,9 @@ fix() {
 hz() {
     while true; do
         tput setaf 3
-        read -p "$(print_text hz_promt) [Y/n]: " answer
+        read -p "$(print_text hz_promt) [y/N]: " answer
         tput sgr0
-        answer=${answer:-y}
+        answer=${answer:-n}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text hz_install)"
             if grep "68, 69," /usr/share/gamescope/scripts/00-gamescope/displays/valve.steamdeck.lcd.lua &>/dev/null; then

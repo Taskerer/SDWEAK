@@ -430,7 +430,7 @@ sudo systemctl enable --now tweak.service &>/dev/null
 # kernel and audio fix
 if [ $steamos_version = 3.7 ]; then
     kernel-3.7
-    audio
+    #audio
 fi
 
 # battery

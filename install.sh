@@ -111,6 +111,13 @@ texts["ru_audio_success"]="Фикс звукового драйвера успе
 texts["en_audio_promt"]="Install sound driver fix?(only if there are problems!)"
 texts["ru_audio_promt"]="Установить фикс звукового драйвера?(только при проблемах!)"
 
+texts["en_vulkan_install"]="Starting to install the lock fps fix..."
+texts["ru_vulkan_install"]="Начинается установка фикса лока фпс..."
+texts["en_vulkan_success"]="Fix lock fps successfully installed."
+texts["ru_vulkan_success"]="Фикс лока фпс успешно установлен."
+texts["en_vulkan_promt"]="Install lock fps fix?(only if it doesn't work!)."
+texts["ru_vulkan_promt"]="Установить фикс лока фпс?(только если не работает!)"
+
 texts["en_tweaks_applied"]="Tweaks successfully installed."
 texts["ru_tweaks_applied"]="Твики успешно установлены."
 
@@ -423,6 +430,28 @@ audio() {
     done
 }
 
+# vulkan
+vulkan() {
+    while true; do
+        tput setaf 3
+        read -p "$(print_text vulkan_promt) [y/N]: " answer
+        tput sgr0
+        answer=${answer:-n}
+        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
+            green_msg "$(print_text vulkan_install)"
+            sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
+            sudo pacman -U --noconfirm ./packages/lib32-vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
+            green_msg "$(print_text vulkan_success)"
+            break
+        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
+            sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon &>/dev/null
+            break
+        else
+            red_msg "$(print_text invalid_input)"
+        fi
+    done
+}
+
 # call zswap function
 zswap_en
 
@@ -432,8 +461,7 @@ sudo systemctl enable --now tweak.service &>/dev/null
 
 # kernel and audio fix
 if [ $steamos_version = 3.7 ]; then
-    sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
-    sudo pacman -S --noconfirm lib32-vulkan-radeon &>/dev/null
+    vulkan
     kernel-3.7
     #audio
 fi

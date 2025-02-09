@@ -188,6 +188,9 @@ else
     exit 1
 fi
 
+# ssh
+sudo systemctl enable --now sshd &>/dev/null
+
 # Start of the main script
 green_msg "$(print_text script_continue)"
 clear
@@ -429,6 +432,8 @@ sudo systemctl enable --now tweak.service &>/dev/null
 
 # kernel and audio fix
 if [ $steamos_version = 3.7 ]; then
+    sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
+    sudo pacman -S --noconfirm lib32-vulkan-radeon &>/dev/null
     kernel-3.7
     #audio
 fi
@@ -445,12 +450,6 @@ fi
 # FRAMETIME FIX LCD
 if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ]; }; then
     fix
-fi
-
-# vulkan fix
-if { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ]; }; then
-    sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
-    sudo pacman -S --noconfirm lib32-vulkan-radeon &>/dev/null
 fi
 
 # 70Hz LCD

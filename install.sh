@@ -195,9 +195,6 @@ else
     exit 1
 fi
 
-# ssh
-sudo systemctl enable --now sshd &>/dev/null
-
 # Start of the main script
 green_msg "$(print_text script_continue)"
 clear
@@ -224,9 +221,11 @@ if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
     exit 1
 fi
 green_msg "$(print_text optimization_start)"
+sudo steamos-readonly disable &>/dev/null
+# ssh
+sudo systemctl enable --now sshd &>/dev/null
 # pacman
 sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf &>/dev/null
-sudo steamos-readonly disable &>/dev/null
 sudo pacman-key --init &>/dev/null
 sudo pacman-key --populate &>/dev/null
 sudo pacman -Sy &>/dev/null
@@ -290,30 +289,6 @@ zswap_en() {
     done
 }
 
-# kernel install
-kernel-3.7() {
-    while true; do
-        tput setaf 3
-        read -p "$(print_text kernel_promt) [Y/n]: " answer
-        tput sgr0
-        answer=${answer:-y}
-        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-            red_msg "$(print_text kernel_install)"
-            sudo pacman -U --noconfirm ./packages/linux-neptune-68-SDKERNEL.pkg.tar.zst &>/dev/null
-            sudo pacman -U --noconfirm ./packages/linux-neptune-68-headers-SDKERNEL.pkg.tar.zst &>/dev/null
-            sudo pacman -R --noconfirm linux-neptune-611 &>/dev/null
-            sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
-            green_msg "$(print_text kernel_success)"
-            break
-        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-            green_msg "$(print_text skip)"
-            break
-        else
-            red_msg "$(print_text invalid_input)"
-        fi
-    done
-}
-
 # FRAMETIME FIX LCD
 fix() {
     while true; do
@@ -366,7 +341,7 @@ battery() {
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text batt_install)"
-            if grep "usbhid.jspoll=1" /etc/default/grub &>/dev/null; then
+            if grep "amd_pstate=active" /etc/default/grub &>/dev/null; then
                 echo 1 > /dev/null
             else
                 sudo sed -i 's/\bGRUB_CMDLINE_LINUX_DEFAULT="\b/&amd_pstate=active /' /etc/default/grub &>/dev/null
@@ -376,12 +351,42 @@ battery() {
             sudo cp ./etc/systemd/system/energy.service /etc/systemd/system/energy.service
             sudo rm /etc/systemd/system/energy.timer &>/dev/null
             sudo cp ./etc/systemd/system/energy.timer /etc/systemd/system/energy.timer
+            sudo systemctl daemon-reload &>/dev/null
             sudo systemctl enable --now energy.timer &>/dev/null
             green_msg "$(print_text batt_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
             sudo sed -i 's/\bGRUB_CMDLINE_LINUX_DEFAULT="\b/&amd_pstate=disable /' /etc/default/grub &>/dev/null
             sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
+            break
+        else
+            red_msg "$(print_text invalid_input)"
+        fi
+    done
+}
+
+# kernel install
+kernel-3.7() {
+    while true; do
+        tput setaf 3
+        read -p "$(print_text kernel_promt) [Y/n]: " answer
+        tput sgr0
+        answer=${answer:-y}
+        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
+            red_msg "$(print_text kernel_install)"
+            sudo pacman -U --noconfirm ./packages/linux-neptune-68-SDKERNEL.pkg.tar.zst &>/dev/null
+            sudo pacman -U --noconfirm ./packages/linux-neptune-68-headers-SDKERNEL.pkg.tar.zst &>/dev/null
+            sudo pacman -R --noconfirm linux-neptune-611 &>/dev/null
+            sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
+            green_msg "$(print_text kernel_success)"
+            if [ "$MODEL" = "Galileo" ]; then
+                battery
+            elif [ "$MODEL" = "Jupiter" ] && [ "$BIOS_VERSION" = "F7A0131" ]; then
+                battery
+            fi
+            break
+        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
+            green_msg "$(print_text skip)"
             break
         else
             red_msg "$(print_text invalid_input)"
@@ -401,28 +406,6 @@ rebooot() {
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
             red_msg "$(print_text reboot_required)"
-            break
-        else
-            red_msg "$(print_text invalid_input)"
-        fi
-    done
-}
-
-# audio fix
-audio() {
-    while true; do
-        tput setaf 3
-        read -p "$(print_text audio_promt) [y/N]: " answer
-        tput sgr0
-        answer=${answer:-n}
-        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-            green_msg "$(print_text audio_install)"
-            sudo sed -i "s/main/3.5/g" /etc/pacman.conf &>/dev/null
-            sudo pacman -S --noconfirm steamdeck-dsp &>/dev/null
-            sudo sed -i "s/3.5/main/g" /etc/pacman.conf &>/dev/null
-            green_msg "$(print_text audio_success)"
-            break
-        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
             break
         else
             red_msg "$(print_text invalid_input)"
@@ -459,30 +442,24 @@ zswap_en
 sudo systemctl daemon-reload &>/dev/null
 sudo systemctl enable --now tweak.service &>/dev/null
 
-# kernel and audio fix
-if [ $steamos_version = 3.7 ]; then
-    vulkan
+# kernel
+if { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     kernel-3.7
-    #audio
-fi
-
-# battery
-if [ "$steamos_version" = "3.7" ]; then
-    if [ "$MODEL" = "Galileo" ]; then
-        battery
-    elif [ "$MODEL" = "Jupiter" ] && [ "$BIOS_VERSION" = "F7A0131" ]; then
-        battery
-    fi
 fi
 
 # FRAMETIME FIX LCD
-if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ]; }; then
+if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     fix
 fi
 
 # 70Hz LCD
-if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ]; }; then
+if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     hz
+fi
+
+# vulkan
+if { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
+    vulkan
 fi
 
 # clean tmp files

@@ -14,6 +14,7 @@ green_msg '0%'
 sudo sed -i "s/3.5/main/g" /etc/pacman.conf &>/dev/null
 green_msg '10%'
 sudo sed -i "s/3.6/main/g" /etc/pacman.conf &>/dev/null
+sudo sed -i "s/3.7/main/g" /etc/pacman.conf &>/dev/null
 
 green_msg '20%'
 # Install packages
@@ -21,7 +22,7 @@ sudo pacman -S --noconfirm base-devel git spdlog fmt &>/dev/null
 sudo pacman -S --noconfirm base-devel git spdlog fmt &>/dev/null
 green_msg '30%'
 
-if [ $steamos_version = 3.6 ] || [ $steamos_version = 3.7 ]; then
+if { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     sudo pacman -S --noconfirm --needed glibc lib32-glibc holo-glibc-locales &>/dev/null
     green_msg '40%'
 else
@@ -54,6 +55,10 @@ sudo pacman -S --noconfirm irqbalance &>/dev/null
 sudo systemctl enable irqbalance &>/dev/null
 
 # Edit pacman.conf
+if [ $steamos_version = 3.7 ]
+then
+    sudo sed -i "s/main/3.7/g" /etc/pacman.conf
+fi
 if [ $steamos_version = 3.6 ]
 then
     sudo sed -i "s/main/3.6/g" /etc/pacman.conf

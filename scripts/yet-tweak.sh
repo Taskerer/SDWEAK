@@ -34,7 +34,6 @@ if grep "usbhid.jspoll=1" /etc/default/grub &>/dev/null; then
     echo 1 > /dev/null
 else
     sudo sed -i 's/\bGRUB_CMDLINE_LINUX_DEFAULT="\b/&usbhid.jspoll=1 /' /etc/default/grub &>/dev/null
-    sudo sed -i "s/log_buf_len=4M/log_buf_len=256K/g" /etc/default/grub &>/dev/null
     sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
 fi
 
@@ -69,9 +68,3 @@ backup_file /usr/lib/sysctl.d/20-panic-sysctls.conf &>/dev/null
 sudo rm /usr/lib/sysctl.d/21-steamos-panic-sysctls.conf &>/dev/null
 sudo rm /usr/lib/sysctl.d/50-coredump.conf &>/dev/null
 sudo rm /usr/lib/sysctl.d/20-panic-sysctls.conf &>/dev/null
-
-# grub edit
-if grep "log_buf_len=4M" /etc/default/grub &>/dev/null; then
-    sudo sed -i "s/log_buf_len=4M/log_buf_len=256K/g" /etc/default/grub &>/dev/null
-    sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
-fi

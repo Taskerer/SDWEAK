@@ -1,30 +1,5 @@
 #!/bin/bash
 
-# Checking root access
-if [ "$(id -u)" != "0" ]; then
-    PASSWORD=$(zenity --password --title="Введите пароль sudo")
-    if [ -z "$PASSWORD" ]; then
-        zenity --error --text="Пароль не был введен. Скрипт завершен." --title="Ошибка"
-        exit 1
-    fi
-    echo "$PASSWORD" | sudo -S echo "" 2>/dev/null
-    if [ $? -ne 0 ]; then
-        zenity --error --text="Неверный пароль. Скрипт завершен." --title="Ошибка"
-        exit 1
-    fi
-fi
-
-# backup
-BACKUP_DIR="/tmp/install_backup"
-sudo mkdir -p "$BACKUP_DIR"
-start_time=$(date +%s)
-backup_file() {
-    local file="$1"
-    if [ -f "$file" ]; then
-        sudo cp "$file" "$BACKUP_DIR"
-    fi
-}
-
 # Check if Bash supports associative arrays
 if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
     echo "This script requires Bash 4.0 or higher."
@@ -35,8 +10,6 @@ fi
 declare -A texts
 
 # Fill the arrays with texts for each language
-texts["en_root_check"]="This script must be run as root."
-texts["ru_root_check"]="Этот скрипт должен быть запущен с правами root."
 texts["en_ping_success"]="Internet connection established."
 texts["ru_ping_success"]="Интернет соединение установлено."
 
@@ -62,8 +35,8 @@ texts["en_zswap_enable"]="Starting ZSWAP installation..."
 texts["ru_zswap_enable"]="Начинается установка ZSWAP..."
 texts["en_zswap_success"]="ZSWAP successfully installed."
 texts["ru_zswap_success"]="ZSWAP успешно установлен."
-texts["en_zswap_promt"]="Install ZSWAP?"
-texts["ru_zswap_promt"]="Установить ZSWAP?"
+texts["en_zswap_prompt"]="Install ZSWAP?"
+texts["ru_zswap_prompt"]="Установить ZSWAP?"
 
 texts["en_skip"]="Skipping..."
 texts["ru_skip"]="Пропуск..."
@@ -75,11 +48,11 @@ texts["en_kernel_install"]="Starting kernel installation..."
 texts["ru_kernel_install"]="Начинается установка ядра..."
 texts["en_kernel_success"]="Kernel successfully installed."
 texts["ru_kernel_success"]="Ядро успешно установлено."
-texts["en_kernel_promt"]="Install optimized kernel?"
-texts["ru_kernel_promt"]="Установить оптимизированное ядро?"
+texts["en_kernel_prompt"]="Install optimized kernel?"
+texts["ru_kernel_prompt"]="Установить оптимизированное ядро?"
 
-texts["en_reboot_promt"]="Reboot to apply changes?"
-texts["ru_reboot_promt"]="Перезагрузить для применения изменений?"
+texts["en_reboot_prompt"]="Reboot to apply changes?"
+texts["ru_reboot_prompt"]="Перезагрузить для применения изменений?"
 texts["en_reboot_required"]="Reboot is required."
 texts["ru_reboot_required"]="Обязательно перезагрузите."
 
@@ -87,36 +60,36 @@ texts["en_fix_install"]="Starting microstutters fix installation..."
 texts["ru_fix_install"]="Начинается установка исправление микрозаиканий..."
 texts["en_fix_success"]="Microstutters fix successfully installed."
 texts["ru_fix_success"]="Исправление микрозаиканий успешно установлено."
-texts["en_fix_promt"]="Install microstutters fix?"
-texts["ru_fix_promt"]="Установить исправление микрозаиканий?"
+texts["en_fix_prompt"]="Install microstutters fix?"
+texts["ru_fix_prompt"]="Установить исправление микрозаиканий?"
 
 texts["en_hz_install"]="Starting Overclocking to 70Hz installation..."
 texts["ru_hz_install"]="Начинается установка разгона дисплея до 70Hz..."
 texts["en_hz_success"]="Overclocking to 70Hz successfully installed."
 texts["ru_hz_success"]="Разгон до 70Hz успешно установлен."
-texts["en_hz_promt"]="Overclock the display to 70Hz?"
-texts["ru_hz_promt"]="Разогнать дисплей до 70Hz?"
+texts["en_hz_prompt"]="Overclock the display to 70Hz?"
+texts["ru_hz_prompt"]="Разогнать дисплей до 70Hz?"
 
 texts["en_batt_install"]="Starting to prioritize power efficiency..."
 texts["ru_batt_install"]="Начинается установка приоритета энергоэффективности..."
 texts["en_batt_success"]="Power efficiency prioritization successfully installed."
 texts["ru_batt_success"]="Приоритет энергоэффективности успешно установлен."
-texts["en_batt_promt"]="Prioritize power efficiency?"
-texts["ru_batt_promt"]="Установить приоритет энергоэффективности?"
+texts["en_batt_prompt"]="Prioritize power efficiency?"
+texts["ru_batt_prompt"]="Установить приоритет энергоэффективности?"
 
 texts["en_audio_install"]="Starting to install the sound driver fix..."
 texts["ru_audio_install"]="Начинается установка фикса звукового драйвера..."
 texts["en_audio_success"]="Sound driver fix successfully installed."
 texts["ru_audio_success"]="Фикс звукового драйвера успешно установлен."
-texts["en_audio_promt"]="Install sound driver fix?(only if there are problems!)"
-texts["ru_audio_promt"]="Установить фикс звукового драйвера?(только при проблемах!)"
+texts["en_audio_prompt"]="Install sound driver fix?(only if there are problems!)"
+texts["ru_audio_prompt"]="Установить фикс звукового драйвера?(только при проблемах!)"
 
 texts["en_vulkan_install"]="Starting to install the lock fps fix..."
 texts["ru_vulkan_install"]="Начинается установка фикса лока фпс..."
 texts["en_vulkan_success"]="Fix lock fps successfully installed."
 texts["ru_vulkan_success"]="Фикс лока фпс успешно установлен."
-texts["en_vulkan_promt"]="Install lock fps fix?(only if it doesn't work!)."
-texts["ru_vulkan_promt"]="Установить фикс лока фпс?(только если не работает!)"
+texts["en_vulkan_prompt"]="Install lock fps fix?(only if it doesn't work!)."
+texts["ru_vulkan_prompt"]="Установить фикс лока фпс?(только если не работает!)"
 
 texts["en_tweaks_applied"]="Tweaks successfully installed."
 texts["ru_tweaks_applied"]="Твики успешно установлены."
@@ -156,6 +129,30 @@ logo() {
     echo "$1"
     tput sgr0
 }
+log() {
+    echo "[*] --- $1"
+}
+
+# check root
+if [ "$(id -u)" != "0" ]
+then
+    red_msg "This script must be run as root."
+    exit 1
+fi
+
+# backup
+BACKUP_DIR="/home/deck/install_backup"
+sudo mkdir -p "$BACKUP_DIR"
+start_time=$(date +%s)
+backup_file() {
+    local file="$1"
+    if [ -f "$file" ]; then
+        sudo cp "$file" "$BACKUP_DIR"
+    fi
+}
+
+# log
+LOG_FILE="/home/deck/SDWEAK-install.log"
 
 # Function for language selection
 choose_language() {
@@ -201,6 +198,9 @@ clear
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
 MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
+log "$MODEL" >> "$LOG_FILE" 2>&1
+log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
+log "$steamos_version" >> "$LOG_FILE" 2>&1
 logo "
 
 >>====================================================<<
@@ -221,16 +221,18 @@ if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
     exit 1
 fi
 green_msg "$(print_text optimization_start)"
-sudo steamos-readonly disable &>/dev/null
+sudo steamos-readonly disable >> "$LOG_FILE" 2>&1
 # ssh
-sudo systemctl enable --now sshd &>/dev/null
+sudo systemctl enable --now sshd >> "$LOG_FILE" 2>&1
 # pacman
-sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf &>/dev/null
-sudo pacman-key --init &>/dev/null
-sudo pacman-key --populate &>/dev/null
-sudo pacman -Sy &>/dev/null
+sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf >> "$LOG_FILE" 2>&1
+log "PACMAN INIT" >> "$LOG_FILE" 2>&1
+sudo pacman-key --init >> "$LOG_FILE" 2>&1
+sudo pacman-key --populate >> "$LOG_FILE" 2>&1
+sudo pacman -Sy >> "$LOG_FILE" 2>&1
+log "SED INSTALL" >> "$LOG_FILE" 2>&1
 sudo pacman -S --noconfirm sed &>/dev/null
-sudo pacman -S --noconfirm sed &>/dev/null
+sudo pacman -S --noconfirm sed >> "$LOG_FILE" 2>&1
 green_msg "$(print_text pacman_keys)"
 
 # yet-tweak
@@ -263,12 +265,13 @@ sudo chmod 777 /home/deck/.local/tweak/SDWEAK.sh
 zswap_en() {
     while true; do
         tput setaf 3
-        read -p "$(print_text zswap_promt) [Y/n]: " answer
+        read -p "$(print_text zswap_prompt) [Y/n]: " answer
         tput sgr0
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             red_msg "$(print_text zswap_enable)"
-            sudo pacman -R --noconfirm holo-zram-swap zram-generator &>/dev/null
+            log "REMOVE ZRAM" >> "$LOG_FILE" 2>&1
+            sudo pacman -R --noconfirm holo-zram-swap zram-generator >> "$LOG_FILE" 2>&1
             backup_file /etc/systemd/zram-generator.conf &>/dev/null
             backup_file /usr/lib/systemd/zram-generator.conf &>/dev/null
             sudo rm /etc/systemd/zram-generator.conf &>/dev/null
@@ -293,7 +296,7 @@ zswap_en() {
 fix() {
     while true; do
         tput setaf 3
-        read -p "$(print_text fix_promt) [Y/n]: " answer
+        read -p "$(print_text fix_prompt) [Y/n]: " answer
         tput sgr0
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
@@ -313,7 +316,7 @@ fix() {
 hz() {
     while true; do
         tput setaf 3
-        read -p "$(print_text hz_promt) [y/N]: " answer
+        read -p "$(print_text hz_prompt) [y/N]: " answer
         tput sgr0
         answer=${answer:-n}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
@@ -336,16 +339,19 @@ hz() {
 battery() {
     while true; do
         tput setaf 3
-        read -p "$(print_text batt_promt) [Y/n]: " answer
+        read -p "$(print_text batt_prompt) [Y/n]: " answer
         tput sgr0
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text batt_install)"
-            if grep "amd_pstate=active" /etc/default/grub &>/dev/null; then
+            if grep -q "GRUB_CMDLINE_LINUX_DEFAULT=.*amd_pstate=active" /etc/default/grub; then
                 echo 1 > /dev/null
-            else
-                sudo sed -i 's/\bGRUB_CMDLINE_LINUX_DEFAULT="\b/&amd_pstate=active /' /etc/default/grub &>/dev/null
+            elif grep -q "GRUB_CMDLINE_LINUX_DEFAULT=.*amd_pstate=disable" /etc/default/grub; then
+                sudo sed -i '/^GRUB_CMDLINE_LINUX_DEFAULT=/s/amd_pstate=disable/amd_pstate=active/g' /etc/default/grub
                 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
+            else
+                sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/&amd_pstate=active /' /etc/default/grub
+                sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg
             fi
             sudo rm /etc/systemd/system/energy.service &>/dev/null
             sudo cp ./etc/systemd/system/energy.service /etc/systemd/system/energy.service
@@ -356,7 +362,11 @@ battery() {
             green_msg "$(print_text batt_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-            sudo sed -i 's/\bGRUB_CMDLINE_LINUX_DEFAULT="\b/&amd_pstate=disable /' /etc/default/grub &>/dev/null
+            if grep -q "GRUB_CMDLINE_LINUX_DEFAULT=.*amd_pstate=active" /etc/default/grub; then
+                sudo sed -i '/^GRUB_CMDLINE_LINUX_DEFAULT=/s/amd_pstate=active/amd_pstate=disable/g' /etc/default/grub
+            else
+                sudo sed -i 's/\bGRUB_CMDLINE_LINUX_DEFAULT="\b/&amd_pstate=disable /' /etc/default/grub &>/dev/null
+            fi
             sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             break
         else
@@ -369,14 +379,16 @@ battery() {
 kernel-3.7() {
     while true; do
         tput setaf 3
-        read -p "$(print_text kernel_promt) [Y/n]: " answer
+        read -p "$(print_text kernel_prompt) [Y/n]: " answer
         tput sgr0
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             red_msg "$(print_text kernel_install)"
-            sudo pacman -U --noconfirm ./packages/linux-neptune-68-SDKERNEL.pkg.tar.zst &>/dev/null
-            sudo pacman -U --noconfirm ./packages/linux-neptune-68-headers-SDKERNEL.pkg.tar.zst &>/dev/null
-            sudo pacman -R --noconfirm linux-neptune-611 &>/dev/null
+            log "SDKERNEL INSTALL" >> "$LOG_FILE" 2>&1
+            sudo pacman -U --noconfirm ./packages/linux-neptune-68-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1
+            sudo pacman -U --noconfirm ./packages/linux-neptune-68-headers-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1
+            log "REMOVE 6.11" >> "$LOG_FILE" 2>&1
+            sudo pacman -R --noconfirm linux-neptune-611 >> "$LOG_FILE" 2>&1
             sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             green_msg "$(print_text kernel_success)"
             if [ "$MODEL" = "Galileo" ]; then
@@ -398,7 +410,7 @@ kernel-3.7() {
 rebooot() {
     while true; do
         tput setaf 3
-        read -p "$(print_text reboot_promt) [Y/n]: " answer
+        read -p "$(print_text reboot_prompt) [Y/n]: " answer
         tput sgr0
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
@@ -417,13 +429,14 @@ rebooot() {
 vulkan() {
     while true; do
         tput setaf 3
-        read -p "$(print_text vulkan_promt) [y/N]: " answer
+        read -p "$(print_text vulkan_prompt) [y/N]: " answer
         tput sgr0
         answer=${answer:-n}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text vulkan_install)"
-            sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
-            sudo pacman -U --noconfirm ./packages/lib32-vulkan-radeon-SDWEAK.pkg.tar.zst &>/dev/null
+            log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
+            sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
+            sudo pacman -U --noconfirm ./packages/lib32-vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
             green_msg "$(print_text vulkan_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
@@ -471,6 +484,7 @@ green_msg "$(print_text tweaks_applied)"
 end_time=$(date +%s)
 elapsed_time=$((end_time - start_time))
 green_msg "$(print_text se) $elapsed_time $(print_text sec)"
+log "COMPLETE" >> "$LOG_FILE" 2>&1
 
 # reboot
 rebooot

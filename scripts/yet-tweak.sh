@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # backup
-BACKUP_DIR="/tmp/install_backup"
+BACKUP_DIR="/home/deck/install_backup"
 start_time=$(date +%s)
 backup_file() {
     local file="$1"

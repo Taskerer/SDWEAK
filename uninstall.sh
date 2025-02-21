@@ -1,19 +1,5 @@
 #!/bin/bash
 
-# Checking root access
-if [ "$(id -u)" != "0" ]; then
-    PASSWORD=$(zenity --password --title="Введите пароль sudo")
-    if [ -z "$PASSWORD" ]; then
-        zenity --error --text="Пароль не был введен. Скрипт завершен." --title="Ошибка"
-        exit 1
-    fi
-    echo "$PASSWORD" | sudo -S echo "" 2>/dev/null
-    if [ $? -ne 0 ]; then
-        zenity --error --text="Неверный пароль. Скрипт завершен." --title="Ошибка"
-        exit 1
-    fi
-fi
-
 # Function for color message output
 green_msg() {
     tput setaf 14
@@ -30,6 +16,14 @@ logo() {
     echo "$1"
     tput sgr0
 }
+
+
+# check root
+if [ "$(id -u)" != "0" ]
+then
+    red_msg "This script must be run as root."
+    exit 1
+fi
 
 # Checking Internet connection
 if ping -c 1 1.1.1.1 >/dev/null 2>&1; then
@@ -132,7 +126,7 @@ then
     sudo pacman -S --noconfirm linux-neptune-611
     sudo pacman -R --noconfirm linux-neptune-68
 fi
-
+sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
 # vulkan
 sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon
 sudo systemctl daemon-reload

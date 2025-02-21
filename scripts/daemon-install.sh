@@ -63,10 +63,9 @@ sudo pacman -U *.zst --noconfirm >> "$LOG_FILE" 2>&1
 sudo systemctl restart ananicy-cpp >> "$LOG_FILE" 2>&1
 green_msg '100%'
 
-# install irqbalance
-log "INSTALL IRQBALANCE" >> "$LOG_FILE" 2>&1
-sudo pacman -S --noconfirm irqbalance >> "$LOG_FILE" 2>&1
-sudo systemctl enable irqbalance >> "$LOG_FILE" 2>&1
+# uninstall irqbalance
+sudo systemctl disable irqbalance >> "$LOG_FILE" 2>&1
+sudo pacman -R --noconfirm irqbalance >> "$LOG_FILE" 2>&1
 
 # Edit pacman.conf
 if [ $steamos_version = 3.7 ]

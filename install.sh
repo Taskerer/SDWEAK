@@ -84,12 +84,12 @@ texts["ru_audio_success"]="Фикс звукового драйвера успе
 texts["en_audio_prompt"]="Install sound driver fix?(only if there are problems!)"
 texts["ru_audio_prompt"]="Установить фикс звукового драйвера?(только при проблемах!)"
 
-texts["en_vulkan_install"]="Starting to install the lock fps fix..."
-texts["ru_vulkan_install"]="Начинается установка фикса лока фпс..."
-texts["en_vulkan_success"]="Fix lock fps successfully installed."
-texts["ru_vulkan_success"]="Фикс лока фпс успешно установлен."
-texts["en_vulkan_prompt"]="Install lock fps fix?(only if it doesn't work!)."
-texts["ru_vulkan_prompt"]="Установить фикс лока фпс?(только если не работает!)"
+texts["en_fixoled_install"]="Starting microstutters fix installation..."
+texts["ru_fixoled_install"]="Начинается установка исправление микрозаиканий..."
+texts["en_fixoled_success"]="Microstutters fix successfully installed."
+texts["ru_fixoled_success"]="Исправление микрозаиканий успешно установлено."
+texts["en_fixoled_prompt"]="Install microstutters fix?(HDR will not work!!)"
+texts["ru_fixoled_prompt"]="Установить исправление микрозаиканий?(HDR перестанет работать!!)"
 
 texts["en_tweaks_applied"]="Tweaks successfully installed."
 texts["ru_tweaks_applied"]="Твики успешно установлены."
@@ -110,8 +110,6 @@ texts["ru_yet_un"]="Ненужные службы успешно отключе�
 
 texts["en_daem_anan"]="ananicy-cpp successfully installed."
 texts["ru_daem_anan"]="ananicy-cpp успешно установлен."
-texts["en_daem_irq"]="irqbalance successfully installed."
-texts["ru_daem_irq"]="irqbalance успешно установлен."
 
 # Function for color message output
 green_msg() {
@@ -198,6 +196,7 @@ clear
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
 MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
+log "VERSION: PRE-3.2" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
@@ -222,7 +221,6 @@ if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
 fi
 green_msg "$(print_text optimization_start)"
 sudo steamos-readonly disable >> "$LOG_FILE" 2>&1
-# ssh
 sudo systemctl enable --now sshd >> "$LOG_FILE" 2>&1
 # pacman
 sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf >> "$LOG_FILE" 2>&1
@@ -250,7 +248,6 @@ cp ./scripts/daemon-install.sh /home/deck/daemon-install.sh
 sudo chmod 775 /home/deck/daemon-install.sh
 sudo /home/deck/daemon-install.sh
 green_msg "$(print_text daem_anan)"
-green_msg "$(print_text daem_irq)"
 
 # tweaks enable
 sudo mkdir -p /home/deck/.local/tweak/
@@ -302,9 +299,54 @@ fix() {
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text fix_install)"
             sudo sed -i "s/ENABLE_GAMESCOPE_WSI=1/ENABLE_GAMESCOPE_WSI=0/g" /usr/bin/gamescope-session &>/dev/null
+            log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
+            sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
+            sudo pacman -U --noconfirm ./packages/lib32-vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
             green_msg "$(print_text fix_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
+            sudo sed -i "s/ENABLE_GAMESCOPE_WSI=0/ENABLE_GAMESCOPE_WSI=1/g" /usr/bin/gamescope-session &>/dev/null
+            sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon &>/dev/null
+            break
+        else
+            red_msg "$(print_text invalid_input)"
+        fi
+    done
+}
+
+# FRAMETIME FIX OLED
+fixoled() {
+    while true; do
+        tput setaf 3
+        read -p "$(print_text fixoled_prompt) [y/N]: " answer
+        tput sgr0
+        answer=${answer:-n}
+        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
+            green_msg "$(print_text fixoled_install)"
+            sudo sed -i "s/main/3.5/g" /etc/pacman.conf &>/dev/null
+            sudo sed -i "s/3.6/3.5/g" /etc/pacman.conf &>/dev/null
+            sudo sed -i "s/3.7/3.5/g" /etc/pacman.conf &>/dev/null
+            sudo pacman -Sy xorg-xwayland-jupiter
+            if [ $steamos_version = 3.7 ]
+            then
+                sudo sed -i "s/3.5/3.7/g" /etc/pacman.conf
+            fi
+            if [ $steamos_version = 3.6 ]
+            then
+                sudo sed -i "s/3.5/3.6/g" /etc/pacman.conf
+            fi
+            if [ $steamos_version = 3.8 ]
+            then
+                sudo sed -i "s/3.5/main/g" /etc/pacman.conf
+            fi
+            sudo pacman -U https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.5/os/x86_64/gamescope-3.13.16.9-1-x86_64.pkg.tar.zst
+            log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
+            sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
+            sudo pacman -S --noconfirm lib32-vulkan-radeon &>/dev/null
+            green_msg "$(print_text fixoled_success)"
+            break
+        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
+            sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon gamescope &>/dev/null
             break
         else
             red_msg "$(print_text invalid_input)"
@@ -425,29 +467,6 @@ rebooot() {
     done
 }
 
-# vulkan
-vulkan() {
-    while true; do
-        tput setaf 3
-        read -p "$(print_text vulkan_prompt) [y/N]: " answer
-        tput sgr0
-        answer=${answer:-n}
-        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-            green_msg "$(print_text vulkan_install)"
-            log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
-            sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
-            sudo pacman -U --noconfirm ./packages/lib32-vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
-            green_msg "$(print_text vulkan_success)"
-            break
-        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-            sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon &>/dev/null
-            break
-        else
-            red_msg "$(print_text invalid_input)"
-        fi
-    done
-}
-
 # call zswap function
 zswap_en
 
@@ -470,9 +489,9 @@ if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_v
     hz
 fi
 
-# vulkan
-if { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
-    vulkan
+# FRAMETIME FIX LCD
+if [ "$MODEL" = "Galileo" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
+    fixoled
 fi
 
 # clean tmp files

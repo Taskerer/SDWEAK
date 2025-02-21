@@ -196,7 +196,7 @@ clear
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
 MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
-log "VERSION: PRE-3.2" >> "$LOG_FILE" 2>&1
+log "VERSION: PRE-3.5" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
@@ -301,7 +301,7 @@ fix() {
             sudo sed -i "s/ENABLE_GAMESCOPE_WSI=1/ENABLE_GAMESCOPE_WSI=0/g" /usr/bin/gamescope-session &>/dev/null
             log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
             sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
-            sudo pacman -U --noconfirm ./packages/lib32-vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
+            sudo pacman -S --noconfirm lib32-vulkan-radeon &>/dev/null
             green_msg "$(print_text fix_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then

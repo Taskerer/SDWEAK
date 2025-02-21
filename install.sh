@@ -339,7 +339,7 @@ fixoled() {
             then
                 sudo sed -i "s/3.5/main/g" /etc/pacman.conf
             fi
-            sudo pacman -U https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.5/os/x86_64/gamescope-3.13.16.9-1-x86_64.pkg.tar.zst
+            sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.5/os/x86_64/gamescope-3.13.16.9-1-x86_64.pkg.tar.zst
             log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
             sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
             sudo pacman -S --noconfirm lib32-vulkan-radeon &>/dev/null

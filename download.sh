@@ -4,7 +4,7 @@ rm -rf SDWEAK
 sudo sed -i "s/main/3.5/g" /etc/pacman.conf &>/dev/null
 sudo sed -i "s/3.6/3.5/g" /etc/pacman.conf &>/dev/null
 sudo sed -i "s/3.7/3.5/g" /etc/pacman.conf &>/dev/null
-sudo pacman -S --noconfirm git-lfs
+sudo pacman -Sy --noconfirm git-lfs
 if [ $steamos_version = 3.7 ]
 then
     sudo sed -i "s/3.5/3.7/g" /etc/pacman.conf

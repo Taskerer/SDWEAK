@@ -327,7 +327,7 @@ fixoled() {
             sudo sed -i "s/main/3.5/g" /etc/pacman.conf &>/dev/null
             sudo sed -i "s/3.6/3.5/g" /etc/pacman.conf &>/dev/null
             sudo sed -i "s/3.7/3.5/g" /etc/pacman.conf &>/dev/null
-            sudo pacman -Sy xorg-xwayland-jupiter
+            sudo pacman -Sydd xorg-xwayland-jupiter &>/dev/null
             if [ $steamos_version = 3.7 ]
             then
                 sudo sed -i "s/3.5/3.7/g" /etc/pacman.conf
@@ -393,7 +393,7 @@ battery() {
                 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             else
                 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/&amd_pstate=active /' /etc/default/grub
-                sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg
+                sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             fi
             sudo rm /etc/systemd/system/energy.service &>/dev/null
             sudo cp ./etc/systemd/system/energy.service /etc/systemd/system/energy.service

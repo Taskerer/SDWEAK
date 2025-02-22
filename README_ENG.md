@@ -1,5 +1,5 @@
 # SDWEAK
-[RUSSIAN README](README.MD)
+[RUSSIAN README](README.md)
 
 Make Steam Deck Great Again
 

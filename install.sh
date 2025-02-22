@@ -74,8 +74,8 @@ texts["en_batt_install"]="Starting to prioritize power efficiency..."
 texts["ru_batt_install"]="Начинается установка приоритета энергоэффективности..."
 texts["en_batt_success"]="Power efficiency prioritization successfully installed."
 texts["ru_batt_success"]="Приоритет энергоэффективности успешно установлен."
-texts["en_batt_prompt"]="Prioritize power efficiency?"
-texts["ru_batt_prompt"]="Установить приоритет энергоэффективности?"
+texts["en_batt_prompt"]="Prioritize power efficiency? (BETA)"
+texts["ru_batt_prompt"]="Установить приоритет энергоэффективности? (БЕТА)"
 
 texts["en_audio_install"]="Starting to install the sound driver fix..."
 texts["ru_audio_install"]="Начинается установка фикса звукового драйвера..."
@@ -196,7 +196,7 @@ clear
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
 MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
-log "VERSION: PRE-3.5" >> "$LOG_FILE" 2>&1
+log "VERSION: RELEASE 1.0" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
@@ -212,7 +212,8 @@ logo "
 >>====================================================<<
 TG: @biddbb
 TG GROUP: @steamdeckoverclock
-DONAT: https://www.tinkoff.ru/cf/8HHVDNi8VMS
+DONAT(RU): https://www.tinkoff.ru/cf/8HHVDNi8VMS
+DONAT(All): https://www.donationalerts.com/r/biddbb
 "
 if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
     red_msg "$(print_text copable)"
@@ -339,10 +340,9 @@ fixoled() {
             then
                 sudo sed -i "s/3.5/main/g" /etc/pacman.conf
             fi
-            sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.5/os/x86_64/gamescope-3.13.16.9-1-x86_64.pkg.tar.zst
+            sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.5/os/x86_64/gamescope-3.13.16.9-1-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
             log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
-            sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
-            sudo pacman -S --noconfirm lib32-vulkan-radeon &>/dev/null
+            sudo pacman -S --noconfirm lib32-vulkan-radeon vulkan-radeon >> "$LOG_FILE" 2>&1
             green_msg "$(print_text fixoled_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
@@ -381,9 +381,9 @@ hz() {
 battery() {
     while true; do
         tput setaf 3
-        read -p "$(print_text batt_prompt) [Y/n]: " answer
+        read -p "$(print_text batt_prompt) [y/N]: " answer
         tput sgr0
-        answer=${answer:-y}
+        answer=${answer:-n}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text batt_install)"
             if grep -q "GRUB_CMDLINE_LINUX_DEFAULT=.*amd_pstate=active" /etc/default/grub; then
@@ -489,7 +489,7 @@ if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_v
     hz
 fi
 
-# FRAMETIME FIX LCD
+# FRAMETIME FIX OLED
 if [ "$MODEL" = "Galileo" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     fixoled
 fi

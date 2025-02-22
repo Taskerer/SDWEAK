@@ -327,6 +327,7 @@ fixoled() {
             sudo sed -i "s/main/3.5/g" /etc/pacman.conf &>/dev/null
             sudo sed -i "s/3.6/3.5/g" /etc/pacman.conf &>/dev/null
             sudo sed -i "s/3.7/3.5/g" /etc/pacman.conf &>/dev/null
+            sudo pacman -Rdd --noconfirm xorg-xwayland &>/dev/null
             sudo pacman -Sydd --noconfirm xorg-xwayland-jupiter &>/dev/null
             if [ $steamos_version = 3.7 ]
             then

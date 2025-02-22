@@ -7,7 +7,7 @@
 Перед установкой обязательно удалите Cryo Utility, если он у вас был установлен ранее.
 
 ```bash
-rm -rf SDWEAK && git clone https://github.com/Taskerer/SDWEAK.git && cd SDWEAK && sudo ./install.sh
+sudo pacman -S --noconfirm git-lfs && rm -rf SDWEAK && git clone https://github.com/Taskerer/SDWEAK.git && cd SDWEAK && sudo ./install.sh
 ```
 ## Донат
 * [DonationAlerts](https://www.donationalerts.com/r/biddbb) (все страны)

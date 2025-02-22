@@ -7,7 +7,7 @@
 Be sure to uninstall Cryo Utility if you have them installed before installing.
 
 ```bash
-rm -rf SDWEAK && git clone https://github.com/Taskerer/SDWEAK.git && cd SDWEAK && sudo ./install.sh
+sudo pacman -S --noconfirm git-lfs && rm -rf SDWEAK && git clone https://github.com/Taskerer/SDWEAK.git && cd SDWEAK && sudo ./install.sh
 ```
 ## DONAT
 * [DonationAlerts](https://www.donationalerts.com/r/biddbb) (all countries)

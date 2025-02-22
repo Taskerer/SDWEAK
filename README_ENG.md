@@ -7,7 +7,7 @@
 Be sure to uninstall Cryo Utility if you have them installed before installing.
 
 ```bash
-wget https://github.com/Taskerer/SDWEAK/releases/download/v1.0.0/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && rm SDWEAK.zip && cd SDWEAK && sudo ./install.sh
+wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && rm SDWEAK.zip && cd SDWEAK && sudo ./install.sh
 ```
 ## DONAT
 * [DonationAlerts](https://www.donationalerts.com/r/biddbb) (all countries)

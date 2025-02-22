@@ -1,5 +1,5 @@
 # SDWEAK
-[ENGLISH GUIDE](README_ENG.md)
+[ENGLISH README](README_ENG.md)
 
 **Сделайте Steam Deck снова великим!**
 

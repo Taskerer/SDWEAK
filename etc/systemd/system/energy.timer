@@ -1,0 +1,9 @@
+[Unit]
+Description=Run energy.service 30 seconds after boot
+
+[Timer]
+OnBootSec=30s
+Unit=energy.service
+
+[Install]
+WantedBy=timers.target

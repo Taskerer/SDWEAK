@@ -315,7 +315,7 @@ fix() {
     done
 }
 
-# FRAMETIME FIX OLED
+# FRAMETIME FIX OLED(DEV)
 fixoled() {
     while true; do
         tput setaf 3
@@ -490,9 +490,11 @@ if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_v
     hz
 fi
 
-# FRAMETIME FIX OLED
+
 if [ "$MODEL" = "Galileo" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
-    fixoled
+    sudo pacman -Rdd --noconfirm xorg-xwayland-jupiter &>/dev/null
+    sudo pacman -Sydd --noconfirm xorg-xwayland &>/dev/null
+    sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon gamescope &>/dev/null
 fi
 
 # clean tmp files

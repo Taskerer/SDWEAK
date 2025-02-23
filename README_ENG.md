@@ -29,8 +29,7 @@ SDWEAK tunes SteamOS for maximum performance and fixes critical bugs in SteamOS 
 The ideal installation configuration is set by default.
 * **ZSWAP** - is a kernel feature called zswap that provides a compressed RAM cache for swap pages. Pages that would otherwise be offloaded to disk are instead compressed and stored in a memory pool in RAM.
 When the pool is full or RAM is exhausted, the last page used is decompressed and written to the paging file or hard disk partition as if it had not been captured at all. Once this page is unloaded to the swap file or partition, the compressed version in the pool will be released.
-* **Frametime fix(OLED)** - fixes terrible frametime caused by Valve's crooked code in SteamOS 3.6 and above. **BUT** HDR will not work (looking for a way to fix this).
-* **Frametime fix(LCD)** - fixes terrible frametime caused by Valve's crooked code in SteamOS 3.6 and above, with no issues unlike OLED.
+* **Frametime fix(LCD)** - fixes terrible frametime caused by Valve's crooked code in SteamOS 3.6 and above.
 * **LCD screen up to 70Hz** - increases the frequency of LCD display up to 70Hz. Only for SteamOS 3.7 and higher.
 * **Power efficiency priority** - greatly reduces overall consumption, autonomy gain reaches +19%, BUT single staters may appear in demanding games (this will be fixed in the future).
 * **SUPER optimized Linux kernel** - installing an improved Linux kernel on all fronts (VERY recommended).

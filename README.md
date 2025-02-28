@@ -9,6 +9,13 @@
 ```bash
 wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && rm SDWEAK.zip && cd SDWEAK && sudo ./install.sh
 ```
+
+## Удаление
+Если у вас возникли какие-то проблемы, пожалуйста сообщите о них!
+
+```bash
+wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && rm SDWEAK.zip && cd SDWEAK && sudo ./uninstall.sh
+```
 ## Донат
 * [DonationAlerts](https://www.donationalerts.com/r/biddbb) (все страны)
 * [Tinkoff](https://www.tinkoff.ru/cf/8HHVDNi8VMS) (только Россия)

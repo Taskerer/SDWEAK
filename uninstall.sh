@@ -67,6 +67,9 @@ sudo pacman -Sy
 # yet-tweak
 sudo rm /etc/tmpfiles.d/mglru.conf
 sudo rm /etc/security/limits.d/memlock.conf
+sudo sed -i -e 's/,noatime//' /etc/fstab
+sudo sed -i -e 's/usbhid.jspoll=1 //' /etc/default/grub
+sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg
 sudo systemctl unmask systemd-coredump.socket
 sudo systemctl unmask kdumpst-init.service
 sudo systemctl unmask steamos-kdumpst-layer.service
@@ -89,11 +92,14 @@ sudo systemctl start steamos-devkit-service.service
 sudo systemctl start cups.service
 sudo systemctl start firewalld.service
 
-# daemon install
+# daemon uninstall
+sudo systemctl disable ananicy-cpp
+sudo systemctl disable irqbalance
 sudo pacman -Rdd --noconfirm ananicy-cpp cachyos-ananicy-rules-git irqbalance
+sudo rm -rf /etc/ananicy.d/{*,.*}
 
-# tweaks enable
-sudo systemctl disable --now tweak
+# tweaks disable
+sudo systemctl disable tweak
 sudo rm /home/deck/.local/tweak/SDWEAK.sh
 sudo rm /home/deck/.local/tweak/SDOC-TWEAKS.sh
 sudo rm /etc/systemd/system/tweak.service
@@ -105,8 +111,14 @@ sudo sed -i "s/ENABLE_GAMESCOPE_WSI=0/ENABLE_GAMESCOPE_WSI=1/g" /usr/bin/gamesco
 
 sudo sed -z -i "s/58, 59,\n        60, 61, 62, 63, 64, 65, 66, 67, 68, 69,\n        70/58, 59,\n        60/g" /usr/share/gamescope/scripts/00-gamescope/displays/valve.steamdeck.lcd.lua
 
-sudo sed -i 's/\bGRUB_CMDLINE_LINUX_DEFAULT="\b/&amd_pstate=disable /' /etc/default/grub
-sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg
+if sudo sed -i -E '/^GRUB_CMDLINE_LINUX_DEFAULT=/ {
+     s/(amd_pstate=)[^ "]*//g
+     s/(=")(.*")/\1amd_pstate=disable \2/
+     s/  +/ /g
+     s/" /"/}' /etc/default/grub
+then
+    sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
+fi
 sudo systemctl disable --now energy.timer
 sudo rm /etc/systemd/system/energy.service
 sudo rm /etc/systemd/system/energy.timer

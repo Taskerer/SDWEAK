@@ -16,6 +16,9 @@ texts["ru_ping_success"]="Интернет соединение установл
 texts["en_ping_fail"]="No internet connection! Please connect to the internet and run the script again."
 texts["ru_ping_fail"]="Отсутствует интернет соединение! Пожалуйста, подключитесь к интернету и запустите скрипт снова."
 
+texts["en_nar_cel"]="SDWEAK integrity violated, files corrupted or deleted! Reinstall SDWEAK!"
+texts["ru_nar_cel"]="Нарушена целостность SDWEAK, файлы повреждены или удалены! Переустановите SDWEAK!"
+
 texts["en_script_continue"]="The script continues execution..."
 texts["ru_script_continue"]="Скрипт продолжает выполнение..."
 
@@ -84,13 +87,6 @@ texts["ru_audio_success"]="Фикс звукового драйвера успе
 texts["en_audio_prompt"]="Install sound driver fix?(only if there are problems!)"
 texts["ru_audio_prompt"]="Установить фикс звукового драйвера?(только при проблемах!)"
 
-texts["en_fixoled_install"]="Starting microstutters fix installation..."
-texts["ru_fixoled_install"]="Начинается установка исправление микрозаиканий..."
-texts["en_fixoled_success"]="Microstutters fix successfully installed."
-texts["ru_fixoled_success"]="Исправление микрозаиканий успешно установлено."
-texts["en_fixoled_prompt"]="Install microstutters fix?(HDR will not work!!)"
-texts["ru_fixoled_prompt"]="Установить исправление микрозаиканий?(HDR перестанет работать!!)"
-
 texts["en_tweaks_applied"]="Tweaks successfully installed."
 texts["ru_tweaks_applied"]="Твики успешно установлены."
 
@@ -128,7 +124,7 @@ logo() {
     tput sgr0
 }
 log() {
-    echo "[*] --- $1"
+    echo "[!] --- $1"
 }
 
 # check root
@@ -150,6 +146,7 @@ backup_file() {
 }
 
 # log
+sudo rm /home/deck/SDWEAK-install.log >/dev/null
 LOG_FILE="/home/deck/SDWEAK-install.log"
 
 # Function for language selection
@@ -190,13 +187,29 @@ else
     exit 1
 fi
 
+# check files
+files=("./packages/linux-neptune-68-headers-SDKERNEL.pkg.tar.zst" "./packages/linux-neptune-68-SDKERNEL.pkg.tar.zst" "./packages/vulkan-radeon-SDWEAK.pkg.tar.zst")
+checksums=("692ec08be5f9a90a3351c406ece1b0336facbb7ab3f064ff902e7cc1b32a4a79" "205777be0b87123e29db7b996ac883ba43f6ff6d253e7f065443905ac47046b6" "7d1f326afb32caabb0c0f82dba8b7e77de69264e243843369ffc3e13611de80c")
+for i in {0..2}; do
+    file="${files[i]}"
+    expected="${checksums[i]}"
+
+    [ -f "$file" ] || { red_msg "$(print_text nar_cel)"; exit 1; }
+
+    actual=$(sha256sum "$file" | awk '{print $1}')
+    [ "$actual" = "$expected" ] || {
+        exit 1
+    }
+done
+
+
 # Start of the main script
 green_msg "$(print_text script_continue)"
 clear
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
 MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
-log "VERSION: RELEASE 1.0" >> "$LOG_FILE" 2>&1
+log "VERSION: RELEASE 1.2" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
@@ -221,10 +234,10 @@ if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
     exit 1
 fi
 green_msg "$(print_text optimization_start)"
-sudo steamos-readonly disable >> "$LOG_FILE" 2>&1
+sudo steamos-readonly disable &>/dev/null
 sudo systemctl enable --now sshd >> "$LOG_FILE" 2>&1
 # pacman
-sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf >> "$LOG_FILE" 2>&1
+sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf &>/dev/null
 log "PACMAN INIT" >> "$LOG_FILE" 2>&1
 sudo pacman-key --init >> "$LOG_FILE" 2>&1
 sudo pacman-key --populate >> "$LOG_FILE" 2>&1
@@ -235,7 +248,7 @@ sudo pacman -S --noconfirm sed >> "$LOG_FILE" 2>&1
 green_msg "$(print_text pacman_keys)"
 
 # yet-tweak
-sudo chmod 775 ./scripts/yet-tweak.sh
+sudo chmod 775 ./scripts/yet-tweak.sh &>/dev/null
 sudo ./scripts/yet-tweak.sh
 green_msg "$(print_text yet_mglru)"
 green_msg "$(print_text yet_io)"
@@ -245,50 +258,22 @@ green_msg "$(print_text yet_un)"
 # daemon install
 green_msg "$(print_text tweaks_install)"
 sudo rm /home/deck/daemon-install.sh &>/dev/null
-cp ./scripts/daemon-install.sh /home/deck/daemon-install.sh
-sudo chmod 775 /home/deck/daemon-install.sh
+cp ./scripts/daemon-install.sh /home/deck/daemon-install.sh &>/dev/null
+sudo chmod 775 /home/deck/daemon-install.sh &>/dev/null
 sudo /home/deck/daemon-install.sh
 green_msg "$(print_text daem_anan)"
 
 # tweaks enable
-sudo mkdir -p /home/deck/.local/tweak/
+sudo mkdir -p /home/deck/.local/tweak/ &>/dev/null
 sudo rm /home/deck/.local/tweak/SDWEAK.sh &>/dev/null
 sudo rm /home/deck/.local/tweak/SDOC-TWEAKS.sh &>/dev/null
-sudo cp ./home/deck/.local/tweak/SDWEAK.sh /home/deck/.local/tweak/SDWEAK.sh
+sudo cp ./home/deck/.local/tweak/SDWEAK.sh /home/deck/.local/tweak/SDWEAK.sh &>/dev/null
 sudo rm /etc/systemd/system/tweak.service &>/dev/null
-sudo cp ./etc/systemd/system/tweak.service /etc/systemd/system/tweak.service
-sudo chmod 777 /home/deck/.local/tweak/SDWEAK.sh
+sudo cp ./etc/systemd/system/tweak.service /etc/systemd/system/tweak.service &>/dev/null
+sudo chmod 777 /home/deck/.local/tweak/SDWEAK.sh &>/dev/null
 
-# Enable ZSWAP function
-zswap_en() {
-    while true; do
-        tput setaf 3
-        read -p "$(print_text zswap_prompt) [Y/n]: " answer
-        tput sgr0
-        answer=${answer:-y}
-        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-            red_msg "$(print_text zswap_enable)"
-            log "REMOVE ZRAM" >> "$LOG_FILE" 2>&1
-            sudo pacman -R --noconfirm holo-zram-swap zram-generator >> "$LOG_FILE" 2>&1
-            backup_file /etc/systemd/zram-generator.conf &>/dev/null
-            backup_file /usr/lib/systemd/zram-generator.conf &>/dev/null
-            sudo rm /etc/systemd/zram-generator.conf &>/dev/null
-            sudo rm /usr/lib/systemd/zram-generator.conf &>/dev/null
-            sudo echo "# ZSWAP" >> /home/deck/.local/tweak/SDWEAK.sh
-            sudo echo "write /sys/module/zswap/parameters/enabled 1" >> /home/deck/.local/tweak/SDWEAK.sh
-            sudo echo "write /sys/module/zswap/parameters/compressor lz4" >> /home/deck/.local/tweak/SDWEAK.sh
-            sudo echo "write /sys/module/zswap/parameters/zpool z3fold" >> /home/deck/.local/tweak/SDWEAK.sh
-            sudo echo "write /sys/module/zswap/parameters/max_pool_percent 25" >> /home/deck/.local/tweak/SDWEAK.sh
-            green_msg "$(print_text zswap_success)"
-            break
-        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-            green_msg "$(print_text skip)"
-            break
-        else
-            red_msg "$(print_text invalid_input)"
-        fi
-    done
-}
+# Enable ZRAM
+sudo pacman -S --noconfirm holo-zram-swap zram-generator &>/dev/null
 
 # FRAMETIME FIX LCD
 fix() {
@@ -302,52 +287,12 @@ fix() {
             sudo sed -i "s/ENABLE_GAMESCOPE_WSI=1/ENABLE_GAMESCOPE_WSI=0/g" /usr/bin/gamescope-session &>/dev/null
             log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
             sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
-            sudo pacman -S --noconfirm lib32-vulkan-radeon &>/dev/null
+            sudo pacman -S --noconfirm lib32-vulkan-radeon >> "$LOG_FILE" 2>&1
             green_msg "$(print_text fix_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
             sudo sed -i "s/ENABLE_GAMESCOPE_WSI=0/ENABLE_GAMESCOPE_WSI=1/g" /usr/bin/gamescope-session &>/dev/null
             sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon &>/dev/null
-            break
-        else
-            red_msg "$(print_text invalid_input)"
-        fi
-    done
-}
-
-# FRAMETIME FIX OLED(DEV)
-fixoled() {
-    while true; do
-        tput setaf 3
-        read -p "$(print_text fixoled_prompt) [y/N]: " answer
-        tput sgr0
-        answer=${answer:-n}
-        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-            green_msg "$(print_text fixoled_install)"
-            sudo sed -i "s/main/3.5/g" /etc/pacman.conf &>/dev/null
-            sudo sed -i "s/3.6/3.5/g" /etc/pacman.conf &>/dev/null
-            sudo sed -i "s/3.7/3.5/g" /etc/pacman.conf &>/dev/null
-            sudo pacman -Rdd --noconfirm xorg-xwayland &>/dev/null
-            sudo pacman -Sydd --noconfirm xorg-xwayland-jupiter &>/dev/null
-            if [ $steamos_version = 3.7 ]
-            then
-                sudo sed -i "s/3.5/3.7/g" /etc/pacman.conf
-            fi
-            if [ $steamos_version = 3.6 ]
-            then
-                sudo sed -i "s/3.5/3.6/g" /etc/pacman.conf
-            fi
-            if [ $steamos_version = 3.8 ]
-            then
-                sudo sed -i "s/3.5/main/g" /etc/pacman.conf
-            fi
-            sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.5/os/x86_64/gamescope-3.13.16.9-1-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
-            log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
-            sudo pacman -S --noconfirm lib32-vulkan-radeon vulkan-radeon >> "$LOG_FILE" 2>&1
-            green_msg "$(print_text fixoled_success)"
-            break
-        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-            sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon gamescope &>/dev/null
             break
         else
             red_msg "$(print_text invalid_input)"
@@ -387,30 +332,31 @@ battery() {
         answer=${answer:-n}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text batt_install)"
-            if grep -q "GRUB_CMDLINE_LINUX_DEFAULT=.*amd_pstate=active" /etc/default/grub; then
-                echo 1 > /dev/null
-            elif grep -q "GRUB_CMDLINE_LINUX_DEFAULT=.*amd_pstate=disable" /etc/default/grub; then
-                sudo sed -i '/^GRUB_CMDLINE_LINUX_DEFAULT=/s/amd_pstate=disable/amd_pstate=active/g' /etc/default/grub
-                sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
-            else
-                sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/&amd_pstate=active /' /etc/default/grub
+            if sudo sed -i -E '/^GRUB_CMDLINE_LINUX_DEFAULT=/ {
+                s/(amd_pstate=)[^ "]*//g
+                s/(=")(.*")/\1amd_pstate=active \2/
+                s/  +/ /g
+                s/" /"/}' /etc/default/grub
+            then
                 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             fi
             sudo rm /etc/systemd/system/energy.service &>/dev/null
-            sudo cp ./etc/systemd/system/energy.service /etc/systemd/system/energy.service
+            sudo cp ./etc/systemd/system/energy.service /etc/systemd/system/energy.service &>/dev/null
             sudo rm /etc/systemd/system/energy.timer &>/dev/null
-            sudo cp ./etc/systemd/system/energy.timer /etc/systemd/system/energy.timer
+            sudo cp ./etc/systemd/system/energy.timer /etc/systemd/system/energy.timer &>/dev/null
             sudo systemctl daemon-reload &>/dev/null
             sudo systemctl enable --now energy.timer &>/dev/null
             green_msg "$(print_text batt_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-            if grep -q "GRUB_CMDLINE_LINUX_DEFAULT=.*amd_pstate=active" /etc/default/grub; then
-                sudo sed -i '/^GRUB_CMDLINE_LINUX_DEFAULT=/s/amd_pstate=active/amd_pstate=disable/g' /etc/default/grub
-            else
-                sudo sed -i 's/\bGRUB_CMDLINE_LINUX_DEFAULT="\b/&amd_pstate=disable /' /etc/default/grub &>/dev/null
+            if sudo sed -i -E '/^GRUB_CMDLINE_LINUX_DEFAULT=/ {
+                s/(amd_pstate=)[^ "]*//g
+                s/(=")(.*")/\1amd_pstate=disable \2/
+                s/  +/ /g
+                s/" /"/}' /etc/default/grub
+            then
+                sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             fi
-            sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             break
         else
             red_msg "$(print_text invalid_input)"
@@ -467,9 +413,6 @@ rebooot() {
         fi
     done
 }
-
-# call zswap function
-zswap_en
 
 # start tweaks
 sudo systemctl daemon-reload &>/dev/null

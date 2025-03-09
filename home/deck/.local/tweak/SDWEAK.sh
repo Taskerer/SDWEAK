@@ -93,17 +93,8 @@ write /proc/sys/net/ipv4/tcp_tw_reuse 1
 write /proc/sys/net/core/netdev_max_backlog 16384
 write /proc/sys/net/ipv4/tcp_slow_start_after_idle 0
 
-
 # flash
 write /sys/block/mmcblk0/queue/add_random 0
 write /sys/block/nvme0n1/queue/add_random 0
 write /sys/block/mmcblk0/queue/iostats 0
 write /sys/block/nvme0n1/queue/iostats 0
-
-if lsblk -dno NAME,TYPE | grep -qE '^(sd[a-z]|mmcblk[0-9]+)\s+disk'; then
-    SD_RULE='ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="kyber"'
-fi
-cat << EOF | sudo tee /etc/udev/rules.d/64-ioschedulers.rules >/dev/null
-ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="kyber"
-$SD_RULE
-EOF

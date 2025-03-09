@@ -11,6 +11,7 @@ log() {
 }
 
 # log
+sudo rm /home/deck/SDWEAK-daemon.log >/dev/null
 LOG_FILE="/home/deck/SDWEAK-daemon.log"
 
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
@@ -22,11 +23,11 @@ sudo sed -i "s/3.5/main/g" /etc/pacman.conf &>/dev/null
 green_msg '10%'
 sudo sed -i "s/3.6/main/g" /etc/pacman.conf &>/dev/null
 sudo sed -i "s/3.7/main/g" /etc/pacman.conf &>/dev/null
-
 green_msg '20%'
+
 # Install packages
 log "INSTALL DEPS" >> "$LOG_FILE" 2>&1
-sudo pacman -S --noconfirm base-devel git spdlog fmt &>/dev/null
+sudo pacman -Syy --noconfirm base-devel git spdlog fmt &>/dev/null
 sudo pacman -S --noconfirm base-devel git spdlog fmt >> "$LOG_FILE" 2>&1
 green_msg '30%'
 
@@ -42,6 +43,7 @@ green_msg '50%'
 
 # ananicy-cpp install
 log "INSTALL ANANICY-CPP PACKAGES" >> "$LOG_FILE" 2>&1
+sudo pacman -Rdd --noconfirm ananicy-cpp cachyos-ananicy-rules-git >> "$LOG_FILE" 2>&1
 sudo pacman -S --noconfirm ananicy-cpp >> "$LOG_FILE" 2>&1
 green_msg '60%'
 sudo systemctl enable --now ananicy-cpp >> "$LOG_FILE" 2>&1

@@ -68,3 +68,4 @@ backup_file /usr/lib/sysctl.d/20-panic-sysctls.conf &>/dev/null
 sudo rm /usr/lib/sysctl.d/21-steamos-panic-sysctls.conf &>/dev/null
 sudo rm /usr/lib/sysctl.d/50-coredump.conf &>/dev/null
 sudo rm /usr/lib/sysctl.d/20-panic-sysctls.conf &>/dev/null
+sudo rm /etc/udev/rules.d/64-ioschedulers.rules &>/dev/null

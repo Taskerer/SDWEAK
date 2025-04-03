@@ -1,23 +1,18 @@
 #!/bin/bash
 
-# Check if Bash supports associative arrays
-if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
-    echo "This script requires Bash 4.0 or higher."
-    exit 1
-fi
-
-# Associative arrays for storing texts in different languages
+# Key = language code, value = text
 declare -A texts
-
-# Fill the arrays with texts for each language
 texts["en_ping_success"]="Internet connection established."
 texts["ru_ping_success"]="Интернет соединение установлено."
 
-texts["en_ping_fail"]="No internet connection! Please connect to the internet and run the script again."
-texts["ru_ping_fail"]="Отсутствует интернет соединение! Пожалуйста, подключитесь к интернету и запустите скрипт снова."
+texts["en_ping_fail"]="No connection to the server! Please connect to the internet or check server availability, try using VPN and run the script again."
+texts["ru_ping_fail"]="Отсутствует соединение с сервером! Пожалуйста, подключитесь к интернету или проверьте доступность сервера, попробуйте использовать VPN и запустите скрипт снова."
 
 texts["en_nar_cel"]="SDWEAK integrity violated, files corrupted or deleted! Reinstall SDWEAK!"
 texts["ru_nar_cel"]="Нарушена целостность SDWEAK, файлы повреждены или удалены! Переустановите SDWEAK!"
+
+texts["en_error_sv"]="A serious error has occurred! The system is corrupted, SDWEAK cannot be installed, call for help!"
+texts["ru_error_sv"]="Произошла серьезная ошибка! Система повреждена, установка SDWEAK невозможна, обратитесь за помощью!"
 
 texts["en_script_continue"]="The script continues execution..."
 texts["ru_script_continue"]="Скрипт продолжает выполнение..."
@@ -33,13 +28,6 @@ texts["ru_pacman_keys"]="Ключи pacman-key успешно инициализ
 
 texts["en_tweaks_install"]="Starting tweaks installation..."
 texts["ru_tweaks_install"]="Начинается установка твиков..."
-
-texts["en_zswap_enable"]="Starting ZSWAP installation..."
-texts["ru_zswap_enable"]="Начинается установка ZSWAP..."
-texts["en_zswap_success"]="ZSWAP successfully installed."
-texts["ru_zswap_success"]="ZSWAP успешно установлен."
-texts["en_zswap_prompt"]="Install ZSWAP?"
-texts["ru_zswap_prompt"]="Установить ZSWAP?"
 
 texts["en_skip"]="Skipping..."
 texts["ru_skip"]="Пропуск..."
@@ -107,7 +95,7 @@ texts["ru_yet_un"]="Ненужные службы успешно отключе�
 texts["en_daem_anan"]="ananicy-cpp successfully installed."
 texts["ru_daem_anan"]="ananicy-cpp успешно установлен."
 
-# Function for color message output
+# Colorized output
 green_msg() {
     tput setaf 14
     echo "[*] --- $1"
@@ -127,15 +115,15 @@ log() {
     echo "[!] --- $1"
 }
 
-# check root
+# Root check
 if [ "$(id -u)" != "0" ]
 then
     red_msg "This script must be run as root."
     exit 1
 fi
 
-# backup
-BACKUP_DIR="/home/deck/install_backup"
+# Backup
+BACKUP_DIR="$HOME/install_backup"
 sudo mkdir -p "$BACKUP_DIR"
 start_time=$(date +%s)
 backup_file() {
@@ -145,11 +133,11 @@ backup_file() {
     fi
 }
 
-# log
-sudo rm /home/deck/SDWEAK-install.log >/dev/null
-LOG_FILE="/home/deck/SDWEAK-install.log"
+# Log
+sudo rm $HOME/SDWEAK-install.log &>/dev/null
+LOG_FILE=$HOME/SDWEAK-install.log
 
-# Function for language selection
+# Select_lang [en|ru]
 choose_language() {
     clear
     sleep 0.3
@@ -172,24 +160,24 @@ choose_language() {
     red_msg "Language selected: $selected_lang"
 }
 
-# Function for outputting text in the selected language
+# Localized echo
 print_text() {
     local key=$1
     echo "${texts[${selected_lang}_${key}]}"
 }
 choose_language
 
-# Checking Internet connection
-if ping -c 1 1.1.1.1 >/dev/null 2>&1; then
+# Server ping test
+if ping -c 1 aur.archlinux.org &>/dev/null; then
     green_msg "$(print_text ping_success)"
 else
     red_msg "$(print_text ping_fail)"
     exit 1
 fi
 
-# check files
-files=("./packages/linux-neptune-68-headers-SDKERNEL.pkg.tar.zst" "./packages/linux-neptune-68-SDKERNEL.pkg.tar.zst" "./packages/vulkan-radeon-SDWEAK.pkg.tar.zst")
-checksums=("692ec08be5f9a90a3351c406ece1b0336facbb7ab3f064ff902e7cc1b32a4a79" "205777be0b87123e29db7b996ac883ba43f6ff6d253e7f065443905ac47046b6" "7d1f326afb32caabb0c0f82dba8b7e77de69264e243843369ffc3e13611de80c")
+# Checksum validation
+files=("./packages/linux-neptune-611-headers-SDKERNEL.pkg.tar.zst" "./packages/linux-neptune-611-SDKERNEL.pkg.tar.zst" "./packages/vulkan-radeon-SDWEAK.pkg.tar.zst")
+checksums=("62105c33017833c0aa699aff9cb36abf374d73b742928954b05f07cf579b4f69" "2a17f68f70a738f899827b91b566c33670c739ccae9daafbd2028b04807898be" "7d1f326afb32caabb0c0f82dba8b7e77de69264e243843369ffc3e13611de80c")
 for i in {0..2}; do
     file="${files[i]}"
     expected="${checksums[i]}"
@@ -202,14 +190,15 @@ for i in {0..2}; do
     }
 done
 
-
-# Start of the main script
+# --- Main ---
 green_msg "$(print_text script_continue)"
 clear
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
 MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
-log "VERSION: RELEASE 1.2" >> "$LOG_FILE" 2>&1
+DATE=$(date '+%d.%m.%Y %T')
+log "$DATE" >> "$LOG_FILE" 2>&1
+log "VERSION: RELEASE 1.3" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
@@ -236,44 +225,81 @@ fi
 green_msg "$(print_text optimization_start)"
 sudo steamos-readonly disable &>/dev/null
 sudo systemctl enable --now sshd >> "$LOG_FILE" 2>&1
-# pacman
+# Pacman
 sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf &>/dev/null
 log "PACMAN INIT" >> "$LOG_FILE" 2>&1
 sudo pacman-key --init >> "$LOG_FILE" 2>&1
 sudo pacman-key --populate >> "$LOG_FILE" 2>&1
-sudo pacman -Sy >> "$LOG_FILE" 2>&1
+if ! sudo pacman -Sy >> "$LOG_FILE" 2>&1; then
+    red_msg "$(print_text error_sv)"
+    exit 1
+fi
 log "SED INSTALL" >> "$LOG_FILE" 2>&1
 sudo pacman -S --noconfirm sed &>/dev/null
 sudo pacman -S --noconfirm sed >> "$LOG_FILE" 2>&1
 green_msg "$(print_text pacman_keys)"
 
-# yet-tweak
+# Yet-tweak
+if [[ ! -f "./scripts/yet-tweak.sh" ]]; then
+    red_msg "$(print_text nar_cel)"
+    exit 1
+fi
 sudo chmod 775 ./scripts/yet-tweak.sh &>/dev/null
-sudo ./scripts/yet-tweak.sh
+sudo --preserve-env=HOME ./scripts/yet-tweak.sh
 green_msg "$(print_text yet_mglru)"
 green_msg "$(print_text yet_io)"
 green_msg "$(print_text yet_ov)"
 green_msg "$(print_text yet_un)"
 
-# daemon install
+# Ananicy-cpp
 green_msg "$(print_text tweaks_install)"
-sudo rm /home/deck/daemon-install.sh &>/dev/null
-cp ./scripts/daemon-install.sh /home/deck/daemon-install.sh &>/dev/null
-sudo chmod 775 /home/deck/daemon-install.sh &>/dev/null
-sudo /home/deck/daemon-install.sh
+sudo rm $HOME/daemon-install.sh &>/dev/null
+sudo cp -f ./scripts/daemon-install.sh $HOME/daemon-install.sh &>/dev/null
+if [[ ! -f "$HOME/daemon-install.sh" ]]; then
+    red_msg "$(print_text nar_cel)"
+    exit 1
+fi
+sudo chmod 775 $HOME/daemon-install.sh &>/dev/null
+sudo --preserve-env=HOME $HOME/daemon-install.sh
 green_msg "$(print_text daem_anan)"
 
-# tweaks enable
-sudo mkdir -p /home/deck/.local/tweak/ &>/dev/null
-sudo rm /home/deck/.local/tweak/SDWEAK.sh &>/dev/null
-sudo rm /home/deck/.local/tweak/SDOC-TWEAKS.sh &>/dev/null
-sudo cp ./home/deck/.local/tweak/SDWEAK.sh /home/deck/.local/tweak/SDWEAK.sh &>/dev/null
+# Sysctl Tweaks
+sudo rm $HOME/.local/tweak/SDWEAK.sh &>/dev/null
+sudo mkdir -p $HOME/.local/tweak/ &>/dev/null
+if [[ ! -f "./home/deck/.local/tweak/SDWEAK.sh" ]]; then
+    red_msg "$(print_text nar_cel)"
+    exit 1
+fi
+sudo cp ./home/deck/.local/tweak/SDWEAK.sh $HOME/.local/tweak/SDWEAK.sh &>/dev/null
 sudo rm /etc/systemd/system/tweak.service &>/dev/null
+if [[ ! -f "./etc/systemd/system/tweak.service" ]]; then
+    red_msg "$(print_text nar_cel)"
+    exit 1
+fi
 sudo cp ./etc/systemd/system/tweak.service /etc/systemd/system/tweak.service &>/dev/null
-sudo chmod 777 /home/deck/.local/tweak/SDWEAK.sh &>/dev/null
+sudo chmod 777 $HOME/.local/tweak/SDWEAK.sh &>/dev/null
 
-# Enable ZRAM
-sudo pacman -S --noconfirm holo-zram-swap zram-generator &>/dev/null
+# ZRAM Tweaks
+sudo pacman -S --noconfirm --needed holo-zram-swap zram-generator &>/dev/null
+if [[ ! -f "./packages/zram-generator.conf" ]]; then
+    red_msg "$(print_text nar_cel)"
+    exit 1
+fi
+sudo cp -f ./packages/zram-generator.conf /usr/lib/systemd/zram-generator.conf &>/dev/null
+sudo systemctl restart systemd-zram-setup@zram0 &>/dev/null
+
+# THP
+sudo find / -type f -regex ".*/core\.[0-9]+" -exec rm -f {} \; &>/dev/null
+if [[ ! -f "./packages/thp-shrinker.conf" ]]; then
+    red_msg "$(print_text nar_cel)"
+    exit 1
+fi
+sudo cp -f ./packages/thp-shrinker.conf /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
+if [[ ! -f "./packages/thp.conf" ]]; then
+    red_msg "$(print_text nar_cel)"
+    exit 1
+fi
+sudo cp -f ./packages/thp.conf /usr/lib/tmpfiles.d/thp.conf &>/dev/null
 
 # FRAMETIME FIX LCD
 fix() {
@@ -284,15 +310,15 @@ fix() {
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text fix_install)"
-            sudo sed -i "s/ENABLE_GAMESCOPE_WSI=1/ENABLE_GAMESCOPE_WSI=0/g" /usr/bin/gamescope-session &>/dev/null
+            sudo sed -i "s/ENABLE_GAMESCOPE_WSI=1/ENABLE_GAMESCOPE_WSI=0/g" /usr/{bin/gamescope-session,lib/steamos/gamescope-session/gamescope-session} 2>/dev/null
             log "VULKAN RADEON" >> "$LOG_FILE" 2>&1
             sudo pacman -U --noconfirm ./packages/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
-            sudo pacman -S --noconfirm lib32-vulkan-radeon >> "$LOG_FILE" 2>&1
+            sudo pacman -S --noconfirm --needed lib32-vulkan-radeon >> "$LOG_FILE" 2>&1
             green_msg "$(print_text fix_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-            sudo sed -i "s/ENABLE_GAMESCOPE_WSI=0/ENABLE_GAMESCOPE_WSI=1/g" /usr/bin/gamescope-session &>/dev/null
-            sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon &>/dev/null
+            sudo sed -i "s/ENABLE_GAMESCOPE_WSI=0/ENABLE_GAMESCOPE_WSI=1/g" /usr/{bin/gamescope-session,lib/steamos/gamescope-session/gamescope-session} 2>/dev/null
+            sudo pacman -S --noconfirm --needed vulkan-radeon lib32-vulkan-radeon &>/dev/null
             break
         else
             red_msg "$(print_text invalid_input)"
@@ -324,6 +350,7 @@ hz() {
     done
 }
 
+# Power efficiency priority
 battery() {
     while true; do
         tput setaf 3
@@ -341,8 +368,16 @@ battery() {
                 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             fi
             sudo rm /etc/systemd/system/energy.service &>/dev/null
+            if [[ ! -f "./etc/systemd/system/energy.service" ]]; then
+                red_msg "$(print_text nar_cel)"
+                exit 1
+            fi
             sudo cp ./etc/systemd/system/energy.service /etc/systemd/system/energy.service &>/dev/null
             sudo rm /etc/systemd/system/energy.timer &>/dev/null
+            if [[ ! -f "./etc/systemd/system/energy.timer" ]]; then
+                red_msg "$(print_text nar_cel)"
+                exit 1
+            fi
             sudo cp ./etc/systemd/system/energy.timer /etc/systemd/system/energy.timer &>/dev/null
             sudo systemctl daemon-reload &>/dev/null
             sudo systemctl enable --now energy.timer &>/dev/null
@@ -364,8 +399,8 @@ battery() {
     done
 }
 
-# kernel install
-kernel-3.7() {
+# SDKERNEL Install
+sdkernel() {
     while true; do
         tput setaf 3
         read -p "$(print_text kernel_prompt) [Y/n]: " answer
@@ -374,10 +409,8 @@ kernel-3.7() {
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             red_msg "$(print_text kernel_install)"
             log "SDKERNEL INSTALL" >> "$LOG_FILE" 2>&1
-            sudo pacman -U --noconfirm ./packages/linux-neptune-68-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1
-            sudo pacman -U --noconfirm ./packages/linux-neptune-68-headers-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1
-            log "REMOVE 6.11" >> "$LOG_FILE" 2>&1
-            sudo pacman -R --noconfirm linux-neptune-611 >> "$LOG_FILE" 2>&1
+            sudo pacman -U --noconfirm ./packages/linux-neptune-611-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1
+            sudo pacman -U --noconfirm ./packages/linux-neptune-611-headers-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1
             sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             green_msg "$(print_text kernel_success)"
             if [ "$MODEL" = "Galileo" ]; then
@@ -395,8 +428,8 @@ kernel-3.7() {
     done
 }
 
-# reboot
-rebooot() {
+# System reboot
+sys-reboot() {
     while true; do
         tput setaf 3
         read -p "$(print_text reboot_prompt) [Y/n]: " answer
@@ -414,13 +447,12 @@ rebooot() {
     done
 }
 
-# start tweaks
 sudo systemctl daemon-reload &>/dev/null
 sudo systemctl enable --now tweak.service &>/dev/null
 
-# kernel
+# SDKERNEL
 if { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
-    kernel-3.7
+    sdkernel
 fi
 
 # FRAMETIME FIX LCD
@@ -428,23 +460,15 @@ if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_v
     fix
 fi
 
-# 70Hz LCD
+# 70Hz
 if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     hz
 fi
 
+# Clean tmp files
+sudo rm $HOME/daemon-install.sh &>/dev/null
+sudo rm -r $HOME/cachyos-ananicy-rules-git &>/dev/null
 
-if [ "$MODEL" = "Galileo" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
-    sudo pacman -Rdd --noconfirm xorg-xwayland-jupiter &>/dev/null
-    sudo pacman -Sydd --noconfirm xorg-xwayland &>/dev/null
-    sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon gamescope &>/dev/null
-fi
-
-# clean tmp files
-sudo rm /home/deck/daemon-install.sh &>/dev/null
-sudo rm -r /home/deck/cachyos-ananicy-rules-git &>/dev/null
-
-# great job
 green_msg "$(print_text tweaks_applied)"
 end_time=$(date +%s)
 elapsed_time=$((end_time - start_time))
@@ -452,4 +476,4 @@ green_msg "$(print_text se) $elapsed_time $(print_text sec)"
 log "COMPLETE" >> "$LOG_FILE" 2>&1
 
 # reboot
-rebooot
+sys-reboot

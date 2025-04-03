@@ -1,5 +1,5 @@
 [Unit]
-Description=Set CPU energy performance preference after 20 seconds
+Description=Power efficiency priority
 After=network.target
 
 [Service]

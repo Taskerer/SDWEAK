@@ -12,7 +12,7 @@ backup_file() {
 # Activate MGLRU
 cat << EOF | sudo tee /etc/tmpfiles.d/mglru.conf &>/dev/null
 w /sys/kernel/mm/lru_gen/enabled - - - - 7
-w /sys/kernel/mm/lru_gen/min_ttl_ms - - - - 0
+w /sys/kernel/mm/lru_gen/min_ttl_ms - - - - 200
 EOF
 
 # Unlocking the memory lock

@@ -6,21 +6,27 @@ green_msg() {
     echo "[*] --- $1"
     tput sgr0
 }
-red_msg() {
-    tput setaf 3
-    echo "[*] --- $1"
+err_msg() {
+    tput setaf 1
+    echo "[!] --- $1"
     tput sgr0
 }
 log() {
-    echo "[*] --- $1"
+    echo "[!] --- $1"
 }
 
 # Log
 sudo rm $HOME/SDWEAK-daemon.log &>/dev/null
 LOG_FILE="$HOME/SDWEAK-daemon.log"
-
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
+MODEL=$(cat /sys/class/dmi/id/board_name)
+BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
+DATE=$(date '+%T %d.%m.%Y')
+log "$DATE" >> "$LOG_FILE" 2>&1
+log "VERSION: RELEASE 1.3" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
+log "$MODEL" >> "$LOG_FILE" 2>&1
+log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
 green_msg '0%'
 
 # Edit pacman.conf
@@ -56,15 +62,16 @@ sudo systemctl enable --now ananicy-cpp >> "$LOG_FILE" 2>&1
 
 # Compile and install Cachyos-ananicy-rules
 sudo rm -r $HOME/cachyos-ananicy-rules-git &>/dev/null
+sudo rm -rf /etc/ananicy.d/{*,.*} &>/dev/null
 log "GIT CLONE ANANICY" >> "$LOG_FILE" 2>&1
 sudo -u deck git clone https://aur.archlinux.org/cachyos-ananicy-rules-git.git $HOME/cachyos-ananicy-rules-git >> "$LOG_FILE" 2>&1
 green_msg '70%'
 cd $HOME/cachyos-ananicy-rules-git
-sudo rm -rf /etc/ananicy.d/{*,.*} &>/dev/null
 log "MAKE RULES ANANICY" >> "$LOG_FILE" 2>&1
 if ! sudo -u deck makepkg -sr --noconfirm >> "$LOG_FILE" 2>&1; then
-    red_msg "An error occurred while cloning the repository. Start installing SDWEAK again. If the problem persists, please contact me via feedback."
+    err_msg "An error occurred while cloning the repository. Start installing SDWEAK again. If the problem persists, please contact me via feedback."
     exit 1
+    sleep 10
 fi
 green_msg '80%'
 log "INSTALL RULES ANANICY" >> "$LOG_FILE" 2>&1
@@ -79,16 +86,7 @@ sudo systemctl disable irqbalance >> "$LOG_FILE" 2>&1
 sudo pacman -R --noconfirm irqbalance >> "$LOG_FILE" 2>&1
 
 # Edit pacman.conf
-if [ $steamos_version = 3.7 ]
-then
-    sudo sed -i "s/main/3.7/g" /etc/pacman.conf
-fi
-if [ $steamos_version = 3.6 ]
-then
-    sudo sed -i "s/main/3.6/g" /etc/pacman.conf
-fi
-if [ $steamos_version = 3.5 ]
-then
-    sudo sed -i "s/main/3.5/g" /etc/pacman.conf
+if [[ $steamos_version == "3.5" || $steamos_version == "3.6" || $steamos_version == "3.7" ]]; then
+    sudo sed -i "s/main/$steamos_version/g" /etc/pacman.conf
 fi
 sudo pacman -Syy &>/dev/null

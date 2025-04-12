@@ -4,13 +4,11 @@
 declare -A texts
 texts["en_ping_success"]="Internet connection established."
 texts["ru_ping_success"]="Интернет соединение установлено."
-
 texts["en_ping_fail"]="No connection to the server! Please connect to the internet or check server availability, try using VPN and run the script again."
 texts["ru_ping_fail"]="Отсутствует соединение с сервером! Пожалуйста, подключитесь к интернету или проверьте доступность сервера, попробуйте использовать VPN и запустите скрипт снова."
 
 texts["en_nar_cel"]="SDWEAK integrity violated, files corrupted or deleted! Reinstall SDWEAK!"
 texts["ru_nar_cel"]="Нарушена целостность SDWEAK, файлы повреждены или удалены! Переустановите SDWEAK!"
-
 texts["en_error_sv"]="A serious error has occurred! The system is corrupted, SDWEAK cannot be installed, call for help!"
 texts["ru_error_sv"]="Произошла серьезная ошибка! Система повреждена, установка SDWEAK невозможна, обратитесь за помощью!"
 
@@ -28,6 +26,8 @@ texts["ru_pacman_keys"]="Ключи pacman-key успешно инициализ
 
 texts["en_tweaks_install"]="Starting tweaks installation..."
 texts["ru_tweaks_install"]="Начинается установка твиков..."
+texts["en_tweaks_applied"]="Tweaks successfully installed."
+texts["ru_tweaks_applied"]="Твики успешно установлены."
 
 texts["en_skip"]="Skipping..."
 texts["ru_skip"]="Пропуск..."
@@ -41,11 +41,6 @@ texts["en_kernel_success"]="Kernel successfully installed."
 texts["ru_kernel_success"]="Ядро успешно установлено."
 texts["en_kernel_prompt"]="Install optimized kernel?"
 texts["ru_kernel_prompt"]="Установить оптимизированное ядро?"
-
-texts["en_reboot_prompt"]="Reboot to apply changes?"
-texts["ru_reboot_prompt"]="Перезагрузить для применения изменений?"
-texts["en_reboot_required"]="Reboot is required."
-texts["ru_reboot_required"]="Обязательно перезагрузите."
 
 texts["en_fix_install"]="Starting microstutters fix installation..."
 texts["ru_fix_install"]="Начинается установка исправление микрозаиканий..."
@@ -68,25 +63,8 @@ texts["ru_batt_success"]="Приоритет энергоэффективнос�
 texts["en_batt_prompt"]="Prioritize power efficiency? (BETA)"
 texts["ru_batt_prompt"]="Установить приоритет энергоэффективности? (БЕТА)"
 
-texts["en_audio_install"]="Starting to install the sound driver fix..."
-texts["ru_audio_install"]="Начинается установка фикса звукового драйвера..."
-texts["en_audio_success"]="Sound driver fix successfully installed."
-texts["ru_audio_success"]="Фикс звукового драйвера успешно установлен."
-texts["en_audio_prompt"]="Install sound driver fix?(only if there are problems!)"
-texts["ru_audio_prompt"]="Установить фикс звукового драйвера?(только при проблемах!)"
-
-texts["en_tweaks_applied"]="Tweaks successfully installed."
-texts["ru_tweaks_applied"]="Твики успешно установлены."
-
-texts["en_se"]="Installation completed in"
-texts["ru_se"]="Установка завершена за"
-texts["en_sec"]="seconds."
-texts["ru_sec"]="секунды."
-
 texts["en_yet_mglru"]="MGLRU successfully activated."
 texts["ru_yet_mglru"]="MGLRU успешно активирован."
-texts["en_yet_io"]="I/O scheduler successfully changed."
-texts["ru_yet_io"]="I/O scheduler успешно изменен."
 texts["en_yet_ov"]="Input controller overclocking successfully activated."
 texts["ru_yet_ov"]="Разгон контроллера ввода успешно активирован."
 texts["en_yet_un"]="Unnecessary services have been successfully disabled."
@@ -94,6 +72,16 @@ texts["ru_yet_un"]="Ненужные службы успешно отключе�
 
 texts["en_daem_anan"]="ananicy-cpp successfully installed."
 texts["ru_daem_anan"]="ananicy-cpp успешно установлен."
+
+texts["en_se"]="Installation completed in"
+texts["ru_se"]="Установка завершена за"
+texts["en_sec"]="seconds."
+texts["ru_sec"]="секунды."
+
+texts["en_reboot_prompt"]="Reboot to apply changes?"
+texts["ru_reboot_prompt"]="Перезагрузить для применения изменений?"
+texts["en_reboot_required"]="Reboot is required."
+texts["ru_reboot_required"]="Обязательно перезагрузите."
 
 # Colorized output
 green_msg() {
@@ -104,6 +92,11 @@ green_msg() {
 red_msg() {
     tput setaf 3
     echo "[*] --- $1"
+    tput sgr0
+}
+err_msg() {
+    tput setaf 1
+    echo "[!] --- $1"
     tput sgr0
 }
 logo() {
@@ -118,7 +111,7 @@ log() {
 # Root check
 if [ "$(id -u)" != "0" ]
 then
-    red_msg "This script must be run as root."
+    err_msg "This script must be run as root."
     exit 1
 fi
 
@@ -157,7 +150,7 @@ choose_language() {
             selected_lang="en"
             ;;
     esac
-    red_msg "Language selected: $selected_lang"
+    red_msg "Language selected / Выбранный язык: $selected_lang"
 }
 
 # Localized echo
@@ -168,27 +161,37 @@ print_text() {
 choose_language
 
 # Server ping test
-if ping -c 1 aur.archlinux.org &>/dev/null; then
+if git ls-remote --exit-code https://aur.archlinux.org/cachyos-ananicy-rules-git.git &>/dev/null; then
     green_msg "$(print_text ping_success)"
 else
-    red_msg "$(print_text ping_fail)"
+    err_msg "$(print_text ping_fail)"
     exit 1
 fi
 
 # Checksum validation
-files=("./packages/linux-neptune-611-headers-SDKERNEL.pkg.tar.zst" "./packages/linux-neptune-611-SDKERNEL.pkg.tar.zst" "./packages/vulkan-radeon-SDWEAK.pkg.tar.zst")
-checksums=("62105c33017833c0aa699aff9cb36abf374d73b742928954b05f07cf579b4f69" "2a17f68f70a738f899827b91b566c33670c739ccae9daafbd2028b04807898be" "7d1f326afb32caabb0c0f82dba8b7e77de69264e243843369ffc3e13611de80c")
-for i in {0..2}; do
+files=(
+    "./packages/linux-neptune-611-headers-SDKERNEL.pkg.tar.zst"
+    "./packages/linux-neptune-611-SDKERNEL.pkg.tar.zst"
+    "./packages/vulkan-radeon-SDWEAK.pkg.tar.zst"
+)
+checksums=(
+    "62105c33017833c0aa699aff9cb36abf374d73b742928954b05f07cf579b4f69"
+    "2a17f68f70a738f899827b91b566c33670c739ccae9daafbd2028b04807898be"
+    "7d1f326afb32caabb0c0f82dba8b7e77de69264e243843369ffc3e13611de80c"
+)
+for i in "${!files[@]}"; do
     file="${files[i]}"
-    expected="${checksums[i]}"
-
-    [ -f "$file" ] || { red_msg "$(print_text nar_cel)"; exit 1; }
-
-    actual=$(sha256sum "$file" | awk '{print $1}')
-    [ "$actual" = "$expected" ] || {
-        exit 1
-    }
+    [[ -f "$file" ]] || { err_msg "$(print_text nar_cel)"; exit 1; }
+    [[ $(sha256sum "$file" | awk '{print $1}') == "${checksums[i]}" ]] || exit 1
 done
+
+check_file() {
+    local file_path="$1"
+    if [[ ! -f "$file_path" ]]; then
+        err_msg "$(print_text nar_cel)"
+        exit 1
+    fi
+}
 
 # --- Main ---
 green_msg "$(print_text script_continue)"
@@ -196,12 +199,12 @@ clear
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
 MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
-DATE=$(date '+%d.%m.%Y %T')
+DATE=$(date '+%T %d.%m.%Y')
 log "$DATE" >> "$LOG_FILE" 2>&1
 log "VERSION: RELEASE 1.3" >> "$LOG_FILE" 2>&1
+log "$steamos_version" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
-log "$steamos_version" >> "$LOG_FILE" 2>&1
 logo "
 
 >>====================================================<<
@@ -218,7 +221,7 @@ DONAT(RU): https://www.tinkoff.ru/cf/8HHVDNi8VMS
 DONAT(All): https://www.donationalerts.com/r/biddbb
 "
 if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
-    red_msg "$(print_text copable)"
+    err_msg "$(print_text copable)"
     sleep 5
     exit 1
 fi
@@ -231,7 +234,7 @@ log "PACMAN INIT" >> "$LOG_FILE" 2>&1
 sudo pacman-key --init >> "$LOG_FILE" 2>&1
 sudo pacman-key --populate >> "$LOG_FILE" 2>&1
 if ! sudo pacman -Sy >> "$LOG_FILE" 2>&1; then
-    red_msg "$(print_text error_sv)"
+    err_msg "$(print_text error_sv)"
     exit 1
 fi
 log "SED INSTALL" >> "$LOG_FILE" 2>&1
@@ -240,65 +243,45 @@ sudo pacman -S --noconfirm sed >> "$LOG_FILE" 2>&1
 green_msg "$(print_text pacman_keys)"
 
 # Yet-tweak
-if [[ ! -f "./scripts/yet-tweak.sh" ]]; then
-    red_msg "$(print_text nar_cel)"
-    exit 1
-fi
+check_file  "./scripts/yet-tweak.sh"
 sudo chmod 775 ./scripts/yet-tweak.sh &>/dev/null
 sudo --preserve-env=HOME ./scripts/yet-tweak.sh
 green_msg "$(print_text yet_mglru)"
-green_msg "$(print_text yet_io)"
 green_msg "$(print_text yet_ov)"
 green_msg "$(print_text yet_un)"
 
 # Ananicy-cpp
 green_msg "$(print_text tweaks_install)"
 sudo rm $HOME/daemon-install.sh &>/dev/null
+check_file "./scripts/daemon-install.sh"
 sudo cp -f ./scripts/daemon-install.sh $HOME/daemon-install.sh &>/dev/null
-if [[ ! -f "$HOME/daemon-install.sh" ]]; then
-    red_msg "$(print_text nar_cel)"
-    exit 1
-fi
+check_file "$HOME/daemon-install.sh"
 sudo chmod 775 $HOME/daemon-install.sh &>/dev/null
 sudo --preserve-env=HOME $HOME/daemon-install.sh
 green_msg "$(print_text daem_anan)"
 
 # Sysctl Tweaks
 sudo rm $HOME/.local/tweak/SDWEAK.sh &>/dev/null
+sudo rm -r $HOME/.local/tweak/ &>/dev/null
 sudo mkdir -p $HOME/.local/tweak/ &>/dev/null
-if [[ ! -f "./home/deck/.local/tweak/SDWEAK.sh" ]]; then
-    red_msg "$(print_text nar_cel)"
-    exit 1
-fi
+check_file "./home/deck/.local/tweak/SDWEAK.sh"
 sudo cp ./home/deck/.local/tweak/SDWEAK.sh $HOME/.local/tweak/SDWEAK.sh &>/dev/null
 sudo rm /etc/systemd/system/tweak.service &>/dev/null
-if [[ ! -f "./etc/systemd/system/tweak.service" ]]; then
-    red_msg "$(print_text nar_cel)"
-    exit 1
-fi
+check_file "./etc/systemd/system/tweak.service"
 sudo cp ./etc/systemd/system/tweak.service /etc/systemd/system/tweak.service &>/dev/null
 sudo chmod 777 $HOME/.local/tweak/SDWEAK.sh &>/dev/null
 
 # ZRAM Tweaks
 sudo pacman -S --noconfirm --needed holo-zram-swap zram-generator &>/dev/null
-if [[ ! -f "./packages/zram-generator.conf" ]]; then
-    red_msg "$(print_text nar_cel)"
-    exit 1
-fi
+check_file "./packages/zram-generator.conf"
 sudo cp -f ./packages/zram-generator.conf /usr/lib/systemd/zram-generator.conf &>/dev/null
 sudo systemctl restart systemd-zram-setup@zram0 &>/dev/null
 
 # THP
 sudo find / -type f -regex ".*/core\.[0-9]+" -exec rm -f {} \; &>/dev/null
-if [[ ! -f "./packages/thp-shrinker.conf" ]]; then
-    red_msg "$(print_text nar_cel)"
-    exit 1
-fi
+check_file "./packages/thp-shrinker.conf"
 sudo cp -f ./packages/thp-shrinker.conf /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
-if [[ ! -f "./packages/thp.conf" ]]; then
-    red_msg "$(print_text nar_cel)"
-    exit 1
-fi
+check_file "./packages/thp.conf"
 sudo cp -f ./packages/thp.conf /usr/lib/tmpfiles.d/thp.conf &>/dev/null
 
 # FRAMETIME FIX LCD
@@ -368,16 +351,10 @@ battery() {
                 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             fi
             sudo rm /etc/systemd/system/energy.service &>/dev/null
-            if [[ ! -f "./etc/systemd/system/energy.service" ]]; then
-                red_msg "$(print_text nar_cel)"
-                exit 1
-            fi
+            check_file "./etc/systemd/system/energy.service"
             sudo cp ./etc/systemd/system/energy.service /etc/systemd/system/energy.service &>/dev/null
             sudo rm /etc/systemd/system/energy.timer &>/dev/null
-            if [[ ! -f "./etc/systemd/system/energy.timer" ]]; then
-                red_msg "$(print_text nar_cel)"
-                exit 1
-            fi
+            check_file "./etc/systemd/system/energy.timer"
             sudo cp ./etc/systemd/system/energy.timer /etc/systemd/system/energy.timer &>/dev/null
             sudo systemctl daemon-reload &>/dev/null
             sudo systemctl enable --now energy.timer &>/dev/null
@@ -409,6 +386,11 @@ sdkernel() {
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             red_msg "$(print_text kernel_install)"
             log "SDKERNEL INSTALL" >> "$LOG_FILE" 2>&1
+            if [ $steamos_version = 3.6 ]
+            then
+                sudo sed -i "s/3.6/3.7/g" /etc/pacman.conf
+                sudo pacman -Sy ell readline iwd networkmanager steamos-networking-tools steamos-manager iptables linux-api-headers jupiter-firewall linux-firmware-neptune linux-firmware-neptune-whence
+            fi
             sudo pacman -U --noconfirm ./packages/linux-neptune-611-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1
             sudo pacman -U --noconfirm ./packages/linux-neptune-611-headers-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1
             sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null

@@ -22,8 +22,9 @@ fi
 # Sync to data in the rare case a device crashes
 sync
 
-# dev/debug
-write /proc/sys/dev/hpet/max-user-freq 1000
+setpci -v -s '*:*' latency_timer=20
+setpci -v -s '0:0' latency_timer=0
+setpci -v -d "*:*:04xx" latency_timer=80
 
 # fs
 write /proc/sys/fs/aio-max-nr 131072
@@ -36,39 +37,23 @@ write /proc/sys/fs/pipe-max-size 2097152
 # kernel
 write /proc/sys/kernel/acct 0
 write /proc/sys/kernel/core_pattern /dev/null
-write /proc/sys/kernel/core_pipe_limit 4
+write /proc/sys/kernel/core_pipe_limit 0
 write /proc/sys/kernel/ftrace_enabled 0
-write /proc/sys/kernel/hung_task_check_count 1048576
-write /proc/sys/kernel/hung_task_check_interval_secs 30
-write /proc/sys/kernel/hung_task_warnings 5
+write /proc/sys/kernel/hung_task_check_count 131072
+write /proc/sys/kernel/hung_task_check_interval_secs 15
+write /proc/sys/kernel/hung_task_warnings 3
 write /proc/sys/kernel/kexec_load_disabled 1
 write /proc/sys/kernel/kexec_load_limit_panic 0
 write /proc/sys/kernel/kexec_load_limit_reboot 0
-write /proc/sys/kernel/msgmax 16384
-write /proc/sys/kernel/msgmnb 65536
-write /proc/sys/kernel/msgmni 64000
-write /proc/sys/kernel/perf_event_max_sample_rate 5000
-write /proc/sys/kernel/perf_event_paranoid -1
-write /proc/sys/kernel/printk_ratelimit_burst 20
-write /proc/sys/kernel/perf_event_max_stack 64
-write /proc/sys/kernel/random/write_wakeup_threshold 512
-write /proc/sys/kernel/randomize_va_space 1
-write /proc/sys/kernel/sched_cfs_bandwidth_slice_us 1000
-write /proc/sys/kernel/sched_deadline_period_min_us 50
-write /proc/sys/kernel/seccomp/actions_logged kill_process kill_thread trap errno
-write /proc/sys/kernel/threads-max 262144
-write /proc/sys/kernel/unprivileged_bpf_disabled 1
-write /proc/sys/kernel/user_events_max 65536
-write /proc/sys/kernel/warn_limit 1000
-write /proc/sys/kernel/watchdog 0
+write /proc/sys/kernel/printk_ratelimit_burst 5
+write /proc/sys/kernel/unprivileged_bpf_disabled 0
 write /proc/sys/kernel/nmi_watchdog 0
 write /proc/sys/kernel/perf_cpu_time_max_percent 10
 write /proc/sys/kernel/printk_devkmsg off
 write /proc/sys/debug/exception-trace 0
 
-# user
-write /proc/sys/user/max_fanotify_marks 262144
-write /proc/sys/user/max_inotify_watches 1048576
+# Group tasks for less stutter but less throughput
+write /proc/sys/kernel/sched_autogroup_enabled 0
 
 # vm
 write /proc/sys/vm/dirty_background_bytes 209715200
@@ -88,13 +73,6 @@ write /proc/sys/vm/watermark_boost_factor 0
 write /sys/kernel/mm/transparent_hugepage/enabled always
 write /sys/kernel/mm/transparent_hugepage/khugepaged/defrag 1
 write /sys/kernel/mm/transparent_hugepage/shmem_enabled always
-
-# net
-write /proc/sys/net/ipv4/tcp_rfc1337 1
-write /proc/sys/net/ipv4/tcp_fastopen 3
-write /proc/sys/net/ipv4/tcp_tw_reuse 1
-write /proc/sys/net/core/netdev_max_backlog 16384
-write /proc/sys/net/ipv4/tcp_slow_start_after_idle 0
 
 # flash
 write /sys/block/mmcblk0/queue/add_random 0

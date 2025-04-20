@@ -1,55 +1,67 @@
 # SDWEAK
 [RUSSIAN README](README.md)
 
-**Make Steam Deck Great Again!**
-
 ## Installation
-Be sure to uninstall Cryo Utility if you have them installed before installing.
+Before installation, be sure to remove Cryo Utilities if it was previously installed.
 
+The new version can be installed over the old one. After updating SteamOS, you must reinstall SDWEAK.
+
+1. Switch to Desktop Mode
+2. Open Konsole
+3. Set a sudo password (if you haven’t done so already):
 ```bash
-wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && rm SDWEAK.zip && cd SDWEAK && sudo ./install.sh
+passwd
 ```
-
-## Uninstallation
-If you have any problems, please report them!
-
+4. Disable Read-Only:
 ```bash
-wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && rm SDWEAK.zip && cd SDWEAK && sudo ./uninstall.sh
+sudo steamos-readonly disable
+```
+5. Enter the command to install SDWEAK:
+```bash
+rm SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./install.sh
+```
+## Uninstallation
+If you encounter any issues, please report them!
+1. Switch to Desktop Mode
+2. Open Konsole
+3. Disable Read-Only:
+```bash
+sudo steamos-readonly disable
+```
+4. Enter the command to uninstall SDWEAK:
+```bash
+rm SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./uninstall.sh
 ```
 ## DONAT
+If you enjoy SDWEAK, you can also support the project's further development via the link below. Thank you for using it!
 * [DonationAlerts](https://www.donationalerts.com/r/biddbb) (all countries)
 * [Tinkoff](https://www.tinkoff.ru/cf/8HHVDNi8VMS) (only Russia)
-## Features
-SDWEAK tunes SteamOS for maximum performance and fixes critical bugs in SteamOS that Valve doesn't fix.
 
-* Tweaking **sysctl** parameters.
-* **SUPER** optimized **Linux kernel**.
-* Fixes for **microstaters** and terrible frametime.
-* LCD screen up to **70Hz**(on SteamOS 3.7 and higher).
-* **Power efficiency** priority, autonomy increases to **+19%** without FPS loss (**BETA**).
-* Installing **ananicy-cpp** and rules for it.
-* Disabling **unnecessary** services.
-* Fine-tuning of system parameter.
+## What are the benefits?
+Increases minimum, maximum, and average FPS. Improves smoothness, responsiveness, and frame timing. Reduces stutters and micro-freezes. Enhances system performance under heavy RAM load. Significantly improves process scheduling. Overall, optimizes system performance for a better gaming experience.
 
-## Description of optional improvements
-The ideal installation configuration is set by default.
-* **Frametime fix(LCD)** - fixes terrible frametime caused by Valve's crooked code in SteamOS 3.6 and above.
-* **LCD screen up to 70Hz** - increases the frequency of LCD display up to 70Hz. Only for SteamOS 3.7 and higher.
-* **Power efficiency priority** - greatly reduces overall consumption, autonomy gain reaches +19%, BUT single staters may appear in demanding games (this will be fixed in the future).
-* **SUPER optimized Linux kernel** - installing an improved Linux kernel on all fronts (VERY recommended).
+NOTE: Actual gains vary by game.
+
+## Optional Features Description
+The ideal installation configuration is enabled by default.
+* **Frametime fix(LCD)** - fixes terrible frame timing and micro-freezes on LCD displays. Significantly improves in-game smoothness.
+* **LCD screen up to 70Hz** - overclocks the LCD screen to 70Hz. For SteamOS 3.7+ only.
+* **Optimized Linux kernel** - installation of an optimized Linux kernel. Configuration tuning (primarily reducing overhead). TCP stack optimization. THP Shrinker for Transparent HugePages optimization. Plus a dozen other minor but system-wide performance improvements
+* **Power efficiency priority(BETA)** - installation of CPU power efficiency priority to improve battery life. When this function is enabled, the CPU always tries to use the minimum possible frequency without worsening FPS. This can significantly improve battery life, but may cause occasional stutters, which is why the function currently has BETA status. Therefore, if you mainly play recent demanding AAA games, it is recommended to keep this function disabled (N). Otherwise, if you play AA and low-demand games, you can enable this function.
+NOTE: This function is only available with the optimized Linux kernel installed.
 
 ## Recommendations
 Recommendations for improving Steam Deck performance beyond SDWEAK
+* [My guide](http://deckoc.notion.site/STEAM-DECK-RUS-76e43eacaf8b400ab130692d2d099a02?pvs=4) to overclocking and optimizing Steam Deck.
 * [Decky-Undervolt](https://github.com/totallynotbakadestroyer/Decky-Undervolt) plugin for efficient CPU undervolting directly from the system(Available in Decky Loader Store)
-* **Undervolting GPU in BIOS**
-* **Memory overclock to 6400MT/s on Steam Deck LCD**
-* **Lowering memory timings in BIOS**
+* [ECLIPSE mods](https://t.me/kf4fr/600631) for specific games. They significantly improve performance and FPS, making unplayable games comfortable to complete.
 
 ## Thanks
 * A HUGE THANK YOU to our [community](https://t.me/steamdeckoverclock) on Telegram for constant tests, ideas and development help! The development of new features has been and will be happening there. I will be glad to every new tester!
 * [Ktweak](https://github.com/tytydraco/KTweak) - for a useful skeleton for sysctl tweaks.
 * [Ananicy-cpp](https://gitlab.com/ananicy-cpp/ananicy-cpp) - for a beautiful demon.
 * [Ananicy-cpp-rules](https://github.com/CachyOS/ananicy-rules) - for the ever-expanding list of rules for a multitude of games and programs.
+* To the CachyOS team for their contributions to the Linux community.
 
 ## Contact me
 * Create an **issue** describing your problem.

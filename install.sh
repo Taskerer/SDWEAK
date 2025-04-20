@@ -398,7 +398,7 @@ sdkernel() {
             if [ $steamos_version = 3.6 ]
             then
                 sudo sed -i "s/3.6/3.7/g" /etc/pacman.conf &>/dev/null
-                sudo pacman -Sy ell readline iwd networkmanager steamos-networking-tools steamos-manager iptables linux-api-headers jupiter-firewall linux-firmware-neptune linux-firmware-neptune-whence >> "$LOG_FILE" 2>&1
+                sudo pacman -Sy --noconfirm ell readline iwd networkmanager steamos-networking-tools steamos-manager iptables linux-api-headers jupiter-firewall linux-firmware-neptune linux-firmware-neptune-whence >> "$LOG_FILE" 2>&1
             fi
             sudo pacman -U --noconfirm ./packages/linux-neptune-611-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1
             sudo pacman -U --noconfirm ./packages/linux-neptune-611-headers-SDKERNEL.pkg.tar.zst >> "$LOG_FILE" 2>&1

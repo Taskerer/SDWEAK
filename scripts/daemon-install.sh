@@ -16,7 +16,7 @@ log() {
 }
 
 # Log
-sudo rm $HOME/SDWEAK-daemon.log &>/dev/null
+sudo rm -f $HOME/SDWEAK-daemon.log &>/dev/null
 LOG_FILE="$HOME/SDWEAK-daemon.log"
 steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -f2 | cut -d "." -f1,2)
 MODEL=$(cat /sys/class/dmi/id/board_name)
@@ -61,7 +61,7 @@ green_msg '60%'
 sudo systemctl enable --now ananicy-cpp >> "$LOG_FILE" 2>&1
 
 # Compile and install Cachyos-ananicy-rules
-sudo rm -r $HOME/cachyos-ananicy-rules-git &>/dev/null
+sudo rm -rf $HOME/cachyos-ananicy-rules-git &>/dev/null
 sudo rm -rf /etc/ananicy.d/{*,.*} &>/dev/null
 log "GIT CLONE ANANICY" >> "$LOG_FILE" 2>&1
 sudo -u deck git clone https://aur.archlinux.org/cachyos-ananicy-rules-git.git $HOME/cachyos-ananicy-rules-git >> "$LOG_FILE" 2>&1

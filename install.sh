@@ -65,6 +65,11 @@ texts["ru_yet_ov"]="Разгон контроллера ввода успешн�
 texts["en_yet_un"]="Unnecessary services have been successfully disabled."
 texts["ru_yet_un"]="Ненужные службы успешно отключены."
 
+texts["en_sysctl_en"]="Optimized sysctl settings are successfully installed."
+texts["ru_sysctl_en"]="Оптимизированные настройки sysctl успешно установлены."
+texts["en_thp_shrink"]="Optimal THP settings have been successfully set."
+texts["ru_thp_shrink"]="Оптимальные настройки THP успешно установлены."
+
 texts["en_daem_anan"]="Ananicy-cpp successfully installed."
 texts["ru_daem_anan"]="Ananicy-cpp успешно установлен."
 
@@ -125,7 +130,7 @@ backup_file() {
 }
 
 # Log
-sudo rm $HOME/SDWEAK-install.log &>/dev/null
+sudo rm -f $HOME/SDWEAK-install.log &>/dev/null
 LOG_FILE=$HOME/SDWEAK-install.log
 
 # Select_lang [en|ru]
@@ -251,7 +256,7 @@ green_msg "$(print_text yet_un)"
 
 # Ananicy-cpp
 green_msg "$(print_text tweaks_install)"
-sudo rm $HOME/daemon-install.sh &>/dev/null
+sudo rm -f $HOME/daemon-install.sh &>/dev/null
 check_file "./scripts/daemon-install.sh"
 sudo cp -f ./scripts/daemon-install.sh $HOME/daemon-install.sh &>/dev/null
 check_file "$HOME/daemon-install.sh"
@@ -260,15 +265,16 @@ sudo --preserve-env=HOME $HOME/daemon-install.sh
 green_msg "$(print_text daem_anan)"
 
 # Sysctl Tweaks
-sudo rm $HOME/.local/tweak/SDWEAK.sh &>/dev/null
-sudo rm -r $HOME/.local/tweak/ &>/dev/null
+sudo rm -f $HOME/.local/tweak/SDWEAK.sh &>/dev/null
+sudo rm -rf $HOME/.local/tweak/ &>/dev/null
 sudo mkdir -p $HOME/.local/tweak/ &>/dev/null
 check_file "./home/deck/.local/tweak/SDWEAK.sh"
 sudo cp ./home/deck/.local/tweak/SDWEAK.sh $HOME/.local/tweak/SDWEAK.sh &>/dev/null
-sudo rm /etc/systemd/system/tweak.service &>/dev/null
+sudo rm -f /etc/systemd/system/tweak.service &>/dev/null
 check_file "./etc/systemd/system/tweak.service"
 sudo cp ./etc/systemd/system/tweak.service /etc/systemd/system/tweak.service &>/dev/null
 sudo chmod 777 $HOME/.local/tweak/SDWEAK.sh &>/dev/null
+green_msg "$(print_text sysctl_en)"
 
 # ZRAM Tweaks
 sudo pacman -S --noconfirm --needed holo-zram-swap zram-generator &>/dev/null
@@ -282,6 +288,7 @@ check_file "./packages/thp-shrinker.conf"
 sudo cp -f ./packages/thp-shrinker.conf /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
 check_file "./packages/thp.conf"
 sudo cp -f ./packages/thp.conf /usr/lib/tmpfiles.d/thp.conf &>/dev/null
+green_msg "$(print_text thp_shrink)"
 
 # FRAMETIME FIX LCD
 fix() {
@@ -351,10 +358,10 @@ battery() {
             then
                 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             fi
-            sudo rm /etc/systemd/system/energy.service &>/dev/null
+            sudo rm -f /etc/systemd/system/energy.service &>/dev/null
             check_file "./etc/systemd/system/energy.service"
             sudo cp ./etc/systemd/system/energy.service /etc/systemd/system/energy.service &>/dev/null
-            sudo rm /etc/systemd/system/energy.timer &>/dev/null
+            sudo rm -f /etc/systemd/system/energy.timer &>/dev/null
             check_file "./etc/systemd/system/energy.timer"
             sudo cp ./etc/systemd/system/energy.timer /etc/systemd/system/energy.timer &>/dev/null
             sudo systemctl daemon-reload &>/dev/null
@@ -450,11 +457,11 @@ if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_v
 fi
 
 # Clean tmp files
-sudo rm $HOME/daemon-install.sh &>/dev/null
-sudo rm -r $HOME/cachyos-ananicy-rules-git &>/dev/null
+sudo rm -f $HOME/daemon-install.sh &>/dev/null
+sudo rm -rf $HOME/cachyos-ananicy-rules-git &>/dev/null
 
-green_msg "$(print_text sdweak_success)"
-sleep 2
+red_msg "$(print_text sdweak_success)"
+sleep 3
 end_time=$(date +%s)
 elapsed_time=$((end_time - start_time))
 green_msg "$(print_text se) $elapsed_time $(print_text sec)"

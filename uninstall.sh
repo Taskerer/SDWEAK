@@ -59,8 +59,8 @@ sudo systemctl disable sshd
 sudo pacman -Sy
 
 # Yet-tweak
-sudo rm /etc/tmpfiles.d/mglru.conf
-sudo rm /etc/security/limits.d/memlock.conf
+sudo rm -f /etc/tmpfiles.d/mglru.conf
+sudo rm -f /etc/security/limits.d/memlock.conf
 sudo sed -i -e 's/,noatime//' /etc/fstab
 sudo sed -i -e 's/usbhid.jspoll=1 //' /etc/default/grub
 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg
@@ -96,17 +96,17 @@ sudo rm -rf /etc/ananicy.d/{*,.*}
 
 # Tweaks disable
 sudo systemctl disable tweak
-sudo rm $HOME/.local/tweak/SDWEAK.sh
-sudo rm /etc/systemd/system/tweak.service
-sudo rm -r $HOME/.local/tweak/
+sudo rm -f $HOME/.local/tweak/SDWEAK.sh
+sudo rm -f /etc/systemd/system/tweak.service
+sudo rm -rf $HOME/.local/tweak/
 
-sudo rm /usr/lib/systemd/zram-generator.conf
+sudo rm -f /usr/lib/systemd/zram-generator.conf
 sudo pacman -Rdd --noconfirm holo-zram-swap zram-generator
 sudo pacman -S --noconfirm --needed holo-zram-swap zram-generator
 sudo systemctl restart systemd-zram-setup@zram0
 #THP
-sudo rm /usr/lib/tmpfiles.d/thp-shrinker.conf
-sudo rm /usr/lib/tmpfiles.d/thp.conf
+sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf
+sudo rm -f /usr/lib/tmpfiles.d/thp.conf
 
 sudo sed -i "s/ENABLE_GAMESCOPE_WSI=0/ENABLE_GAMESCOPE_WSI=1/g" /usr/{bin/gamescope-session,lib/steamos/gamescope-session/gamescope-session}
 sudo pacman -S --noconfirm --needed vulkan-radeon lib32-vulkan-radeon
@@ -122,8 +122,8 @@ then
     sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
 fi
 sudo systemctl disable --now energy.timer
-sudo rm /etc/systemd/system/energy.service
-sudo rm /etc/systemd/system/energy.timer
+sudo rm -f /etc/systemd/system/energy.service
+sudo rm -f /etc/systemd/system/energy.timer
 
 
 if [ $steamos_version = 3.7 ]

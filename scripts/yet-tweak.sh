@@ -74,9 +74,9 @@ backup_file /usr/lib/sysctl.d/20-panic-sysctls.conf &>/dev/null
 backup_file /usr/lib/sysctl.d/60-crash-hook.conf &>/dev/null
 backup_file /usr/lib/sysctl.d/20-sched.conf &>/dev/null
 backup_file /usr/lib/sysctl.d/50-coredump.conf &>/dev/null
-sudo rm /usr/lib/sysctl.d/50-coredump.conf &>/dev/null
-sudo rm /usr/lib/sysctl.d/21-steamos-panic-sysctls.conf &>/dev/null
-sudo rm /usr/lib/sysctl.d/20-panic-sysctls.conf &>/dev/null
-sudo rm /etc/udev/rules.d/64-ioschedulers.rules &>/dev/null
-sudo rm /usr/lib/sysctl.d/60-crash-hook.conf &>/dev/null
-sudo rm /usr/lib/sysctl.d/20-sched.conf &>/dev/null
+sudo rm -f /usr/lib/sysctl.d/50-coredump.conf &>/dev/null
+sudo rm -f /usr/lib/sysctl.d/21-steamos-panic-sysctls.conf &>/dev/null
+sudo rm -f /usr/lib/sysctl.d/20-panic-sysctls.conf &>/dev/null
+sudo rm -f /etc/udev/rules.d/64-ioschedulers.rules &>/dev/null
+sudo rm -f /usr/lib/sysctl.d/60-crash-hook.conf &>/dev/null
+sudo rm -f /usr/lib/sysctl.d/20-sched.conf &>/dev/null

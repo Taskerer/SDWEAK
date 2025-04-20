@@ -18,7 +18,7 @@ sudo steamos-readonly disable
 ```
 5. Enter the command to install SDWEAK:
 ```bash
-rm SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./install.sh
+rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./install.sh
 ```
 ## Uninstallation
 If you encounter any issues, please report them!
@@ -30,7 +30,7 @@ sudo steamos-readonly disable
 ```
 4. Enter the command to uninstall SDWEAK:
 ```bash
-rm SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./uninstall.sh
+rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./uninstall.sh
 ```
 ## DONAT
 If you enjoy SDWEAK, you can also support the project's further development via the link below. Thank you for using it!

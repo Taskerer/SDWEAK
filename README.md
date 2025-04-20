@@ -18,7 +18,7 @@ sudo steamos-readonly disable
 ```
 5. Введите команду для установки SDWEAK:
 ```bash
-rm SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./install.sh
+rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./install.sh
 ```
 ## Удаление
 Если у вас возникли какие-то проблемы, пожалуйста сообщите о них!
@@ -30,7 +30,7 @@ sudo steamos-readonly disable
 ```
 4. Введите команду для удаления SDWEAK:
 ```bash
-rm SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./uninstall.sh
+rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./uninstall.sh
 ```
 ## Донат
 Если вам нравится SDWEAK, вы также можете поддержать донатом дальнейшее развитие проекта по ссылке ниже. Спасибо за использование!

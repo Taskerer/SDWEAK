@@ -137,7 +137,7 @@ then
     sudo pacman -R --noconfirm linux-neptune-611-headers
     sudo sed -i "s/3.7/3.6/g" /etc/pacman.conf
     sudo sed -i "s/main/3.6/g" /etc/pacman.conf
-    sudo pacman -Sy ell readline iwd networkmanager steamos-networking-tools steamos-manager iptables linux-api-headers jupiter-firewall linux-firmware-neptune linux-firmware-neptune-whence &>/dev/null
+    sudo pacman -Sy --noconfirm ell readline iwd networkmanager steamos-networking-tools steamos-manager iptables linux-api-headers jupiter-firewall linux-firmware-neptune linux-firmware-neptune-whence &>/dev/null
 fi
 if [ $steamos_version = 3.8 ]
 then

@@ -35,6 +35,7 @@ write /proc/sys/fs/inotify/max_user_watches 1048576
 write /proc/sys/fs/pipe-max-size 2097152
 
 # kernel
+write /proc/sys/kernel/sched_autogroup_enabled 1
 write /proc/sys/kernel/acct 0
 write /proc/sys/kernel/core_pattern /dev/null
 write /proc/sys/kernel/core_pipe_limit 0
@@ -52,9 +53,6 @@ write /proc/sys/kernel/perf_cpu_time_max_percent 10
 write /proc/sys/kernel/printk_devkmsg off
 write /proc/sys/debug/exception-trace 0
 
-# Group tasks for less stutter but less throughput
-write /proc/sys/kernel/sched_autogroup_enabled 0
-
 # vm
 write /proc/sys/vm/dirty_background_bytes 209715200
 write /proc/sys/vm/dirty_bytes 419430400
@@ -66,13 +64,12 @@ write /proc/sys/vm/page-cluster 0
 write /proc/sys/vm/page_lock_unfairness 8
 write /proc/sys/vm/vfs_cache_pressure 66
 write /proc/sys/vm/watermark_scale_factor 125
-write /proc/sys/vm/swappiness 180
+write /proc/sys/vm/swappiness 40
 write /proc/sys/vm/watermark_boost_factor 0
 
 # mm
 write /sys/kernel/mm/transparent_hugepage/enabled always
 write /sys/kernel/mm/transparent_hugepage/khugepaged/defrag 1
-write /sys/kernel/mm/transparent_hugepage/shmem_enabled always
 
 # flash
 write /sys/block/mmcblk0/queue/add_random 0
@@ -82,11 +79,12 @@ write /sys/block/nvme0n1/queue/iostats 0
 
 # bore
 write /proc/sys/kernel/sched_bore 1
-write /proc/sys/kernel/sched_burst_cache_lifetime 30000000
-write /proc/sys/kernel/sched_burst_fork_atavistic 3
-write /proc/sys/kernel/sched_burst_penalty_offset 40
-write /proc/sys/kernel/sched_burst_penalty_scale 2500
-write /proc/sys/kernel/sched_burst_smoothness_long 1
-write /proc/sys/kernel/sched_burst_smoothness_short 1
+write /proc/sys/kernel/sched_burst_cache_lifetime 40000000
+write /proc/sys/kernel/sched_burst_fork_atavistic 2
+write /proc/sys/kernel/sched_burst_penalty_offset 26
+write /proc/sys/kernel/sched_burst_penalty_scale 1000
+write /proc/sys/kernel/sched_burst_smoothness_long 0
+write /proc/sys/kernel/sched_burst_smoothness_short 0
 write /proc/sys/kernel/sched_burst_exclude_kthreads 1
+write /proc/sys/kernel/sched_burst_parity_threshold 1
 

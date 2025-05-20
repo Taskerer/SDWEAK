@@ -64,13 +64,12 @@ write /proc/sys/vm/page-cluster 0
 write /proc/sys/vm/page_lock_unfairness 8
 write /proc/sys/vm/vfs_cache_pressure 66
 write /proc/sys/vm/watermark_scale_factor 125
-write /proc/sys/vm/swappiness 180
+write /proc/sys/vm/swappiness 40
 write /proc/sys/vm/watermark_boost_factor 0
 
 # mm
 write /sys/kernel/mm/transparent_hugepage/enabled always
 write /sys/kernel/mm/transparent_hugepage/khugepaged/defrag 1
-write /sys/kernel/mm/transparent_hugepage/shmem_enabled always
 
 # flash
 write /sys/block/mmcblk0/queue/add_random 0
@@ -80,11 +79,12 @@ write /sys/block/nvme0n1/queue/iostats 0
 
 # bore
 write /proc/sys/kernel/sched_bore 1
-write /proc/sys/kernel/sched_burst_cache_lifetime 30000000
-write /proc/sys/kernel/sched_burst_fork_atavistic 3
-write /proc/sys/kernel/sched_burst_penalty_offset 40
-write /proc/sys/kernel/sched_burst_penalty_scale 2500
-write /proc/sys/kernel/sched_burst_smoothness_long 1
-write /proc/sys/kernel/sched_burst_smoothness_short 1
+write /proc/sys/kernel/sched_burst_cache_lifetime 40000000
+write /proc/sys/kernel/sched_burst_fork_atavistic 2
+write /proc/sys/kernel/sched_burst_penalty_offset 26
+write /proc/sys/kernel/sched_burst_penalty_scale 1000
+write /proc/sys/kernel/sched_burst_smoothness_long 0
+write /proc/sys/kernel/sched_burst_smoothness_short 0
 write /proc/sys/kernel/sched_burst_exclude_kthreads 1
+write /proc/sys/kernel/sched_burst_parity_threshold 1
 

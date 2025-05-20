@@ -1,81 +1,7 @@
 #!/bin/bash
 
-# Key = language code, value = text
-declare -A texts
-texts["en_ping_success"]="Internet connection established."
-texts["ru_ping_success"]="Интернет соединение установлено."
-texts["en_ping_fail"]="No connection to the server! Please connect to the internet and run the script again."
-texts["ru_ping_fail"]="Отсутствует соединение с сервером! Пожалуйста, подключитесь к интернету и запустите скрипт снова."
-texts["en_nar_cel"]="SDWEAK integrity violated, files corrupted or deleted! Reinstall SDWEAK!"
-texts["ru_nar_cel"]="Нарушена целостность SDWEAK, файлы повреждены или удалены! Переустановите SDWEAK!"
-texts["en_copable"]="SDWEAK is compatible with Steam Deck only!"
-texts["ru_copable"]="SDWEAK совместим только со Steam Deck!"
-texts["en_optimization_start"]="SDWEAK installation begins..."
-texts["ru_optimization_start"]="Начинается установка SDWEAK..."
-texts["en_error_sv"]="A serious error has occurred! The system is corrupted, SDWEAK cannot be installed, call for help! TG: @biddbb"
-texts["ru_error_sv"]="Произошла серьезная ошибка! Система повреждена, установка SDWEAK невозможна, обратитесь за помощью! TG: @biddbb"
-texts["en_skip"]="Skipping..."
-texts["ru_skip"]="Пропуск..."
-texts["en_invalid_input"]="Invalid input. Please enter 'y' or 'n'."
-texts["ru_invalid_input"]="Неправильный ввод. Пожалуйста, введите 'y' или 'n'."
-
-texts["en_yet_mglru"]="MGLRU successfully activated."
-texts["ru_yet_mglru"]="MGLRU успешно активирован."
-texts["en_yet_ov"]="Input controller overclocking successfully activated."
-texts["ru_yet_ov"]="Разгон контроллера ввода успешно активирован."
-texts["en_yet_un"]="Unnecessary services have been successfully disabled."
-texts["ru_yet_un"]="Ненужные службы успешно отключены."
-texts["en_tweaks_install"]="Starting tweaks installation..."
-texts["ru_tweaks_install"]="Начинается установка твиков..."
-texts["en_daem_anan"]="Ananicy-cpp successfully installed."
-texts["ru_daem_anan"]="Ananicy-cpp успешно установлен."
-texts["en_sysctl_en"]="Optimized sysctl settings are successfully installed."
-texts["ru_sysctl_en"]="Оптимизированные настройки sysctl успешно установлены."
-texts["en_thp_shrink"]="Optimal THP settings have been successfully set."
-texts["ru_thp_shrink"]="Оптимальные настройки THP успешно установлены."
-texts["en_zram_optim"]="Optimal ZRAM settings have been successfully set."
-texts["ru_zram_optim"]="Оптимальные настройки ZRAM успешно установлены."
-
-texts["en_fix_install"]="Starting microstutters fix installation..."
-texts["ru_fix_install"]="Начинается установка исправления микрозаиканий..."
-texts["en_fix_success"]="Microstutters fix successfully installed."
-texts["ru_fix_success"]="Исправление микрозаиканий успешно установлено."
-texts["en_fix_prompt"]="Install microstutters fix?"
-texts["ru_fix_prompt"]="Установить исправление микрозаиканий?"
-
-texts["en_hz_install"]="Starting Overclocking to 70Hz installation..."
-texts["ru_hz_install"]="Начинается установка разгона дисплея до 70Hz..."
-texts["en_hz_success"]="Overclocking to 70Hz successfully installed."
-texts["ru_hz_success"]="Разгон до 70Hz успешно установлен."
-texts["en_hz_prompt"]="Overclock the display to 70Hz?"
-texts["ru_hz_prompt"]="Разогнать дисплей до 70Hz?"
-
-texts["en_batt_install"]="Starting to prioritize power efficiency..."
-texts["ru_batt_install"]="Начинается установка приоритета энергоэффективности..."
-texts["en_batt_success"]="Power efficiency prioritization successfully installed."
-texts["ru_batt_success"]="Приоритет энергоэффективности успешно установлен."
-texts["en_batt_prompt"]="Prioritize power efficiency? (BETA)"
-texts["ru_batt_prompt"]="Установить приоритет энергоэффективности? (БЕТА)"
-
-texts["en_kernel_install"]="Starting kernel installation..."
-texts["ru_kernel_install"]="Начинается установка ядра..."
-texts["en_kernel_success"]="Kernel successfully installed."
-texts["ru_kernel_success"]="Ядро успешно установлено."
-texts["en_kernel_prompt"]="Install optimized kernel?"
-texts["ru_kernel_prompt"]="Установить оптимизированное ядро?"
-
-texts["en_sdweak_success"]="The installation of SDWEAK has been successfully completed! If you enjoy SDWEAK, you can also support the project's further development with a donation via the link in the GitHub repository. Thank you for using it!"
-texts["ru_sdweak_success"]="Установка SDWEAK успешно завершена! Если вам понравится SDWEAK, вы также можете поддержать донатом дальнейшее развитие проекта по ссылке в репозитории на GITHUB. Спасибо за использование!"
-
-texts["en_se"]="Installation completed in"
-texts["ru_se"]="Установка завершена за"
-texts["en_sec"]="seconds."
-texts["ru_sec"]="секунды."
-
-texts["en_reboot_prompt"]="Reboot to apply changes?"
-texts["ru_reboot_prompt"]="Перезагрузить для применения изменений?"
-texts["en_reboot_required"]="Reboot is required."
-texts["ru_reboot_required"]="Обязательно перезагрузите."
+# connecting a file with translations
+source ./packages/lang.sh
 
 # Colorized output
 green_msg() {
@@ -222,6 +148,7 @@ if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
     sleep 5
     exit 1
 fi
+check_file "./packages/lang.sh"
 # -- Start --
 green_msg "$(print_text optimization_start)"
 sudo steamos-readonly disable &>/dev/null
@@ -384,6 +311,10 @@ battery() {
             then
                 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             fi
+            sudo systemctl disable energy.timer &>/dev/null
+            sudo rm -f /etc/systemd/system/energy.service &>/dev/null
+            sudo rm -f /etc/systemd/system/energy.timer &>/dev/null
+            sudo systemctl daemon-reload &>/dev/null
             break
         else
             red_msg "$(print_text invalid_input)"
@@ -412,6 +343,38 @@ sdkernel() {
             elif [ "$MODEL" = "Jupiter" ] && [ "$BIOS_VERSION" = "F7A0131" ]; then
                 battery
             fi
+            break
+        elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
+            green_msg "$(print_text skip)"
+            break
+        else
+            red_msg "$(print_text invalid_input)"
+        fi
+    done
+}
+
+# AMDGPU optimization
+gpu-optimization() {
+    while true; do
+        tput setaf 3
+        read -p "$(print_text gpu_prompt) [Y/n]: " answer
+        tput sgr0
+        answer=${answer:-y}
+        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
+            green_msg "$(print_text gpu_install)"
+            params=("amdgpu.moverate=128" "amdgpu.mes=1" "amdgpu.cwsr_enable=0" "amdgpu.umsch_mm=1" "amdgpu.uni_mes=1")
+            missing=()
+            for param in "${params[@]}"; do
+                if ! grep -q "$param" /etc/default/grub &>/dev/null; then
+                    missing+=("$param")
+                fi
+            done
+            if [ ${#missing[@]} -gt 0 ]; then
+                missing_str=$(IFS=" "; echo "${missing[*]}")
+                sudo sed -i "s/\bGRUB_CMDLINE_LINUX_DEFAULT=\"\b/&$missing_str /" /etc/default/grub &>/dev/null
+                sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
+            fi
+            green_msg "$(print_text gpu_success)"
             break
         elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
             green_msg "$(print_text skip)"
@@ -458,6 +421,9 @@ fi
 if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     hz
 fi
+
+# GPU OPTIMIZATION
+gpu-optimization
 
 # Clean tmp files
 sudo rm -f $HOME/daemon-install.sh &>/dev/null

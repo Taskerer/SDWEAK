@@ -123,5 +123,15 @@ sudo rm -f /etc/systemd/system/energy.timer
 if { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     sudo pacman -S --noconfirm linux-neptune-611 linux-neptune-611-headers
 fi
+
+params=("amdgpu.moverate=128" "amdgpu.mes=1" "amdgpu.cwsr_enable=0" "amdgpu.umsch_mm=1" "amdgpu.uni_mes=1")
+
+for param in "${params[@]}"; do
+    if grep -q "$param" /etc/default/grub &>/dev/null; then
+        sudo sed -i "s/\b$param\b//g" /etc/default/grub &>/dev/null
+    else
+        echo 1 > /dev/null
+    fi
+done
 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
 sudo systemctl daemon-reload

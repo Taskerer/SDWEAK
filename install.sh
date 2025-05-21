@@ -148,6 +148,12 @@ if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
     sleep 5
     exit 1
 fi
+if { [ "$steamos_version" != "3.7" ] || [ "$steamos_version" != "3.8" ]; }; then
+    err_msg "$(print_text old_steamos)"
+    sleep 5
+    exit 1
+fi
+
 check_file "./packages/lang.sh"
 # -- Start --
 green_msg "$(print_text optimization_start)"

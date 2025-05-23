@@ -35,17 +35,6 @@ then
     exit 1
 fi
 
-# Backup
-BACKUP_DIR="$HOME/install_backup"
-sudo mkdir -p "$BACKUP_DIR"
-start_time=$(date +%s)
-backup_file() {
-    local file="$1"
-    if [ -f "$file" ]; then
-        sudo cp "$file" "$BACKUP_DIR"
-    fi
-}
-
 # Log
 sudo rm -f $HOME/SDWEAK-install.log &>/dev/null
 LOG_FILE=$HOME/SDWEAK-install.log
@@ -195,15 +184,6 @@ check_file "$HOME/daemon-install.sh"
 sudo chmod 775 $HOME/daemon-install.sh &>/dev/null
 sudo --preserve-env=HOME $HOME/daemon-install.sh
 green_msg "$(print_text daem_anan)"
-
-# Rollback changes to support 6.11 kernel from past versions
-if [ -f "$HOME/.local/tweak/SDWEAK.sh" ] && [ "$steamos_version" = "3.6" ]; then
-    log "Rollback changes to support 6.11 kernel from past versions" >> "$LOG_FILE" 2>&1
-    sudo pacman -S --noconfirm --needed linux-neptune-65 linux-neptune-65-headers >> "$LOG_FILE" 2>&1
-    sudo pacman -R --noconfirm linux-neptune-611 linux-neptune-611-headers >> "$LOG_FILE" 2>&1
-    sudo pacman -R --noconfirm linux-neptune-68 linux-neptune-68-headers >> "$LOG_FILE" 2>&1
-    sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
-fi
 
 # Sysctl Tweaks
 sudo rm -f $HOME/.local/tweak/SDWEAK.sh &>/dev/null
@@ -419,7 +399,7 @@ if { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
 fi
 
 # FRAMETIME FIX LCD
-if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.6" ] || [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
+if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     fix
 fi
 

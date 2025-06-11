@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# connecting a file with translations
+# Connecting a file with translations
 source ./packages/lang.sh
 
 # Colorized output
@@ -83,14 +83,14 @@ files=(
     "./packages/linux-neptune-611-SDKERNEL.pkg.tar.zst"
     "./packages/vulkan-radeon-SDWEAK.pkg.tar.zst"
     "./packages/lib32-vulkan-radeon-SDWEAK.pkg.tar.zst"
-    "./packages/cachyos-ananicy-rules-git-latest-plus-pull.pkg.tar.zst"
+    "./packages/cachyos-ananicy-rules-git-latest-plus-SDWEAK.pkg.tar.zst"
 )
 checksums=(
-    "a1dd89cd9520bc4975b14519bf13b42d114b0c9ffee05618ced54b3a48d2c9f3"
-    "9057721fac0c5baf91364a7e067731b0a42fcb18b96cf0be1e0da4f0eab70844"
+    "7a44ca9f0466ee8e3626d4fd953b3175891746a89fa6c7502024d6be4210bfcf"
+    "40a44d4b6d267605d44dfece79da12b3efdc14c301262f6f90bec9dffda803e3"
     "7d1f326afb32caabb0c0f82dba8b7e77de69264e243843369ffc3e13611de80c"
     "8b94a8ecd8b7c87852f8c12ff7dab16ff46ada7f4062d5ee5b72bbda3812e91c"
-    "7e354d646faefc1b371e63b7764b1aa3a597257d63398f9ed8fc23319c1a5d28"
+    "eabaa1ba6c3e349f90e7b12da3620196a8761912c46637db475a7474c212fd7a"
 )
 for i in "${!files[@]}"; do
     file="${files[i]}"
@@ -113,7 +113,7 @@ MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
 DATE=$(date '+%T %d.%m.%Y')
 log "$DATE" >> "$LOG_FILE" 2>&1
-log "VERSION: SDWEAK RELEASE 1.4" >> "$LOG_FILE" 2>&1
+log "VERSION: SDWEAK RELEASE 1.5" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
@@ -127,7 +127,7 @@ logo "
 || ███████║██████╔╝╚███╔███╔╝███████╗██║  ██║██║  ██╗ ||
 || ╚══════╝╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ||
 >>====================================================<<
-VERSION: 1.4 RELEASE
+VERSION: 1.5 RELEASE
 DEVELOPER: @biddbb
 TG GROUP: @steamdeckoverclock
 "
@@ -348,7 +348,7 @@ gpu-optimization() {
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text gpu_install)"
-            params=("amdgpu.moverate=128" "amdgpu.mes=1" "amdgpu.cwsr_enable=0" "amdgpu.umsch_mm=1" "amdgpu.uni_mes=1")
+            params=("amdgpu.mes=1" "amdgpu.moverate=128" "amdgpu.uni_mes=1" "amdgpu.lbpw=0" "amdgpu.mes_kiq=1")
             missing=()
             for param in "${params[@]}"; do
                 if ! grep -q "$param" /etc/default/grub &>/dev/null; then
@@ -401,10 +401,6 @@ fi
 # FRAMETIME FIX LCD
 if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     fix
-fi
-
-# 70Hz
-if [ "$MODEL" = "Jupiter" ] && { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     hz
 fi
 

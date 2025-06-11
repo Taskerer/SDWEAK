@@ -87,4 +87,3 @@ write /proc/sys/kernel/sched_burst_smoothness_long 0
 write /proc/sys/kernel/sched_burst_smoothness_short 0
 write /proc/sys/kernel/sched_burst_exclude_kthreads 1
 write /proc/sys/kernel/sched_burst_parity_threshold 1
-

@@ -38,6 +38,7 @@ fi
 # Log
 sudo rm -f $HOME/SDWEAK-install.log &>/dev/null
 LOG_FILE=$HOME/SDWEAK-install.log
+start_time=$(date +%s)
 
 # Select_lang [en|ru]
 choose_language() {

@@ -2,7 +2,6 @@
 [RUSSIAN README](README.md)
 
 ## Installation
-**For SteamOS 3.7+ only!!!**
 Before installation, be sure to remove Cryo Utilities if it was previously installed.
 
 The new version can be installed over the old one. After updating SteamOS, you must reinstall SDWEAK.
@@ -50,7 +49,7 @@ The ideal installation configuration is enabled by default.
 * **Optimized Linux kernel** - installation of an optimized Linux kernel. Configuration tuning (primarily reducing overhead). TCP stack optimization. THP Shrinker for Transparent HugePages optimization. Plus a dozen other minor but system-wide performance improvements.
 * **Power efficiency priority(BETA)** - installation of CPU power efficiency priority to improve battery life. When this function is enabled, the CPU always tries to use the minimum possible frequency without worsening FPS. This can significantly improve battery life, but may cause occasional stutters, which is why the function currently has BETA status. Therefore, if you mainly play recent demanding AAA games, it is recommended to keep this function disabled (N). Otherwise, if you play AA and low-demand games, you can enable this function.
 NOTE: This function is only available with the optimized Linux kernel installed.
-* **GPU Optimization** - adjusts the amdgpu driver settings, giving a boost.
+* **GPU Optimization(BETA)** - adjusts the amdgpu driver settings, giving a boost.
 
 ## Recommendations
 Recommendations for improving Steam Deck performance beyond SDWEAK

@@ -23,7 +23,7 @@ MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
 DATE=$(date '+%T %d.%m.%Y')
 log "$DATE" >> "$LOG_FILE" 2>&1
-log "VERSION: RELEASE 1.4" >> "$LOG_FILE" 2>&1
+log "VERSION: RELEASE 1.5" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
@@ -64,9 +64,9 @@ green_msg '70%'
 # Install Cachyos-ananicy-rules
 sudo rm -rf /etc/ananicy.d/{*,.*} &>/dev/null
 log "INSTALL RULES ANANICY" >> "$LOG_FILE" 2>&1
-sudo pacman -U ./packages/cachyos-ananicy-rules-git-latest-plus-pull.pkg.tar.zst --noconfirm >> "$LOG_FILE" 2>&1
+sudo pacman -U ./packages/cachyos-ananicy-rules-git-latest-plus-SDWEAK.pkg.tar.zst --noconfirm >> "$LOG_FILE" 2>&1
 green_msg '80%'
-sudo pacman -U ./packages/cachyos-ananicy-rules-git-latest-plus-pull.pkg.tar.zst --noconfirm >> "$LOG_FILE" 2>&1
+sudo pacman -U ./packages/cachyos-ananicy-rules-git-latest-plus-SDWEAK.pkg.tar.zst --noconfirm >> "$LOG_FILE" 2>&1
 sudo systemctl restart ananicy-cpp >> "$LOG_FILE" 2>&1
 green_msg '90%'
 

@@ -124,7 +124,7 @@ if { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     sudo pacman -S --noconfirm linux-neptune-611 linux-neptune-611-headers
 fi
 
-params=("amdgpu.moverate=128" "amdgpu.mes=1" "amdgpu.cwsr_enable=0" "amdgpu.umsch_mm=1" "amdgpu.uni_mes=1")
+params=("amdgpu.mes=1" "amdgpu.moverate=128" "amdgpu.uni_mes=1" "amdgpu.lbpw=0" "amdgpu.mes_kiq=1")
 
 for param in "${params[@]}"; do
     if grep -q "$param" /etc/default/grub &>/dev/null; then

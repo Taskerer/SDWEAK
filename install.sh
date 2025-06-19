@@ -349,7 +349,7 @@ gpu-optimization() {
         answer=${answer:-y}
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             green_msg "$(print_text gpu_install)"
-            params=("amdgpu.mes=1" "amdgpu.moverate=128" "amdgpu.uni_mes=1" "amdgpu.lbpw=0" "amdgpu.mes_kiq=1")
+            params=("gpu_sched.sched_policy=0" "amdgpu.mes=1" "amdgpu.moverate=128" "amdgpu.uni_mes=1" "amdgpu.lbpw=0" "amdgpu.mes_kiq=1")
             missing=()
             for param in "${params[@]}"; do
                 if ! grep -q "$param" /etc/default/grub &>/dev/null; then

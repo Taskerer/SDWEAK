@@ -109,10 +109,10 @@ sudo pacman -S --noconfirm --needed vulkan-radeon lib32-vulkan-radeon
 sudo sed -z -i "s/58, 59,\n        60, 61, 62, 63, 64, 65, 66, 67, 68, 69,\n        70/58, 59,\n        60/g" /usr/share/gamescope/scripts/00-gamescope/displays/valve.steamdeck.lcd.lua
 
 if sudo sed -i -E '/^GRUB_CMDLINE_LINUX_DEFAULT=/ {
-     s/(amd_pstate=)[^ "]*//g
-     s/(=")(.*")/\1amd_pstate=disable \2/
-     s/  +/ /g
-     s/" /"/}' /etc/default/grub
+    s/(amd_pstate=)[^ "]*//g
+    s/  +/ /g
+    s/(GRUB_CMDLINE_LINUX_DEFAULT=") /\1/
+    s/ (")/\1/}' /etc/default/grub
 then
     sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
 fi
@@ -124,7 +124,7 @@ if { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
     sudo pacman -S --noconfirm linux-neptune-611 linux-neptune-611-headers
 fi
 
-params=("amdgpu.mes=1" "amdgpu.moverate=128" "amdgpu.uni_mes=1" "amdgpu.lbpw=0" "amdgpu.mes_kiq=1")
+params=("gpu_sched.sched_policy=0" "amdgpu.mes=1" "amdgpu.moverate=128" "amdgpu.uni_mes=1" "amdgpu.lbpw=0" "amdgpu.mes_kiq=1")
 
 for param in "${params[@]}"; do
     if grep -q "$param" /etc/default/grub &>/dev/null; then

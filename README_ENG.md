@@ -34,8 +34,7 @@ rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/down
 ```
 ## DONAT
 If you enjoy SDWEAK, you can also support the project's further development via the link below. Thank you for using it!
-* [DonationAlerts](https://www.donationalerts.com/r/biddbb) (all countries)
-* [Tinkoff](https://www.tinkoff.ru/cf/8HHVDNi8VMS) (only Russia)
+* [Tinkoff](https://www.tinkoff.ru/cf/8HHVDNi8VMS)
 
 ## What are the benefits?
 Increases minimum, maximum, and average FPS. Improves smoothness, responsiveness, and frame timing. Reduces stutters and micro-freezes. Enhances system performance under heavy RAM load. Significantly improves process scheduling. Overall, optimizes system performance for a better gaming experience.
@@ -55,7 +54,7 @@ NOTE: This function is only available with the optimized Linux kernel installed.
 Recommendations for improving Steam Deck performance beyond SDWEAK
 * [My guide](http://deckoc.notion.site/STEAM-DECK-RUS-76e43eacaf8b400ab130692d2d099a02?pvs=4) to overclocking and optimizing Steam Deck.
 * [Decky-Undervolt](https://github.com/totallynotbakadestroyer/Decky-Undervolt) plugin for efficient CPU undervolting directly from the system(Available in Decky Loader Store)
-* [ECLIPSE mods](https://t.me/kf4fr/600631) for specific games. They significantly improve performance and FPS, making unplayable games comfortable to complete.
+* [ECLIPSE mods](https://t.me/kf4fr/850467) for specific games. They significantly improve performance and FPS, making unplayable games comfortable to complete.
 
 ## Thanks
 * A HUGE THANK YOU to our [community](https://t.me/steamdeckoverclock) on Telegram for constant tests, ideas and development help! The development of new features has been and will be happening there. I will be glad to every new tester!

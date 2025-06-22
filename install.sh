@@ -87,11 +87,11 @@ files=(
     "./packages/cachyos-ananicy-rules-git-latest-plus-SDWEAK.pkg.tar.zst"
 )
 checksums=(
-    "7a44ca9f0466ee8e3626d4fd953b3175891746a89fa6c7502024d6be4210bfcf"
-    "40a44d4b6d267605d44dfece79da12b3efdc14c301262f6f90bec9dffda803e3"
+    "bab6d349ea3f0f98f71b6a5ddd86f4d2f728eabdf0ece569898de729c74e467f"
+    "72a930fdc8620b697a8ce33a0d358cfebd50586499222a28ea3083feb1a3ed94"
     "7d1f326afb32caabb0c0f82dba8b7e77de69264e243843369ffc3e13611de80c"
     "8b94a8ecd8b7c87852f8c12ff7dab16ff46ada7f4062d5ee5b72bbda3812e91c"
-    "eabaa1ba6c3e349f90e7b12da3620196a8761912c46637db475a7474c212fd7a"
+    "4596a43861bc71fb6b0d8a0036c38936046da786ff446aa9e700bb072a217956"
 )
 for i in "${!files[@]}"; do
     file="${files[i]}"
@@ -114,7 +114,7 @@ MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
 DATE=$(date '+%T %d.%m.%Y')
 log "$DATE" >> "$LOG_FILE" 2>&1
-log "VERSION: SDWEAK RELEASE 1.5" >> "$LOG_FILE" 2>&1
+log "VERSION: SDWEAK RELEASE 1.6" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
@@ -128,7 +128,7 @@ logo "
 || ███████║██████╔╝╚███╔███╔╝███████╗██║  ██║██║  ██╗ ||
 || ╚══════╝╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ||
 >>====================================================<<
-VERSION: 1.5 RELEASE
+VERSION: 1.6 RELEASE
 DEVELOPER: @biddbb
 TG GROUP: @steamdeckoverclock
 "
@@ -292,9 +292,9 @@ battery() {
             green_msg "$(print_text skip)"
             if sudo sed -i -E '/^GRUB_CMDLINE_LINUX_DEFAULT=/ {
                 s/(amd_pstate=)[^ "]*//g
-                s/(=")(.*")/\1amd_pstate=disable \2/
                 s/  +/ /g
-                s/" /"/}' /etc/default/grub
+                s/(GRUB_CMDLINE_LINUX_DEFAULT=") /\1/
+                s/ (")/\1/}' /etc/default/grub
             then
                 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
             fi

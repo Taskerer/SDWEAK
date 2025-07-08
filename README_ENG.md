@@ -32,7 +32,7 @@ sudo steamos-readonly disable
 ```bash
 rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./uninstall.sh
 ```
-## DONAT
+## DONATE
 If you enjoy SDWEAK, you can also support the project's further development via the link below. Thank you for using it!
 * [Tinkoff](https://www.tinkoff.ru/cf/8HHVDNi8VMS)
 

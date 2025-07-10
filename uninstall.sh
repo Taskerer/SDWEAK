@@ -25,7 +25,7 @@ then
 fi
 
 # Server ping test
-if ping -c 1 1.1.1.1 &>/dev/null || ping -c 1 8.8.8.8 &>/dev/null || ping -c 1 9.9.9.9 &>/dev/null || ping -c 1 208.67.222.222 &>/dev/null || ping -c 1 4.2.2.1 &>/dev/null || ping -c 1 94.140.14.14 &>/dev/null || ping -c 1 64.6.64.6 &>/dev/null || ping -c 1 77.88.8.8 &>/dev/null; then
+if ping -c 1 23.5.165.56 &>/dev/null || ping -c 1 23.5.165.16 &>/dev/null || ping -c 1 23.33.46.172 &>/dev/null || ping -c 1 23.33.46.173 &>/dev/null || ping -c 1 23.192.228.144 &>/dev/null || ping -c 1 23.50.131.25 &>/dev/null || ping -c 1 23.50.131.27 &>/dev/null; then
     echo 1 > /dev/null
 else
     red_msg "No Internet!"

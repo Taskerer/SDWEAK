@@ -23,7 +23,7 @@ MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
 DATE=$(date '+%T %d.%m.%Y')
 log "$DATE" >> "$LOG_FILE" 2>&1
-log "VERSION: RELEASE 1.6" >> "$LOG_FILE" 2>&1
+log "VERSION: RELEASE 1.7" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1

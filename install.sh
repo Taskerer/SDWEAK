@@ -71,7 +71,7 @@ print_text() {
 choose_language
 
 # Server ping test
-if ping -c 1 1.1.1.1 &>/dev/null; then
+if ping -c 1 23.5.165.56 &>/dev/null || ping -c 1 23.5.165.16 &>/dev/null || ping -c 1 23.33.46.172 &>/dev/null || ping -c 1 23.33.46.173 &>/dev/null || ping -c 1 23.192.228.144 &>/dev/null || ping -c 1 23.50.131.25 &>/dev/null || ping -c 1 23.50.131.27 &>/dev/null; then
     green_msg "$(print_text ping_success)"
 else
     err_msg "$(print_text ping_fail)"
@@ -91,7 +91,7 @@ checksums=(
     "72a930fdc8620b697a8ce33a0d358cfebd50586499222a28ea3083feb1a3ed94"
     "7d1f326afb32caabb0c0f82dba8b7e77de69264e243843369ffc3e13611de80c"
     "8b94a8ecd8b7c87852f8c12ff7dab16ff46ada7f4062d5ee5b72bbda3812e91c"
-    "4596a43861bc71fb6b0d8a0036c38936046da786ff446aa9e700bb072a217956"
+    "49e26ce4342211bc896cab00043b3d84bf8057d82c175db30db9ef440edb9797"
 )
 for i in "${!files[@]}"; do
     file="${files[i]}"
@@ -114,7 +114,7 @@ MODEL=$(cat /sys/class/dmi/id/board_name)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
 DATE=$(date '+%T %d.%m.%Y')
 log "$DATE" >> "$LOG_FILE" 2>&1
-log "VERSION: SDWEAK RELEASE 1.6" >> "$LOG_FILE" 2>&1
+log "VERSION: SDWEAK RELEASE 1.7" >> "$LOG_FILE" 2>&1
 log "$steamos_version" >> "$LOG_FILE" 2>&1
 log "$MODEL" >> "$LOG_FILE" 2>&1
 log "$BIOS_VERSION" >> "$LOG_FILE" 2>&1
@@ -128,7 +128,7 @@ logo "
 || ███████║██████╔╝╚███╔███╔╝███████╗██║  ██║██║  ██╗ ||
 || ╚══════╝╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ||
 >>====================================================<<
-VERSION: 1.6 RELEASE
+VERSION: 1.7 RELEASE
 DEVELOPER: @biddbb
 TG GROUP: @steamdeckoverclock
 "
@@ -196,6 +196,11 @@ sudo rm -f /etc/systemd/system/tweak.service &>/dev/null
 check_file "./packages/tweak.service"
 sudo cp ./packages/tweak.service /etc/systemd/system/tweak.service &>/dev/null
 sudo chmod 777 $HOME/.local/tweak/SDWEAK.sh &>/dev/null
+
+# I/O schedulers
+sudo rm -f /etc/udev/rules.d/60-ioschedulers.rules &>/dev/null
+check_file "./packages/60-ioschedulers.rules"
+sudo cp ./packages/60-ioschedulers.rules /etc/udev/rules.d/60-ioschedulers.rules &>/dev/null
 green_msg "$(print_text sysctl_en)"
 
 # ZRAM Tweaks

@@ -41,7 +41,6 @@ sudo systemctl stop steamos-cfs-debugfs-tunings.service &>/dev/null
 sudo systemctl stop gpu-trace.service &>/dev/null
 sudo systemctl stop steamos-log-submitter.service &>/dev/null
 sudo systemctl stop cups.service &>/dev/null
-sudo systemctl stop gamemoded.service &>/dev/null
 sudo systemctl stop avahi-daemon.socket &>/dev/null
 sudo systemctl stop avahi-daemon.service &>/dev/null
 
@@ -50,17 +49,8 @@ sudo systemctl mask steamos-cfs-debugfs-tunings.service &>/dev/null
 sudo systemctl mask gpu-trace.service &>/dev/null
 sudo systemctl mask steamos-log-submitter.service &>/dev/null
 sudo systemctl mask cups.service &>/dev/null
-sudo systemctl mask gamemoded.service &>/dev/null
 sudo systemctl mask avahi-daemon.socket &>/dev/null
 sudo systemctl mask avahi-daemon.service &>/dev/null
-
-# Starting the necessary services that were disabled by mistake in previous versions
-sudo systemctl unmask systemd-coredump.socket &>/dev/null
-sudo systemctl unmask kdumpst-init.service &>/dev/null
-sudo systemctl unmask steamos-kdumpst-layer.service &>/dev/null
-sudo systemctl unmask steamos-dump-info.service &>/dev/null
-sudo systemctl unmask steamos-devkit-service.service &>/dev/null
-sudo systemctl unmask firewalld.service &>/dev/null
 
 # RM unnecessary .conf
 backup_file /usr/lib/sysctl.d/60-crash-hook.conf &>/dev/null
@@ -71,6 +61,5 @@ sudo rm -f /etc/udev/rules.d/64-ioschedulers.rules &>/dev/null
 sudo rm -f /usr/lib/sysctl.d/60-crash-hook.conf &>/dev/null
 sudo rm -f /usr/lib/sysctl.d/20-sched.conf &>/dev/null
 
-# Bringing back configs that were removed by mistake in previous versions
-sudo cp -f $HOME/install_backup/21-steamos-panic-sysctls.conf /usr/lib/sysctl.d/21-steamos-panic-sysctls.conf &>/dev/null
-sudo cp -f $HOME/install_backup/20-panic-sysctls.conf /usr/lib/sysctl.d/20-panic-sysctls.conf &>/dev/null
+# remove gamemoded
+sudo pacman -Rdd --noconfirm gamemode &>/dev/null

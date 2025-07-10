@@ -22,34 +22,30 @@ fi
 # Sync to data in the rare case a device crashes
 sync
 
-setpci -v -s '*:*' latency_timer=20
-setpci -v -s '0:0' latency_timer=0
-setpci -v -d "*:*:04xx" latency_timer=80
-
 # fs
 write /proc/sys/fs/aio-max-nr 131072
-write /proc/sys/fs/dir-notify-enable 0
-write /proc/sys/fs/epoll/max_user_watches 524288
-write /proc/sys/fs/inotify/max_queued_events 32768
-write /proc/sys/fs/inotify/max_user_watches 1048576
+write /proc/sys/fs/epoll/max_user_watches 100000
+write /proc/sys/fs/inotify/max_user_watches 65536
 write /proc/sys/fs/pipe-max-size 2097152
+write /proc/sys/fs/pipe-user-pages-soft 65536
 
 # kernel
-write /proc/sys/kernel/sched_autogroup_enabled 1
-write /proc/sys/kernel/acct 0
+write /proc/sys/kernel/perf_cpu_time_max_percent 1
+write /proc/sys/kernel/perf_event_max_contexts_per_stack 1
+write /proc/sys/kernel/perf_event_max_sample_rate 1
+write /proc/sys/kernel/perf_event_max_stack 1
+write /proc/sys/kernel/seccomp/actions_logged ""
+write /proc/sys/kernel/io_delay_type 3
+write /proc/sys/dev/hpet/max-user-freq 2048
+write /proc/sys/kernel/timer_migration 0
+write /proc/sys/kernel/watchdog 0
+write /proc/sys/kernel/soft_watchdog 0
+write /proc/sys/kernel/nmi_watchdog 0
+write /proc/sys/kernel/sched_autogroup_enabled 0
 write /proc/sys/kernel/core_pattern /dev/null
 write /proc/sys/kernel/core_pipe_limit 0
 write /proc/sys/kernel/ftrace_enabled 0
-write /proc/sys/kernel/hung_task_check_count 131072
-write /proc/sys/kernel/hung_task_check_interval_secs 15
-write /proc/sys/kernel/hung_task_warnings 3
-write /proc/sys/kernel/kexec_load_disabled 1
-write /proc/sys/kernel/kexec_load_limit_panic 0
-write /proc/sys/kernel/kexec_load_limit_reboot 0
-write /proc/sys/kernel/printk_ratelimit_burst 5
-write /proc/sys/kernel/unprivileged_bpf_disabled 0
-write /proc/sys/kernel/nmi_watchdog 0
-write /proc/sys/kernel/perf_cpu_time_max_percent 10
+write /proc/sys/kernel/printk_ratelimit_burst 1
 write /proc/sys/kernel/printk_devkmsg off
 write /proc/sys/debug/exception-trace 0
 
@@ -66,14 +62,15 @@ write /proc/sys/vm/vfs_cache_pressure 66
 write /proc/sys/vm/watermark_scale_factor 125
 write /proc/sys/vm/swappiness 40
 write /proc/sys/vm/watermark_boost_factor 0
+write /proc/sys/vm/stat_interval 15
+write /proc/sys/vm/compact_unevictable_allowed 1
 
 # mm
 write /sys/kernel/mm/transparent_hugepage/enabled always
 write /sys/kernel/mm/transparent_hugepage/khugepaged/defrag 1
 
 # flash
-write /sys/block/mmcblk0/queue/add_random 0
-write /sys/block/nvme0n1/queue/add_random 0
+# TODO optimize flash drives thoroughly
 write /sys/block/mmcblk0/queue/iostats 0
 write /sys/block/nvme0n1/queue/iostats 0
 

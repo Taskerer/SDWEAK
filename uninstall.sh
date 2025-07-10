@@ -25,7 +25,7 @@ then
 fi
 
 # Server ping test
-if ping -c 1 1.1.1.1 >/dev/null 2>&1; then
+if ping -c 1 1.1.1.1 &>/dev/null || ping -c 1 8.8.8.8 &>/dev/null || ping -c 1 9.9.9.9 &>/dev/null || ping -c 1 208.67.222.222 &>/dev/null || ping -c 1 4.2.2.1 &>/dev/null || ping -c 1 94.140.14.14 &>/dev/null || ping -c 1 64.6.64.6 &>/dev/null || ping -c 1 77.88.8.8 &>/dev/null; then
     echo 1 > /dev/null
 else
     red_msg "No Internet!"
@@ -94,6 +94,7 @@ sudo systemctl disable tweak
 sudo rm -f $HOME/.local/tweak/SDWEAK.sh
 sudo rm -f /etc/systemd/system/tweak.service
 sudo rm -rf $HOME/.local/tweak/
+sudo rm -f /etc/udev/rules.d/60-ioschedulers.rules
 
 sudo rm -f /usr/lib/systemd/zram-generator.conf
 sudo pacman -Rdd --noconfirm holo-zram-swap zram-generator

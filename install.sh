@@ -45,19 +45,19 @@ choose_language() {
     clear
     sleep 0.3
     green_msg "Please select your language / Пожалуйста, выберите язык:"
-    red_msg "1. English"
-    red_msg "2. Русский"
+    red_msg "1. Русский"
+    red_msg "2. English"
     read -p "Enter the needed number / Введите нужную цифру: " choice
     case $choice in
         1)
-            selected_lang="en"
-            ;;
-        2)
             selected_lang="ru"
             ;;
-        *)
-            red_msg "Invalid choice. Defaulting to English."
+        2)
             selected_lang="en"
+            ;;
+        *)
+            red_msg "Неверный выбор. По умолчанию выбран Русский."
+            selected_lang="ru"
             ;;
     esac
     red_msg "Language selected / Выбранный язык: $selected_lang"
@@ -70,11 +70,19 @@ print_text() {
 }
 choose_language
 
-# Server ping test
-if ping -c 1 23.5.165.56 &>/dev/null || ping -c 1 23.5.165.16 &>/dev/null || ping -c 1 23.33.46.172 &>/dev/null || ping -c 1 23.33.46.173 &>/dev/null || ping -c 1 23.192.228.144 &>/dev/null || ping -c 1 23.50.131.25 &>/dev/null || ping -c 1 23.50.131.27 &>/dev/null; then
+# Checking Internet access
+if ping -c 1 8.8.8.8 &>/dev/null || ping -c 1 1.1.1.1 &>/dev/null || ping -c 1 208.67.222.222 &>/dev/null || ping -c 1 9.9.9.9 &>/dev/null || ping -c 1 94.140.14.14 &>/dev/null || ping -c 1 8.26.56.26 &>/dev/null; then
     green_msg "$(print_text ping_success)"
 else
     err_msg "$(print_text ping_fail)"
+    exit 1
+fi
+
+# Checking access to Valve's server
+if curl --speed-limit 3 --speed-time 2 --max-time 30 https://steamdeck-packages.steamos.cloud/archlinux-mirror/core-main/os/x86_64/sed-4.9-3-x86_64.pkg.tar.zst --output /dev/null &>/dev/null; then
+    green_msg "$(print_text server_success)"
+else
+    err_msg "$(print_text server_fail)"
     exit 1
 fi
 

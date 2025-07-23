@@ -28,6 +28,7 @@ rm SDWEAK.zip
 cat <<EOF >"$DESKTOP_DIR/SDWeak.desktop"
 [Desktop Entry]
 Name=SDWeak
+Path=$APP_DIR
 Exec=pkexec $APP_DIR/install.sh
 Icon=system-software-update
 Terminal=true
@@ -40,6 +41,7 @@ chmod +x "$DESKTOP_DIR/SDWeak.desktop"
 cat <<EOF >"$DESKTOP_DIR/SDWeakUninstall.desktop"
 [Desktop Entry]
 Name=Uninstall SDWeak
+Path=$APP_DIR
 Exec=pkexec $APP_DIR/uninstall.sh
 Icon=edit-delete
 Terminal=true

@@ -13,7 +13,7 @@ echo "#!/usr/bin/env xdg-open
 [Desktop Entry]
 Name=SDWeak
 Exec=bash ${PREFIX}/SDWEAK/install.sh
-Icon=steamdeck-gaming-return
+Icon=system-software-update
 Terminal=false
 Type=Application
 StartupNotify=false" >"$HOME"/Desktop/SDWeak.desktop

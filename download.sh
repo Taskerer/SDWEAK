@@ -10,6 +10,8 @@ ZIP_URL="https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip"
 cd "$PREFIX" || exit 1
 rm -rf "$APP_DIR" "$APP_DIR.zip"
 
+source ./packages/lang.sh
+
 # Загрузка и распаковка
 wget "$ZIP_URL" -O SDWEAK.zip || {
   zenity --error --text="Не удалось скачать SDWEAK!" --width=300
@@ -26,7 +28,7 @@ rm SDWEAK.zip
 cat <<EOF >"$DESKTOP_DIR/SDWeak.desktop"
 [Desktop Entry]
 Name=SDWeak
-Exec=$APP_DIR/install.sh
+Exec=pkexec $APP_DIR/install.sh
 Icon=system-software-update
 Terminal=true
 Type=Application
@@ -38,7 +40,7 @@ chmod +x "$DESKTOP_DIR/SDWeak.desktop"
 cat <<EOF >"$DESKTOP_DIR/SDWeakUninstall.desktop"
 [Desktop Entry]
 Name=Uninstall SDWeak
-Exec=$APP_DIR/uninstall.sh
+Exec=pkexec $APP_DIR/uninstall.sh
 Icon=edit-delete
 Terminal=true
 Type=Application

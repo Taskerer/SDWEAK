@@ -18,33 +18,15 @@ passwd
 
 4. Загрузите файл по [ссылке](https://raw.githubusercontent.com/klen/SDWEAK/refs/heads/main/InstallSDWEAK.desktop) (правой кнопкой мыши по ссылке и "Сохранить как..."), после этого откройте его двойным кликом и установите его.
 
-```bash
-sudo steamos-readonly disable
-```
-
-5. Введите команду для установки SDWEAK:
-
-```bash
-rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./install.sh
-```
+5. После установки запустите ярлык `SDWeak` на рабочем столе.
 
 ## Удаление
 
 Если у вас возникли какие-то проблемы, пожалуйста сообщите о них!
 
 1. Перейдите в режим рабочего стола
-2. Откройте Konsole
-3. Отключите Read-Only:
-
-```bash
-sudo steamos-readonly disable
-```
-
-4. Введите команду для удаления SDWEAK:
-
-```bash
-rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./uninstall.sh
-```
+2. Запустите ярлык `Uninstall SDWeak` на рабочем столе
+   `
 
 ## Донат
 

@@ -1,43 +1,44 @@
 #!/bin/bash
 
+sudo steamos-readonly disable
+
 # Colorized output
 green_msg() {
-    tput setaf 14
-    echo "[*] --- $1"
-    tput sgr0
+  tput setaf 14
+  echo "[*] --- $1"
+  tput sgr0
 }
 red_msg() {
-    tput setaf 3
-    echo "[*] --- $1"
-    tput sgr0
+  tput setaf 3
+  echo "[*] --- $1"
+  tput sgr0
 }
 logo() {
-    tput setaf 11
-    echo "$1"
-    tput sgr0
+  tput setaf 11
+  echo "$1"
+  tput sgr0
 }
 
 # Root check
-if [ "$(id -u)" != "0" ]
-then
-    red_msg "This script must be run as root."
-    exit 1
+if [ "$(id -u)" != "0" ]; then
+  red_msg "This script must be run as root."
+  exit 1
 fi
 
 # Checking Internet access
 if ping -c 1 8.8.8.8 &>/dev/null || ping -c 1 1.1.1.1 &>/dev/null || ping -c 1 208.67.222.222 &>/dev/null || ping -c 1 9.9.9.9 &>/dev/null || ping -c 1 94.140.14.14 &>/dev/null || ping -c 1 8.26.56.26 &>/dev/null; then
-    echo 1 > /dev/null
+  echo 1 >/dev/null
 else
-    red_msg "No Internet connection! Please connect to the Internet and run the script again."
-    exit 1
+  red_msg "No Internet connection! Please connect to the Internet and run the script again."
+  exit 1
 fi
 
 # Checking access to Valve's server
 if curl --speed-limit 3 --speed-time 2 --max-time 30 https://steamdeck-packages.steamos.cloud/archlinux-mirror/core-main/os/x86_64/sed-4.9-3-x86_64.pkg.tar.zst --output /dev/null &>/dev/null; then
-    echo 1 > /dev/null
+  echo 1 >/dev/null
 else
-    red_msg "No connection to Valve server! Your ISP has probably blocked Valve's servers. Try connecting to another network or using a VPN (or other blocking methods)."
-    exit 1
+  red_msg "No connection to Valve server! Your ISP has probably blocked Valve's servers. Try connecting to another network or using a VPN (or other blocking methods)."
+  exit 1
 fi
 
 clear
@@ -58,7 +59,7 @@ DEVELOPER: @biddbb
 TG GROUP: @steamdeckoverclock
 "
 if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
-    exit 1
+  exit 1
 fi
 red_msg "Uninstalling..."
 sudo steamos-readonly disable
@@ -69,10 +70,10 @@ sudo rm -rf /etc/pacman.d/gnupg
 sudo pacman-key --init
 sudo pacman-key --populate
 if ! sudo pacman -Sy; then
-    exit 1
+  exit 1
 fi
 if ! sudo pacman -S --noconfirm sed; then
-    exit 1
+  exit 1
 fi
 
 # Yet-tweak
@@ -121,26 +122,25 @@ if sudo sed -i -E '/^GRUB_CMDLINE_LINUX_DEFAULT=/ {
     s/(amd_pstate=)[^ "]*//g
     s/  +/ /g
     s/(GRUB_CMDLINE_LINUX_DEFAULT=") /\1/
-    s/ (")/\1/}' /etc/default/grub
-then
-    sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
+    s/ (")/\1/}' /etc/default/grub; then
+  sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
 fi
 sudo systemctl disable --now energy.timer
 sudo rm -f /etc/systemd/system/energy.service
 sudo rm -f /etc/systemd/system/energy.timer
 
 if { [ "$steamos_version" = "3.7" ] || [ "$steamos_version" = "3.8" ]; }; then
-    sudo pacman -S --noconfirm linux-neptune-611 linux-neptune-611-headers
+  sudo pacman -S --noconfirm linux-neptune-611 linux-neptune-611-headers
 fi
 
 params=("gpu_sched.sched_policy=0" "amdgpu.mes=1" "amdgpu.moverate=128" "amdgpu.uni_mes=1" "amdgpu.lbpw=0" "amdgpu.mes_kiq=1")
 
 for param in "${params[@]}"; do
-    if grep -q "$param" /etc/default/grub &>/dev/null; then
-        sudo sed -i "s/\b$param\b//g" /etc/default/grub &>/dev/null
-    else
-        echo 1 > /dev/null
-    fi
+  if grep -q "$param" /etc/default/grub &>/dev/null; then
+    sudo sed -i "s/\b$param\b//g" /etc/default/grub &>/dev/null
+  else
+    echo 1 >/dev/null
+  fi
 done
 sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
 sudo systemctl daemon-reload

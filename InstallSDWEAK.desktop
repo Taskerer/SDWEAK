@@ -1,0 +1,8 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=Install SDWEAK
+Exec=curl https://raw.githubusercontent.com/klen/SDWEAK/main/sync.sh | bash -s --
+Icon=steamdeck-gaming-return
+Terminal=true
+Type=Application
+StartupNotify=false

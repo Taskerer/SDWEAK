@@ -11,7 +11,7 @@ unzip SDWEAK.zip
 rm -rf "$HOME"/Desktop/SDWeakUninstall.desktop 2>/dev/null
 echo '#!/usr/bin/env xdg-open
 [Desktop Entry]
-Name=Uninstall CryoUtilities
+Name=Uninstall SDWeak
 Exec=bash ${PREFIX}/SDWEAK/uninstall.sh
 Icon=delete
 Terminal=false
@@ -22,12 +22,12 @@ chmod +x "$HOME"/Desktop/SDWeakUninstall.desktop
 rm -rf "$HOME"/Desktop/SDWeak.desktop 2>/dev/null
 echo "#!/usr/bin/env xdg-open
 [Desktop Entry]
-Name=CryoUtilities
+Name=SDWeak
 Exec=bash ${PREFIX}/SDWEAK/install.sh
 Icon=steamdeck-gaming-return
 Terminal=false
 Type=Application
-StartupNotify=false" >"$HOME"/Desktop/CryoUtilities.desktop
-chmod +x "$HOME"/Desktop/CryoUtilities.desktop
+StartupNotify=false" >"$HOME"/Desktop/SDWeak.desktop
+chmod +x "$HOME"/Desktop/SDWeak.desktop
 
 zenity --info --text="Download of SDWEAK has been completed!" --width=300

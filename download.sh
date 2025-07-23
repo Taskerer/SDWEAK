@@ -15,7 +15,14 @@ wget "$ZIP_URL" -O SDWEAK.zip || {
   zenity --error --text="Не удалось скачать SDWEAK!" --width=300
   exit 1
 }
-unzip SDWEAK.zip -d "$APP_DIR"
+
+unzip SDWEAK.zip || {
+  zenity --error --text="Не удалось распаковать архив!" --width=300
+  exit 1
+}
+
+rm -rf "$APP_DIR"
+mv SDWEAK "$APP_DIR"
 rm SDWEAK.zip
 
 # Создание ярлыка запуска

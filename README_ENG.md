@@ -1,76 +1,138 @@
 # SDWEAK
-[RUSSIAN README](README.md)
+
+📄 [RUSSIAN README](README.md)
 
 ## Installation
-Before installation, be sure to remove Cryo Utilities if it was previously installed.
 
-The new version can be installed over the old one. After updating SteamOS, you must reinstall SDWEAK.
+> **Important:** Before installing, be sure to remove **Cryo Utilities** if it was previously installed.  
+> Updates can be installed over an existing version. After a **SteamOS** update, it's recommended to reinstall SDWEAK.
 
-1. Switch to Desktop Mode
-2. Open Konsole
-3. Set a sudo password (if you haven’t done so already):
-```bash
-passwd
-```
-4. Disable Read-Only:
-```bash
-sudo steamos-readonly disable
-```
-5. Enter the command to install SDWEAK:
-```bash
-rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./install.sh
-```
+### Installation Steps:
+
+1. Switch to **Desktop Mode**.
+2. Open **Konsole**.
+3. Set a `sudo` password (if you haven’t already):
+
+   ```bash
+   passwd
+   ```
+
+4. Download the [installation shortcut](https://raw.githubusercontent.com/klen/SDWEAK/refs/heads/main/InstallSDWEAK.desktop):  
+   Right-click the link → **Save As...**  
+   Then double-click the file and install it.
+
+5. After installation, launch the `SDWeak` shortcut from the desktop.
+
+---
+
 ## Uninstallation
-If you encounter any issues, please report them!
-1. Switch to Desktop Mode
-2. Open Konsole
-3. Disable Read-Only:
-```bash
-sudo steamos-readonly disable
-```
-4. Enter the command to uninstall SDWEAK:
-```bash
-rm -f SDWEAK.zip && wget https://github.com/Taskerer/SDWEAK/releases/latest/download/SDWEAK.zip && rm -rf SDWEAK && unzip SDWEAK.zip && cd SDWEAK && sudo --preserve-env=HOME ./uninstall.sh
-```
-## DONATE
-If you enjoy SDWEAK, you can also support the project's further development via the link below. Thank you for using it!
-* [Tinkoff](https://www.tinkoff.ru/cf/8HHVDNi8VMS)
 
-## What are the benefits?
-Increases minimum, maximum, and average FPS. Improves smoothness, responsiveness, and frame timing. Reduces stutters and micro-freezes. Enhances system performance under heavy RAM load. Significantly improves process scheduling. Overall, optimizes system performance for a better gaming experience.
+If you encounter issues — please report them!
 
-NOTE: Actual gains vary by game.
+1. Switch to **Desktop Mode**.
+2. Launch the `Uninstall SDWeak` shortcut from the desktop.
 
-## Optional Features Description
-The ideal installation configuration is enabled by default.
-* **Frametime fix(LCD)** - fixes terrible frame timing and micro-freezes on LCD displays. Significantly improves in-game smoothness.
-* **LCD screen up to 70Hz** - overclocks the LCD screen to 70Hz.
-* **Optimized Linux kernel** - installation of an optimized Linux kernel. Configuration tuning (primarily reducing overhead). TCP stack optimization. THP Shrinker for Transparent HugePages optimization. Plus a dozen other minor but system-wide performance improvements.
-* **Power efficiency priority(BETA)** - installation of CPU power efficiency priority to improve battery life. When this function is enabled, the CPU always tries to use the minimum possible frequency without worsening FPS. This can significantly improve battery life, but may cause occasional stutters, which is why the function currently has BETA status. Therefore, if you mainly play recent demanding AAA games, it is recommended to keep this function disabled (N). Otherwise, if you play AA and low-demand games, you can enable this function.
-NOTE: This function is only available with the optimized Linux kernel installed.
-* **GPU Optimization(BETA)** - adjusts the amdgpu driver settings, giving a boost.
+---
+
+## Updating
+
+1. Run the previously downloaded `SDWeakInstall` shortcut.  
+   The script will install the latest version over the current one.
+2. After the update, run the `SDWeak` shortcut again.
+
+---
+
+## Donate
+
+If you enjoy SDWEAK and want to support its development:
+
+- 💳 [Support via Tinkoff](https://www.tinkoff.ru/cf/8HHVDNi8VMS)
+
+Thank you for using SDWEAK!
+
+---
+
+## What does SDWEAK do?
+
+- Increases **minimum**, **average**, and **maximum FPS**
+- Improves **smoothness**, **responsiveness**, and **frame timing**
+- Reduces **stutters** and **micro-freezes**
+- More stable system behavior under heavy memory usage
+- Significantly improves **process scheduling**
+- Overall — boosts system responsiveness and improves the gaming experience
+
+> ⚠️ **Note:** Actual performance gains vary by game.
+
+---
+
+## Optional Features
+
+> The default installation includes an optimal configuration.
+
+- **Frametime fix (LCD)**  
+  Eliminates micro-freezes and severe frame timing issues on LCD. Greatly improves game smoothness.
+
+- **LCD overclock to 70Hz**  
+  Overclocks the LCD screen refresh rate to 70Hz.
+
+- **Optimized Linux kernel**  
+  Includes numerous enhancements:
+
+  - Reduced overhead in configuration
+  - TCP stack tuning
+  - THP Shrinker for Transparent HugePages
+  - Plus a dozen minor but system-wide improvements
+
+- **Power efficiency priority (BETA)**  
+  Enables CPU power efficiency mode to extend battery life.  
+  The CPU aims to use the lowest possible frequency without affecting FPS.  
+  Can significantly improve autonomy, but may cause rare stutters.
+
+  > Recommended to **disable** this feature for demanding AAA games.  
+  > Safe to **enable** for AA and low-demand games.  
+  > **Requires** the optimized kernel to be enabled.
+
+- **GPU Optimization (BETA)**  
+  Adjusts GPU driver parameters for performance improvements.
+
+---
 
 ## Recommendations
-Recommendations for improving Steam Deck performance beyond SDWEAK
-* [My guide](http://deckoc.notion.site/STEAM-DECK-RUS-76e43eacaf8b400ab130692d2d099a02?pvs=4) to overclocking and optimizing Steam Deck.
-* [Decky-Undervolt](https://github.com/totallynotbakadestroyer/Decky-Undervolt) plugin for efficient CPU undervolting directly from the system(Available in Decky Loader Store)
-* [ECLIPSE mods](https://t.me/kf4fr/850467) for specific games. They significantly improve performance and FPS, making unplayable games comfortable to complete.
+
+Additional tips to enhance Steam Deck performance:
+
+- 🔧 [My overclocking & optimization guide](http://deckoc.notion.site/STEAM-DECK-RUS-76e43eacaf8b400ab130692d2d099a02?pvs=4)
+- ⚡ [Decky-Undervolt](https://github.com/totallynotbakadestroyer/Decky-Undervolt) — a plugin for undervolting CPU directly from the system (available in Decky Loader Store)
+- 🎮 [ECLIPSE mods](https://t.me/kf4fr/850467) — targeted game tweaks that can significantly boost performance and FPS
+
+---
 
 ## Thanks
-* A HUGE THANK YOU to our [community](https://t.me/steamdeckoverclock) on Telegram for constant tests, ideas and development help! The development of new features has been and will be happening there. I will be glad to every new tester!
-* [Ktweak](https://github.com/tytydraco/KTweak) - for a useful skeleton for sysctl tweaks.
-* [Ananicy-cpp](https://gitlab.com/ananicy-cpp/ananicy-cpp) - for a beautiful demon.
-* [Ananicy-cpp-rules](https://github.com/CachyOS/ananicy-rules) - for the ever-expanding list of rules for a multitude of games and programs.
-* To the CachyOS team for their contributions to the Linux community.
 
-## Contact me
-* Create an **issue** describing your problem.
-* Text me on telegram **@biddbb**.
-* Write in our [Telegram group](https://t.me/steamdeckoverclock) your problem, we will be happy to help you out.
+- 💬 A **huge thank you** to our [Telegram community](https://t.me/steamdeckoverclock) for testing, ideas, and development support!  
+  All new features are developed and discussed there — join us!
+- [Ktweak](https://github.com/tytydraco/KTweak) — for the sysctl tuning base
+- [Ananicy-cpp](https://gitlab.com/ananicy-cpp/ananicy-cpp) — for the great CPU scheduler daemon
+- [Ananicy-cpp-rules](https://github.com/CachyOS/ananicy-rules) — for the extensive game rule set
+- The **CachyOS** team — for contributions to the Linux community
+
+---
+
+## Feedback
+
+- Create an **issue** describing your problem
+- Message me on Telegram: **@biddbb**
+- Or write in our [Telegram group](https://t.me/steamdeckoverclock) — we're happy to help!
+
+---
+
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+Pull requests are welcome!  
+For major changes, please open an issue first to discuss what you'd like to do.
+
+---
+
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT License](https://choosealicense.com/licenses/mit/)

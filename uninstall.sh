@@ -54,7 +54,7 @@ logo "
 || ███████║██████╔╝╚███╔███╔╝███████╗██║  ██║██║  ██╗ ||
 || ╚══════╝╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ||
 >>====================================================<<
-DEVELOPER: @biddbb
+DEVELOPER: @noncatt
 TG GROUP: @steamdeckoverclock
 "
 if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then

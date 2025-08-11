@@ -65,7 +65,7 @@ Recommendations for improving Steam Deck performance beyond SDWEAK
 
 ## Contact me
 * Create an **issue** describing your problem.
-* Text me on telegram **@biddbb**.
+* Text me on telegram **@noncatt**.
 * Write in our [Telegram group](https://t.me/steamdeckoverclock) your problem, we will be happy to help you out.
 ## Contributing
 

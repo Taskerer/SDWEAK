@@ -343,8 +343,8 @@ fi
 
 # display overclock LCD
 if [ "$MODEL" = "Jupiter" ]; then
-  display_overclock
   frametime_fix
+  display_overclock
 fi
 
 # GPU optimization

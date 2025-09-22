@@ -1,13 +1,10 @@
 #!/bin/bash
 
-# Backup
-BACKUP_DIR="$HOME/install_backup"
-backup_file() {
-    local file="$1"
-    if [ -f "$file" ]; then
-        cp "$file" "$BACKUP_DIR"
-    fi
-}
+# Connect a common script with functions and variables
+source ./scripts/common.sh
+
+# Restore stock grub
+restore_file "$GRUB"
 
 # Activate MGLRU
 cat << EOF | sudo tee /etc/tmpfiles.d/mglru.conf &>/dev/null
@@ -22,44 +19,26 @@ cat << EOF | sudo tee /etc/security/limits.d/memlock.conf &>/dev/null
 EOF
 
 # Disable file access time tracking
-if grep "noatime" /etc/fstab &>/dev/null; then
-    echo 1 > /dev/null
-else
-    sudo sed -i -e '/home/s/\<defaults\>/&,noatime/' /etc/fstab &>/dev/null
+if ! grep "noatime" /etc/fstab &>/dev/null; then
+  backup_file /etc/fstab
+  sudo sed -i -e '/home/s/\<defaults\>/&,noatime/' /etc/fstab &>/dev/null
 fi
 
 # Input controller overclocking
-if grep "usbhid.jspoll=1" /etc/default/grub &>/dev/null; then
-    echo 1 > /dev/null
-else
-    sudo sed -i 's/\bGRUB_CMDLINE_LINUX_DEFAULT="\b/&usbhid.jspoll=1 /' /etc/default/grub &>/dev/null
-    sudo grub-mkconfig -o /boot/efi/EFI/steamos/grub.cfg &>/dev/null
-fi
+echo "options usbhid jspoll=1 kbpoll=1 mousepoll=1" | sudo tee /etc/modprobe.d/usbhid.conf &>/dev/null
 
-# Stop unnecessary services
-sudo systemctl stop steamos-cfs-debugfs-tunings.service &>/dev/null
-sudo systemctl stop gpu-trace.service &>/dev/null
-sudo systemctl stop steamos-log-submitter.service &>/dev/null
-sudo systemctl stop cups.service &>/dev/null
-sudo systemctl stop avahi-daemon.socket &>/dev/null
-sudo systemctl stop avahi-daemon.service &>/dev/null
+# List of unnecessary services
+services="steamos-cfs-debugfs-tunings.service gpu-trace.service steamos-log-submitter.service cups.service avahi-daemon.socket avahi-daemon.service"
 
-# Mask unnecessary services
-sudo systemctl mask steamos-cfs-debugfs-tunings.service &>/dev/null
-sudo systemctl mask gpu-trace.service &>/dev/null
-sudo systemctl mask steamos-log-submitter.service &>/dev/null
-sudo systemctl mask cups.service &>/dev/null
-sudo systemctl mask avahi-daemon.socket &>/dev/null
-sudo systemctl mask avahi-daemon.service &>/dev/null
+# Stopping and masking unnecessary services
+sudo systemctl stop $services --quiet
+sudo systemctl mask $services --quiet
 
 # RM unnecessary .conf
+backup_file /usr/lib/sysctl.d/50-coredump.conf &>/dev/null
 backup_file /usr/lib/sysctl.d/60-crash-hook.conf &>/dev/null
 backup_file /usr/lib/sysctl.d/20-sched.conf &>/dev/null
-backup_file /usr/lib/sysctl.d/50-coredump.conf &>/dev/null
-sudo rm -f /usr/lib/sysctl.d/50-coredump.conf &>/dev/null
-sudo rm -f /etc/udev/rules.d/64-ioschedulers.rules &>/dev/null
-sudo rm -f /usr/lib/sysctl.d/60-crash-hook.conf &>/dev/null
-sudo rm -f /usr/lib/sysctl.d/20-sched.conf &>/dev/null
+sudo rm -f /usr/lib/sysctl.d/50-coredump.conf /etc/udev/rules.d/64-ioschedulers.rules /usr/lib/sysctl.d/60-crash-hook.conf /usr/lib/sysctl.d/20-sched.conf
 
-# remove gamemoded
+# Remove gamemoded
 sudo pacman -Rdd --noconfirm gamemode &>/dev/null

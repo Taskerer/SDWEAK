@@ -328,6 +328,7 @@ sys-reboot() {
       break
     elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
       red_msg "$(print_text reboot_required)"
+      sleep 5
       break
     else
       red_msg "$(print_text invalid_input)"

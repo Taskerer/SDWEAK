@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Install SDWEAK
-Exec=curl https://raw.githubusercontent.com/Taskerer/SDWEAK/main/desktop-install.sh | bash -s --
+Exec=bash -c 'wget -O /tmp/desktop-install.sh https://raw.githubusercontent.com/Taskerer/SDWEAK/main/desktop-install.sh && bash /tmp/desktop-install.sh'
 Icon=steamdeck-gaming-return
 Terminal=true
 Type=Application

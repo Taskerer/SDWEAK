@@ -122,3 +122,4 @@ sudo mkinitcpio -P &>/dev/null
 sudo grub-mkconfig -o "$GRUB_CFG" &>/dev/null
 
 red_msg "A reboot is required!"
+sleep 5

@@ -141,7 +141,7 @@ logo "
 || ╚══════╝╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ||
 >>====================================================<<
 VERSION: 1.7 RELEASE
-DEVELOPER: @biddbb
+DEVELOPER: @noncatt
 TG GROUP: @steamdeckoverclock
 "
 # Compatibility check

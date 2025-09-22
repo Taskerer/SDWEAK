@@ -131,7 +131,6 @@ Pull requests приветствуются!
 Перед серьёзными изменениями откройте issue для обсуждения.
 
 ---
-
 ## Лицензия
 
 [MIT License](https://choosealicense.com/licenses/mit/)

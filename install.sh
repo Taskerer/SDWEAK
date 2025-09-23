@@ -42,6 +42,7 @@ if ping -c 1 8.8.8.8 &>/dev/null || ping -c 1 1.1.1.1 &>/dev/null || ping -c 1 2
   green_msg "$(print_text ping_success)"
 else
   err_msg "$(print_text ping_fail)"
+  sleep 10
   exit 1
 fi
 
@@ -50,6 +51,7 @@ if curl --speed-limit 3 --speed-time 2 --max-time 30 https://steamdeck-packages.
   green_msg "$(print_text server_success)"
 else
   err_msg "$(print_text server_fail)"
+  sleep 10
   exit 1
 fi
 
@@ -70,9 +72,9 @@ checksums=(
 )
 for i in "${!files[@]}"; do
   file="${files[i]}"
-  [[ -f "$file" ]] || { err_msg "$(print_text integrity_fail)"; exit 1; }
+  [[ -f "$file" ]] || { err_msg "$(print_text integrity_fail)"; sleep 10; exit 1; }
   [[ $(sha256sum "$file" | awk '{print $1}') == "${checksums[i]}" ]] \
-    || { err_msg "$(print_text integrity_fail)"; exit 1; }
+    || { err_msg "$(print_text integrity_fail)"; sleep 10; exit 1; }
 done
 
 # Function for checking the availability of files
@@ -80,6 +82,7 @@ check_file() {
   local file_path="$1"
   if [[ ! -f "$file_path" ]]; then
     err_msg "$(print_text integrity_fail)"
+    sleep 10
     exit 1
   fi
 }
@@ -101,12 +104,12 @@ print_logo
 # Compatibility check
 if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
   err_msg "$(print_text compatible)"
-  sleep 5
+  sleep 10
   exit 1
 fi
 if [ "$steamos_version" != "3.7" ] && [ "$steamos_version" != "3.8" ]; then
   err_msg "$(print_text old_steamos)"
-  sleep 5
+  sleep 10
   exit 1
 fi
 
@@ -123,12 +126,14 @@ sudo pacman-key --init >>"$LOG_FILE" 2>&1
 sudo pacman-key --populate >>"$LOG_FILE" 2>&1
 if ! sudo pacman -Sy >>"$LOG_FILE" 2>&1; then
   err_msg "$(print_text error_sys)"
+  sleep 10
   exit 1
 fi
 log "SED INSTALL" >>"$LOG_FILE" 2>&1
 sudo pacman -S --noconfirm sed &>/dev/null
 if ! sudo pacman -S --noconfirm sed >>"$LOG_FILE" 2>&1; then
   err_msg "$(print_text error_sys)"
+  sleep 10
   exit 1
 fi
 

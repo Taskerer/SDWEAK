@@ -66,7 +66,7 @@ files=(
 checksums=(
   "7c46a9e6c0d94961633f3b6764aec2fb78894e1a66dc892a832b19b5ce168ee2"
   "87b5f0077d1ff1421ad1050bb4d92fca1fadaa6a57a37b9bce646d5e90ae147f"
-  "dc49dbbc7853b9731a7afa2d58016c37954691b87b6b92fadcc09287ef31ff75"
+  "1ce843dd9a3782fea60267ae01945636654b7ff5094d9feca7bd6955e57c5006"
   "98c1f1ecd63e01530e16d4d4c5e1106024133ea389322692715d715038a5f228"
   "10f7cc049a6eaaa37f48a0ebfe309614a7959bf3818c5790e8c365506eec2772"
 )
@@ -107,7 +107,7 @@ if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
   sleep 10
   exit 1
 fi
-if [ "$steamos_version" != "3.7" ] && [ "$steamos_version" != "3.8" ]; then
+if [ "$steamos_version" != "3.7" ]; then
   err_msg "$(print_text old_steamos)"
   sleep 10
   exit 1
@@ -180,9 +180,9 @@ green_msg "$(print_text zram_conf)"
 frametime_fix() {
   while true; do
     tput setaf 3
-    read -p "$(print_text frametime_fix_prompt) [Y/n]: " answer
+    read -p "$(print_text frametime_fix_prompt) [y/N]: " answer
     tput sgr0
-    answer=${answer:-y}
+    answer=${answer:-n}
     if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
       red_msg "$(print_text frametime_fix_install)"
       sudo pacman -U --noconfirm ./packages/gamescope-3.16.14.2-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
@@ -342,9 +342,7 @@ sys-reboot() {
 }
 
 # SDKERNEL and Frametime fix
-if [ "$steamos_version" = "3.7" ]; then
-  sdkernel
-fi
+sdkernel
 
 # display overclock LCD
 if [ "$MODEL" = "Jupiter" ]; then

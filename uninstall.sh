@@ -33,8 +33,8 @@ if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
   sleep 5
   exit 1
 fi
-if [ "$steamos_version" != "3.7" ] && [ "$steamos_version" != "3.8" ]; then
-  err_msg "SDWEAK is only compatible with SteamOS 3.7 and higher! Please update your system!"
+if [ "$steamos_version" != "3.7" ]; then
+  err_msg "SDWEAK is only compatible with SteamOS 3.7!"
   sleep 5
   exit 1
 fi
@@ -108,11 +108,9 @@ sudo rm -f /etc/systemd/system/energy.service
 sudo rm -f /etc/systemd/system/energy.timer
 
 # SDKERNEL
-if [ "$steamos_version" = "3.7" ]; then
-  sudo pacman -S --noconfirm linux-neptune-611 &>/dev/null
-  sudo pacman -R --noconfirm linux-neptune-611-headers &>/dev/null
-  sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
-fi
+sudo pacman -S --noconfirm linux-neptune-611 &>/dev/null
+sudo pacman -R --noconfirm linux-neptune-611-headers &>/dev/null
+sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
 
 # AMDGPU optimization
 sudo rm -f /etc/modprobe.d/amdgpu.conf

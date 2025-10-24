@@ -28,7 +28,7 @@ fi
 echo "options usbhid jspoll=1 kbpoll=1 mousepoll=1" | sudo tee /etc/modprobe.d/usbhid.conf &>/dev/null
 
 # List of unnecessary services
-services="steamos-cfs-debugfs-tunings.service gpu-trace.service steamos-log-submitter.service cups.service avahi-daemon.socket avahi-daemon.service"
+services="steamos-cfs-debugfs-tunings.service gpu-trace.service steamos-log-submitter.service cups.service"
 
 # Stopping and masking unnecessary services
 sudo systemctl stop $services --quiet

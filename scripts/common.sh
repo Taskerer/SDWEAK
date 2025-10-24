@@ -5,7 +5,7 @@ export steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -
 export MODEL=$(cat /sys/class/dmi/id/board_name)
 export BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
 export DATE=$(date '+%T %d.%m.%Y')
-export SDWEAK_VERSION="1.8 RELEASE"
+export SDWEAK_VERSION="1.9 RELEASE"
 export LUA_PATH="/usr/share/gamescope/scripts/00-gamescope/displays/valve.steamdeck.lcd.lua"
 export MODIFIED_STRING="58, 59,\n        60, 61, 62, 63, 64, 65, 66, 67, 68, 69,\n        70"
 export ORIGINAL_STRING="58, 59,\n        60"

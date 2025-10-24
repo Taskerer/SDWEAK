@@ -4,6 +4,7 @@
 
 ## Installation
 > **Important:** Before installation, be sure to uninstall **Cryo Utility** if it was previously installed.
+> Only for SteamOS 3.7!
 > SDWEAK updates can be installed over the old version. After updating **SteamOS**, it is recommended to reinstall SDWEAK over the old version as well.
 
 ### Installation steps:
@@ -53,22 +54,21 @@ Thank you for using SDWEAK!
 
 > The optimal configuration is used by default.
 > Some features are only available on Steam Deck LCD and will not be available on Steam Deck OLED.
-> Some features are only available on SteamOS 3.7 and will not be available on SteamOS 3.8.
 
-- **Fixes uneven frame rates when using FPS limiting via QAM. Only for SteamOS 3.7 and LCD (BETA)**  
+- **Fixes uneven frame rates when using FPS limiting via QAM. Only for LCD (BETA)**  
   Eliminates micro-freezes and frame rate spikes caused by FPS limiting via QAM (Steam side menu).
 
 - **Overclocking the screen to 70 Hz. (LCD)**  
   Increases the screen refresh rate to 70Hz. Useful for limiting 35FPS(70Hz) and for using the 70FPS(70Hz) limit in undemanding projects.
 
-- **Optimized Linux kernel. Only for SteamOS 3.7**  
+- **Optimized Linux kernel.**  
   Includes many improvements:
 
 - Disabling overhead in the configuration (including disabling mitigation)
 - Adding THP Shrinker
 - And a number of less significant but useful changes
 
-- **CPU power efficiency priority. Only for SteamOS 3.7 (BETA)**
+- **CPU power efficiency priority. (BETA)**
 Sets the minimum frequency priority for the CPU without losing FPS.
 Improves battery life, but single stutters are possible.
 

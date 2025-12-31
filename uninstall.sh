@@ -108,8 +108,9 @@ sudo rm -f /etc/systemd/system/energy.service
 sudo rm -f /etc/systemd/system/energy.timer
 
 # SDKERNEL
+sudo pacman -R --noconfirm linux-charcoal-611 &>/dev/null
 sudo pacman -S --noconfirm linux-neptune-611 &>/dev/null
-sudo pacman -R --noconfirm linux-neptune-611-headers &>/dev/null
+sudo pacman -R --noconfirm linux-charcoal-611-headers &>/dev/null
 sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
 
 # AMDGPU optimization

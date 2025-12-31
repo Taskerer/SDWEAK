@@ -57,17 +57,17 @@ fi
 
 # Validation of checksums of binary files
 files=(
-  "./packages/linux-neptune-611-headers-SDKERNEL.pkg.tar.zst"
-  "./packages/linux-neptune-611-SDKERNEL.pkg.tar.zst"
+  "./packages/linux-charcoal-611-headers-6.11.11.valve26-3-x86_64.pkg.tar.zst"
+  "./packages/linux-charcoal-611-6.11.11.valve26-3-x86_64.pkg.tar.zst"
   "./packages/cachyos-ananicy-rules-git-latest-plus-SDWEAK.pkg.tar.zst"
-  "./packages/gamescope-3.16.14.2-SDWEAK.pkg.tar.zst"
+  "./packages/gamescope-3.16.14.5-1-SDWEAK.pkg.tar.zst"
   "./packages/vulkan-radeon-24.3.0-SDWEAK.pkg.tar.zst"
 )
 checksums=(
-  "7c46a9e6c0d94961633f3b6764aec2fb78894e1a66dc892a832b19b5ce168ee2"
-  "87b5f0077d1ff1421ad1050bb4d92fca1fadaa6a57a37b9bce646d5e90ae147f"
-  "1ce843dd9a3782fea60267ae01945636654b7ff5094d9feca7bd6955e57c5006"
-  "98c1f1ecd63e01530e16d4d4c5e1106024133ea389322692715d715038a5f228"
+  "beb9ebf803f1dba93cfc5ecd3e2ffa7ebbf4521db9226eba95708efde932b588"
+  "cf31e0f26e9588d22b0c6febbadf84336813c6d3c8e5129c1dbb4652210649b6"
+  "77340e7e86ad598ea42a19224ff9dd0c0c63ddd023d8b9e11eada2c8a2c3d6f6"
+  "c1250cb3ad97f296204e29b6f359dc6bd91c4cd0dc515cb0e8fd5f9e11616295"
   "10f7cc049a6eaaa37f48a0ebfe309614a7959bf3818c5790e8c365506eec2772"
 )
 for i in "${!files[@]}"; do
@@ -185,7 +185,7 @@ frametime_fix() {
     answer=${answer:-n}
     if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
       red_msg "$(print_text frametime_fix_install)"
-      sudo pacman -U --noconfirm ./packages/gamescope-3.16.14.2-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
+      sudo pacman -U --noconfirm ./packages/gamescope-3.16.14.5-1-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo pacman -U --noconfirm ./packages/vulkan-radeon-24.3.0-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo pacman -S --noconfirm --needed lib32-vulkan-radeon >>"$LOG_FILE" 2>&1
       green_msg "$(print_text frametime_fix_success)"
@@ -275,8 +275,10 @@ sdkernel() {
     if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
       red_msg "$(print_text sdkernel_install)"
       log "SDKERNEL INSTALL" >>"$LOG_FILE" 2>&1
-      sudo pacman -U --noconfirm ./packages/linux-neptune-611-SDKERNEL.pkg.tar.zst >>"$LOG_FILE" 2>&1
-      sudo pacman -U --noconfirm ./packages/linux-neptune-611-headers-SDKERNEL.pkg.tar.zst >>"$LOG_FILE" 2>&1
+      sudo pacman -R --noconfirm linux-neptune-611 >>"$LOG_FILE" 2>&1
+      sudo pacman -U --noconfirm ./packages/linux-charcoal-611-6.11.11.valve26-3-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
+      sudo pacman -R --noconfirm linux-neptune-611-headers >>"$LOG_FILE" 2>&1
+      sudo pacman -U --noconfirm ./packages/linux-charcoal-611-headers-6.11.11.valve26-3-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo grub-mkconfig -o "$GRUB_CFG" &>/dev/null
       check_file "./packages/thp-shrinker.conf"
       sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null

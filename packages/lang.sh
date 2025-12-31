@@ -50,8 +50,8 @@ texts["ru_display_overclock_prompt"]="Поднять частоту обновл
 texts["en_display_overclock_success"]="Screen refresh rate successfully increased to 70Hz."
 texts["ru_display_overclock_success"]="Частота обновления экрана успешно поднята до 70Hz."
 
-texts["en_power_efficiency_prompt"]="Set CPU power efficiency priority? (BETA)"
-texts["ru_power_efficiency_prompt"]="Установить приоритет энергоэффективности для CPU? (БЕТА)"
+texts["en_power_efficiency_prompt"]="Set CPU power efficiency priority?"
+texts["ru_power_efficiency_prompt"]="Установить приоритет энергоэффективности для CPU?"
 texts["en_power_efficiency_install"]="Applying CPU power efficiency priority..."
 texts["ru_power_efficiency_install"]="Установка приоритета энергоэффективности..."
 texts["en_power_efficiency_success"]="CPU power efficiency priority successfully applied."

@@ -104,19 +104,19 @@ write /sys/block/nvme*n*/queue/iosched/write_lat_nsec 6000000
 write /sys/block/nvme*n*/queue/iosched/read_lat_nsec 1200000
 
 # BORE-scheduler
-write /proc/sys/kernel/sched_bore 1
-write /proc/sys/kernel/sched_burst_cache_lifetime 40000000
-write /proc/sys/kernel/sched_burst_fork_atavistic 2
-write /proc/sys/kernel/sched_burst_penalty_offset 26
-write /proc/sys/kernel/sched_burst_penalty_scale 1000
-write /proc/sys/kernel/sched_burst_smoothness_long 0
-write /proc/sys/kernel/sched_burst_smoothness_short 0
-write /proc/sys/kernel/sched_burst_exclude_kthreads 1
-write /proc/sys/kernel/sched_burst_parity_threshold 1
+#write /proc/sys/kernel/sched_bore 1
+#write /proc/sys/kernel/sched_burst_cache_lifetime 40000000
+#write /proc/sys/kernel/sched_burst_fork_atavistic 2
+#write /proc/sys/kernel/sched_burst_penalty_offset 26
+#write /proc/sys/kernel/sched_burst_penalty_scale 1000
+#write /proc/sys/kernel/sched_burst_smoothness_long 0
+#write /proc/sys/kernel/sched_burst_smoothness_short 0
+#write /proc/sys/kernel/sched_burst_exclude_kthreads 1
+#write /proc/sys/kernel/sched_burst_parity_threshold 1
 
 # debug sched
-write /sys/kernel/debug/sched/features NO_PLACE_LAG
-write /sys/kernel/debug/sched/features NO_RUN_TO_PARITY
-write /sys/kernel/debug/sched/features NEXT_BUDDY
-write /sys/kernel/debug/sched/migration_cost_ns 1000000
-write /sys/kernel/debug/sched/nr_migrate 4
+#write /sys/kernel/debug/sched/features NO_PLACE_LAG
+#write /sys/kernel/debug/sched/features NO_RUN_TO_PARITY
+#write /sys/kernel/debug/sched/features NEXT_BUDDY
+#write /sys/kernel/debug/sched/migration_cost_ns 1000000
+#write /sys/kernel/debug/sched/nr_migrate 4

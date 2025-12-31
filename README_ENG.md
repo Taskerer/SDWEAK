@@ -61,14 +61,10 @@ Thank you for using SDWEAK!
 - **Overclocking the screen to 70 Hz. (LCD)**  
   Increases the screen refresh rate to 70Hz. Useful for limiting 35FPS(70Hz) and for using the 70FPS(70Hz) limit in undemanding projects.
 
-- **Optimized Linux kernel.**  
-  Includes many improvements:
+- **Optimized linux-charcoal kernel.**  
+  [More details in the repository](https://github.com/V10lator/linux-charcoal?tab=readme-ov-file)
 
-- Disabling overhead in the configuration (including disabling mitigation)
-- Adding THP Shrinker
-- And a number of less significant but useful changes
-
-- **CPU power efficiency priority. (BETA)**
+- **CPU power efficiency priority.**
 Sets the minimum frequency priority for the CPU without losing FPS.
 Improves battery life, but single stutters are possible.
 
@@ -93,6 +89,7 @@ Additional ways to improve Steam Deck performance:
 
 - 💬 **Thank you** to our [Telegram community](https://t.me/steamdeckoverclock) for their ideas, testing, and assistance!
 Development takes place there — please join us!
+- [linux-charcoal](https://github.com/V10lator/linux-charcoal?tab=readme-ov-file) — optimized kernel based on linux-neptune
 - [Ktweak](https://github.com/tytydraco/KTweak) — the basis for sysctl tweaks
 - [Ananicy-cpp](https://gitlab.com/ananicy-cpp/ananicy-cpp) — priority management daemon
 - [Ananicy-cpp-rules](https://github.com/CachyOS/ananicy-rules) — a set of rules for many games

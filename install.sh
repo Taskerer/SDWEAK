@@ -57,15 +57,15 @@ fi
 
 # Validation of checksums of binary files
 files=(
-  "./packages/linux-charcoal-611-headers-6.11.11.valve26-3-x86_64.pkg.tar.zst"
-  "./packages/linux-charcoal-611-6.11.11.valve26-3-x86_64.pkg.tar.zst"
+  "./packages/linux-charcoal-611-headers-6.11.11.valve26-4-x86_64.pkg.tar.zst"
+  "./packages/linux-charcoal-611-6.11.11.valve26-4-x86_64.pkg.tar.zst"
   "./packages/cachyos-ananicy-rules-git-latest-plus-SDWEAK.pkg.tar.zst"
   "./packages/gamescope-3.16.14.5-1-SDWEAK.pkg.tar.zst"
   "./packages/vulkan-radeon-24.3.0-SDWEAK.pkg.tar.zst"
 )
 checksums=(
-  "beb9ebf803f1dba93cfc5ecd3e2ffa7ebbf4521db9226eba95708efde932b588"
-  "cf31e0f26e9588d22b0c6febbadf84336813c6d3c8e5129c1dbb4652210649b6"
+  "2d5cdd0be4c79d6147d24bf1be3e44dbff3d49be347afb9d6bbfef5667533f9a"
+  "92b799339963ef04c0021044d0498618d35e11c25e662925f68681859944c93d"
   "77340e7e86ad598ea42a19224ff9dd0c0c63ddd023d8b9e11eada2c8a2c3d6f6"
   "c1250cb3ad97f296204e29b6f359dc6bd91c4cd0dc515cb0e8fd5f9e11616295"
   "10f7cc049a6eaaa37f48a0ebfe309614a7959bf3818c5790e8c365506eec2772"
@@ -276,9 +276,9 @@ sdkernel() {
       red_msg "$(print_text sdkernel_install)"
       log "SDKERNEL INSTALL" >>"$LOG_FILE" 2>&1
       sudo pacman -R --noconfirm linux-neptune-611 >>"$LOG_FILE" 2>&1
-      sudo pacman -U --noconfirm ./packages/linux-charcoal-611-6.11.11.valve26-3-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
+      sudo pacman -U --noconfirm ./packages/linux-charcoal-611-6.11.11.valve26-4-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo pacman -R --noconfirm linux-neptune-611-headers >>"$LOG_FILE" 2>&1
-      sudo pacman -U --noconfirm ./packages/linux-charcoal-611-headers-6.11.11.valve26-3-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
+      sudo pacman -U --noconfirm ./packages/linux-charcoal-611-headers-6.11.11.valve26-4-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo grub-mkconfig -o "$GRUB_CFG" &>/dev/null
       check_file "./packages/thp-shrinker.conf"
       sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null

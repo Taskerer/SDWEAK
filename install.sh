@@ -14,6 +14,21 @@ sudo steamos-readonly disable
 sudo rm -f "$HOME/SDWEAK-install.log"
 LOG_FILE="$HOME/SDWEAK-install.log"
 
+# local setup with wildcards
+install_local() {
+  local pkg_name=$1
+  local pkg_file=$(ls ./packages/${pkg_name}*.pkg.tar.zst 2>/dev/null | head -n 1)
+
+  if [[ -f "$pkg_file" ]]; then
+    sudo pacman -U --noconfirm "$pkg_file" >>"$LOG_FILE" 2>&1
+  else
+    err_msg "$(print_text bundled_package_missing)"
+    log "$(print_text bundled_package_missing) $pkg_name" >>"$LOG_FILE"
+    sleep 10
+    exit 1
+  fi
+}
+
 # Select_lang [ru|en]
 choose_language() {
   clear
@@ -124,18 +139,8 @@ sudo rm -rf /home/.steamos/offload/var/cache/pacman/pkg/{*,.*} &>/dev/null
 sudo rm -rf /etc/pacman.d/gnupg &>/dev/null
 sudo pacman-key --init >>"$LOG_FILE" 2>&1
 sudo pacman-key --populate >>"$LOG_FILE" 2>&1
-if ! sudo pacman -Sy >>"$LOG_FILE" 2>&1; then
-  err_msg "$(print_text error_sys)"
-  sleep 10
-  exit 1
-fi
-log "SED INSTALL" >>"$LOG_FILE" 2>&1
-sudo pacman -S --noconfirm sed &>/dev/null
-if ! sudo pacman -S --noconfirm sed >>"$LOG_FILE" 2>&1; then
-  err_msg "$(print_text error_sys)"
-  sleep 10
-  exit 1
-fi
+
+install_local "sed"
 
 # Yet-tweak
 check_file "./scripts/yet-tweak.sh"
@@ -169,8 +174,9 @@ check_file "./packages/60-ioschedulers.rules"
 sudo cp ./packages/60-ioschedulers.rules /etc/udev/rules.d/60-ioschedulers.rules &>/dev/null
 green_msg "$(print_text sysfs_optimization)"
 
-# ZRAM Tweaks
-sudo pacman -S --noconfirm --needed holo-zram-swap zram-generator &>/dev/null
+# ZRAM Tweaks (LOCAL ONLY)
+install_local "holo-zram-swap"
+install_local "zram-generator"
 check_file "./packages/zram-generator.conf"
 sudo cp -f ./packages/zram-generator.conf /usr/lib/systemd/zram-generator.conf &>/dev/null
 sudo systemctl restart systemd-zram-setup@zram0 &>/dev/null
@@ -187,13 +193,14 @@ frametime_fix() {
       red_msg "$(print_text frametime_fix_install)"
       sudo pacman -U --noconfirm ./packages/gamescope-3.16.14.5-1-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo pacman -U --noconfirm ./packages/vulkan-radeon-24.3.0-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
-      sudo pacman -S --noconfirm --needed lib32-vulkan-radeon >>"$LOG_FILE" 2>&1
+      install_local "lib32-vulkan-radeon"
       green_msg "$(print_text frametime_fix_success)"
       break
     elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
       green_msg "$(print_text skip)"
-      sudo pacman -S --noconfirm gamescope vulkan-radeon &>/dev/null
-      sudo pacman -S --noconfirm --needed lib32-vulkan-radeon >>"$LOG_FILE" 2>&1
+      install_local "gamescope"
+      install_local "vulkan-radeon"
+      install_local "lib32-vulkan-radeon"
       break
     else
       red_msg "$(print_text invalid_input)"
@@ -290,7 +297,7 @@ sdkernel() {
       break
     elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
       green_msg "$(print_text skip)"
-      sudo pacman -S --noconfirm linux-neptune-611 >>"$LOG_FILE" 2>&1
+      install_local "linux-neptune-611"
       sudo pacman -R --noconfirm linux-neptune-611-headers >>"$LOG_FILE" 2>&1
       sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
       break

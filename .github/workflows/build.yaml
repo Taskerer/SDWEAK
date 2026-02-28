@@ -102,7 +102,12 @@ jobs:
       - name: create zip
         run: |
           pacman -S --noconfirm zip
-          zip -r sdweak.zip . -x "sdweak.zip" ".git/*" ".github/*"
+          mkdir -p /tmp/SDWEAK
+          cp -a . /tmp/SDWEAK/
+          rm -rf /tmp/SDWEAK/.git /tmp/SDWEAK/.github
+
+          cd /tmp
+          zip -r $GITHUB_WORKSPACE/sdweak.zip SDWEAK
 
       - name: create release
         uses: softprops/action-gh-release@v2

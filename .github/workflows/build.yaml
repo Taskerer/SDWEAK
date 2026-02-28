@@ -1,0 +1,88 @@
+name: SteamOS 3.7 Dependencies bundle
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: configure SteamOS 3.7 repos
+        run: |
+          rm -rf /etc/pacman.d/*
+          
+          cat <<EOF > /etc/pacman.conf
+          [options]
+          Architecture = auto
+          SigLevel = Never
+          
+          [jupiter-3.7]
+          Server = https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.7/os/x86_64/
+          
+          [holo-3.7]
+          Server = https://steamdeck-packages.steamos.cloud/archlinux-mirror/holo-3.7/os/x86_64/
+
+          [core-3.7]
+          Server = https://steamdeck-packages.steamos.cloud/archlinux-mirror/core-3.7/os/x86_64/
+
+          [extra-3.7]
+          Server = https://steamdeck-packages.steamos.cloud/archlinux-mirror/extra-3.7/os/x86_64/
+
+          [community-3.7]
+          Server = https://steamdeck-packages.steamos.cloud/archlinux-mirror/community-3.7/os/x86_64/
+
+          [multilib-3.7]
+          Server = https://steamdeck-packages.steamos.cloud/archlinux-mirror/multilib-3.7/os/x86_64/
+          EOF
+          
+          pacman-key --init
+          pacman -Syy
+
+      - name: download all packages
+        run: |
+          mkdir -p ./packages
+          pacman -Swdd --noconfirm --cachedir ./packages \
+            sed \
+            holo-zram-swap \
+            zram-generator \
+            lib32-vulkan-radeon \
+            vulkan-radeon \
+            gamescope \
+            linux-neptune-611 \
+            pipewire-jack \
+            libpipewire \
+            bluez-libs \
+            mkinitcpio
+
+          pacman -S --noconfirm jq
+
+          API_URL="https://api.github.com/repos/V10lator/linux-charcoal/releases/tags/6.11.11-valve27-charcoal-1"
+          RELEASE_DATA=$(curl -s $API_URL)
+          
+          KERNEL_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[] | select(.name | contains("linux-charcoal") and (contains("headers") | not)) | .browser_download_url')
+          HEADERS_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[] | select(.name | contains("headers")) | .browser_download_url')
+
+          echo "Downloading Kernel from: $KERNEL_URL"
+          curl -Lf "$KERNEL_URL" -O --output-dir ./packages --create-dirs          
+          echo "Downloading Headers from: $HEADERS_URL"
+          curl -Lf "$HEADERS_URL" -O --output-dir ./packages --create-dirs
+
+          rm -f ./packages/*.db ./packages/*.sig
+
+      - name: create zip
+        run: |
+          pacman -S --noconfirm zip
+          zip -r sdweak.zip . -x "sdweak.zip" ".git/*" ".github/*"
+
+      - name: create release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: sdweak.zip
+          body: "Offline bundle"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

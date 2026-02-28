@@ -10,12 +10,10 @@ on:
         type: string
         default: 'v1.11.0'
       release_notes:
-        description: 'description'
+        description: 'desc'
         required: false
         type: string
-        default: 'description'
-
-# Добавляем права для GITHUB_TOKEN на создание релизов
+        default: 'desc'
 permissions:
   contents: write
 

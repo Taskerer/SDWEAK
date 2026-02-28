@@ -3,6 +3,21 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'SDWEAK v1.11'
+        required: true
+        type: string
+        default: 'v1.11.0'
+      release_notes:
+        description: 'description'
+        required: false
+        type: string
+        default: 'description'
+
+# Добавляем права для GITHUB_TOKEN на создание релизов
+permissions:
+  contents: write
 
 jobs:
   bundle:
@@ -56,7 +71,20 @@ jobs:
             pipewire-jack \
             libpipewire \
             bluez-libs \
-            mkinitcpio
+            mkinitcpio \
+            spdlog \
+            fmt \
+            ananicy-cpp \
+            clang \
+            clang-libs \
+            compiler-rt \
+            gcc \
+            libisl \
+            libmpc \
+            lld \
+            llvm \
+            pahole \
+            polly
 
           pacman -S --noconfirm jq
 
@@ -80,9 +108,11 @@ jobs:
 
       - name: create release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: sdweak.zip
-          body: "Offline bundle"
+          tag_name: ${{ inputs.version || github.ref_name }}
+          name: "SDWEAK ${{ inputs.version || github.ref_name }}"
+          body: |
+            ${{ inputs.release_notes}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

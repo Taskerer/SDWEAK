@@ -14,21 +14,6 @@ sudo steamos-readonly disable
 sudo rm -f "$HOME/SDWEAK-install.log"
 LOG_FILE="$HOME/SDWEAK-install.log"
 
-# local setup with wildcards
-install_local() {
-  local pkg_name=$1
-  local pkg_file=$(ls ./packages/${pkg_name}*.pkg.tar.zst 2>/dev/null | head -n 1)
-
-  if [[ -f "$pkg_file" ]]; then
-    sudo pacman -U --noconfirm "$pkg_file" >>"$LOG_FILE" 2>&1
-  else
-    err_msg "$(print_text bundled_package_missing)"
-    log "$(print_text bundled_package_missing) $pkg_name" >>"$LOG_FILE"
-    sleep 10
-    exit 1
-  fi
-}
-
 # Select_lang [ru|en]
 choose_language() {
   clear
@@ -57,15 +42,6 @@ if ping -c 1 8.8.8.8 &>/dev/null || ping -c 1 1.1.1.1 &>/dev/null || ping -c 1 2
   green_msg "$(print_text ping_success)"
 else
   err_msg "$(print_text ping_fail)"
-  sleep 10
-  exit 1
-fi
-
-# Checking access to Valve's server
-if curl --speed-limit 3 --speed-time 2 --max-time 30 https://steamdeck-packages.steamos.cloud/archlinux-mirror/core-main/os/x86_64/sed-4.9-3-x86_64.pkg.tar.zst --output /dev/null &>/dev/null; then
-  green_msg "$(print_text server_success)"
-else
-  err_msg "$(print_text server_fail)"
   sleep 10
   exit 1
 fi
@@ -154,6 +130,8 @@ green_msg "$(print_text yet_services)"
 green_msg "$(print_text ananicy_install)"
 check_file "./scripts/daemon-install.sh"
 sudo chmod 775 ./scripts/daemon-install.sh &>/dev/null
+install_local "spdlog"
+install_local "fmt"
 sudo --preserve-env=HOME ./scripts/daemon-install.sh
 green_msg "$(print_text daemon_ananicy)"
 
@@ -198,6 +176,7 @@ frametime_fix() {
       break
     elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
       green_msg "$(print_text skip)"
+      # Stock fallback via local bundle
       install_local "gamescope"
       install_local "vulkan-radeon"
       install_local "lib32-vulkan-radeon"
@@ -285,6 +264,16 @@ sdkernel() {
       sudo pacman -R --noconfirm linux-neptune-611 >>"$LOG_FILE" 2>&1
       sudo pacman -U --noconfirm ./packages/linux-charcoal-611-6.11.11.valve27-1-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo pacman -R --noconfirm linux-neptune-611-headers >>"$LOG_FILE" 2>&1
+      install_local "clang"
+      install_local "clang-libs"
+      install_local "compiler-rt"
+      install_local "gcc"
+      install_local "libisl"
+      install_local "libmpc"
+      install_local "lld"
+      install_local "llvm"
+      install_local "pahole"
+      install_local "polly"
       sudo pacman -U --noconfirm ./packages/linux-charcoal-611-headers-6.11.11.valve27-1-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo grub-mkconfig -o "$GRUB_CFG" &>/dev/null
       check_file "./packages/thp-shrinker.conf"

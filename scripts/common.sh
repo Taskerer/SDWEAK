@@ -45,6 +45,21 @@ if [ "$(id -u)" != "0" ]; then
 fi
 }
 
+# local setup with wildcards
+install_local() {
+  local pkg_name=$1
+  local pkg_file=$(ls ./packages/${pkg_name}*.pkg.tar.zst 2>/dev/null | head -n 1)
+
+  if [[ -f "$pkg_file" ]]; then
+    sudo pacman -U --noconfirm "$pkg_file" >>"$LOG_FILE" 2>&1
+  else
+    err_msg "$(print_text bundled_package_missing)"
+    log "$(print_text bundled_package_missing) $pkg_name" >>"$LOG_FILE"
+    sleep 10
+    exit 1
+  fi
+}
+
 backup_file() {
     local file_path="$1"
     if [ -f "$file_path" ]; then

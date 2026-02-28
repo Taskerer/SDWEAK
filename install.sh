@@ -130,8 +130,7 @@ green_msg "$(print_text yet_services)"
 green_msg "$(print_text ananicy_install)"
 check_file "./scripts/daemon-install.sh"
 sudo chmod 775 ./scripts/daemon-install.sh &>/dev/null
-install_local "spdlog"
-install_local "fmt"
+install_local "spdlog" "fmt"
 sudo --preserve-env=HOME ./scripts/daemon-install.sh
 green_msg "$(print_text daemon_ananicy)"
 
@@ -264,16 +263,7 @@ sdkernel() {
       sudo pacman -R --noconfirm linux-neptune-611 >>"$LOG_FILE" 2>&1
       sudo pacman -U --noconfirm ./packages/linux-charcoal-611-6.11.11.valve27-1-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo pacman -R --noconfirm linux-neptune-611-headers >>"$LOG_FILE" 2>&1
-      install_local "clang"
-      install_local "clang-libs"
-      install_local "compiler-rt"
-      install_local "gcc"
-      install_local "libisl"
-      install_local "libmpc"
-      install_local "lld"
-      install_local "llvm"
-      install_local "pahole"
-      install_local "polly"
+      install_local "clang" "clang-libs" "compiler-rt" "gcc" "libisl" "libmpc" "lld" "llvm" "pahole" "polly"
       sudo pacman -U --noconfirm ./packages/linux-charcoal-611-headers-6.11.11.valve27-1-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo grub-mkconfig -o "$GRUB_CFG" &>/dev/null
       check_file "./packages/thp-shrinker.conf"

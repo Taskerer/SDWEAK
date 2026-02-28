@@ -5,7 +5,7 @@ export steamos_version=$(cat /etc/os-release | grep -i version_id | cut -d "=" -
 export MODEL=$(cat /sys/class/dmi/id/board_name)
 export BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version)
 export DATE=$(date '+%T %d.%m.%Y')
-export SDWEAK_VERSION="1.10 RELEASE"
+export SDWEAK_VERSION="1.11 RELEASE"
 export LUA_PATH="/usr/share/gamescope/scripts/00-gamescope/displays/valve.steamdeck.lcd.lua"
 export MODIFIED_STRING="58, 59,\n        60, 61, 62, 63, 64, 65, 66, 67, 68, 69,\n        70"
 export ORIGINAL_STRING="58, 59,\n        60"
@@ -47,16 +47,26 @@ fi
 
 # local setup with wildcards
 install_local() {
-  local pkg_name=$1
-  local pkg_file=$(ls ./packages/${pkg_name}*.pkg.tar.zst 2>/dev/null | head -n 1)
+  local pkg_files=()
+  if [[ $# -eq 0 ]]; then
+    return 0
+  fi
 
-  if [[ -f "$pkg_file" ]]; then
-    sudo pacman -U --noconfirm "$pkg_file" >>"$LOG_FILE" 2>&1
-  else
-    err_msg "$(print_text bundled_package_missing)"
-    log "$(print_text bundled_package_missing) $pkg_name" >>"$LOG_FILE"
-    sleep 10
-    exit 1
+  for pkg_name in "$@"; do
+    local pkg_file=$(ls ./packages/${pkg_name}-[0-9]*.pkg.tar.zst 2>/dev/null | head -n 1)
+
+    if [[ -f "$pkg_file" ]]; then
+      pkg_files+=("$pkg_file")
+    else
+      err_msg "$(print_text bundled_package_missing)"
+      log "$(print_text bundled_package_missing) $pkg_name" >>"$LOG_FILE"
+      sleep 10
+      exit 1
+    fi
+  done
+
+  if [[ ${#pkg_files[@]} -gt 0 ]]; then
+    sudo pacman -U --noconfirm "${pkg_files[@]}" >>"$LOG_FILE" 2>&1
   fi
 }
 

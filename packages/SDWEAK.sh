@@ -49,28 +49,28 @@ write /proc/sys/kernel/printk_devkmsg off
 write /proc/sys/debug/exception-trace 0
 
 # vm
-write /proc/sys/vm/dirty_background_bytes 264857600
-write /proc/sys/vm/dirty_bytes 2147483648
-write /proc/sys/vm/dirty_expire_centisecs 4500
-write /proc/sys/vm/dirty_writeback_centisecs 2000
+write /proc/sys/vm/dirty_background_bytes 227001600
+write /proc/sys/vm/dirty_bytes 556531840
+write /proc/sys/vm/dirty_expire_centisecs 1500
+write /proc/sys/vm/dirty_writeback_centisecs 1500
 write /proc/sys/vm/hugetlb_optimize_vmemmap 0
 write /proc/sys/vm/page-cluster 0
 write /proc/sys/vm/page_lock_unfairness 1
-write /proc/sys/vm/vfs_cache_pressure 50
+write /proc/sys/vm/vfs_cache_pressure 100
 write /proc/sys/vm/watermark_scale_factor 125
-write /proc/sys/vm/swappiness 100
+write /proc/sys/vm/swappiness 150
 write /proc/sys/vm/watermark_boost_factor 0
-#write /proc/sys/vm/stat_interval 5
+write /proc/sys/vm/stat_interval 5
 write /proc/sys/vm/compact_unevictable_allowed 0
 write /proc/sys/vm/compaction_proactiveness 10
 
 # mm
 write /sys/kernel/mm/transparent_hugepage/enabled madvise
 write /sys/kernel/mm/transparent_hugepage/khugepaged/defrag 0
-write /sys/kernel/mm/transparent_hugepage/defrag defer+madvise
+write /sys/kernel/mm/transparent_hugepage/defrag never
 write /sys/kernel/mm/ksm/run 0
 write /sys/kernel/mm/transparent_hugepage/shmem_enabled advise
-write /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_swap 128
+# descompression on swap costs too much cpu and memory write /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_swap 128 
 
 # flash
 write /sys/block/zram*/queue/iostats 0
@@ -79,20 +79,20 @@ write /sys/block/nvme*n*/queue/iostats 0
 write /sys/block/zram*/queue/add_random 0
 write /sys/block/mmcblk*/queue/add_random 0
 write /sys/block/nvme*n*/queue/add_random 0
-# zram
+# zram any read_ahead_kb on zram will increase latency, we don't need that
 write /sys/block/zram*/queue/read_ahead_kb 0
-# microSD
-write /sys/block/mmcblk*/queue/read_ahead_kb 512
+# microSD 1024 is more conservative and will still improve performance 
+write /sys/block/mmcblk*/queue/read_ahead_kb 1024
 write /sys/block/mmcblk*/queue/rq_affinity 2
-#write /sys/block/mmcblk*/queue/wbt_lat_usec 2000
-#write /sys/block/mmcblk*/queue/iosched/back_seek_penalty 1
-#write /sys/block/mmcblk*/queue/iosched/fifo_expire_async 200
-#write /sys/block/mmcblk*/queue/iosched/fifo_expire_sync 100
-#write /sys/block/mmcblk*/queue/iosched/slice_idle 0
-#write /sys/block/mmcblk*/queue/iosched/slice_idle_us 0
-#write /sys/block/mmcblk*/queue/iosched/timeout_sync 100
+write /sys/block/mmcblk*/queue/wbt_lat_usec 2000
+write /sys/block/mmcblk*/queue/iosched/back_seek_penalty 1
+write /sys/block/mmcblk*/queue/iosched/fifo_expire_async 200
+write /sys/block/mmcblk*/queue/iosched/fifo_expire_sync 100
+write /sys/block/mmcblk*/queue/iosched/slice_idle 0
+write /sys/block/mmcblk*/queue/iosched/slice_idle_us 0
+write /sys/block/mmcblk*/queue/iosched/timeout_sync 100
 # nvme
-write /sys/block/nvme*n*/queue/read_ahead_kb 256
+write /sys/block/nvme*n*/queue/read_ahead_kb 512
 write /sys/block/nvme*n*/queue/rq_affinity 2
 write /sys/block/nvme*n*/queue/nomerges 2
 

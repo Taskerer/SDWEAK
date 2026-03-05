@@ -56,8 +56,10 @@ write /proc/sys/vm/dirty_writeback_centisecs 1500
 write /proc/sys/vm/hugetlb_optimize_vmemmap 0
 write /proc/sys/vm/page-cluster 0
 write /proc/sys/vm/page_lock_unfairness 1
+#cache pressure, default value will let the system decides better when to free dentries and inodes cache on memory pressure
 write /proc/sys/vm/vfs_cache_pressure 100
 write /proc/sys/vm/watermark_scale_factor 125
+# higher swappiness value will keep more data for fast acess while gaming
 write /proc/sys/vm/swappiness 150
 write /proc/sys/vm/watermark_boost_factor 0
 write /proc/sys/vm/stat_interval 5

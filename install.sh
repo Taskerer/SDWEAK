@@ -46,15 +46,6 @@ else
   exit 1
 fi
 
-# Checking access to Valve's server
-if curl --speed-limit 3 --speed-time 2 --max-time 30 https://steamdeck-packages.steamos.cloud/archlinux-mirror/core-main/os/x86_64/sed-4.9-3-x86_64.pkg.tar.zst --output /dev/null &>/dev/null; then
-  green_msg "$(print_text server_success)"
-else
-  err_msg "$(print_text server_fail)"
-  sleep 10
-  exit 1
-fi
-
 # Validation of checksums of binary files
 files=(
   "./packages/linux-charcoal-611-headers-6.11.11.valve27-1-x86_64.pkg.tar.zst"
@@ -124,18 +115,8 @@ sudo rm -rf /home/.steamos/offload/var/cache/pacman/pkg/{*,.*} &>/dev/null
 sudo rm -rf /etc/pacman.d/gnupg &>/dev/null
 sudo pacman-key --init >>"$LOG_FILE" 2>&1
 sudo pacman-key --populate >>"$LOG_FILE" 2>&1
-if ! sudo pacman -Sy >>"$LOG_FILE" 2>&1; then
-  err_msg "$(print_text error_sys)"
-  sleep 10
-  exit 1
-fi
-log "SED INSTALL" >>"$LOG_FILE" 2>&1
-sudo pacman -S --noconfirm sed &>/dev/null
-if ! sudo pacman -S --noconfirm sed >>"$LOG_FILE" 2>&1; then
-  err_msg "$(print_text error_sys)"
-  sleep 10
-  exit 1
-fi
+
+install_local "sed"
 
 # Yet-tweak
 check_file "./scripts/yet-tweak.sh"
@@ -149,6 +130,7 @@ green_msg "$(print_text yet_services)"
 green_msg "$(print_text ananicy_install)"
 check_file "./scripts/daemon-install.sh"
 sudo chmod 775 ./scripts/daemon-install.sh &>/dev/null
+install_local "spdlog" "fmt"
 sudo --preserve-env=HOME ./scripts/daemon-install.sh
 green_msg "$(print_text daemon_ananicy)"
 
@@ -169,8 +151,9 @@ check_file "./packages/60-ioschedulers.rules"
 sudo cp ./packages/60-ioschedulers.rules /etc/udev/rules.d/60-ioschedulers.rules &>/dev/null
 green_msg "$(print_text sysfs_optimization)"
 
-# ZRAM Tweaks
-sudo pacman -S --noconfirm --needed holo-zram-swap zram-generator &>/dev/null
+# ZRAM Tweaks (LOCAL ONLY)
+install_local "holo-zram-swap"
+install_local "zram-generator"
 check_file "./packages/zram-generator.conf"
 sudo cp -f ./packages/zram-generator.conf /usr/lib/systemd/zram-generator.conf &>/dev/null
 sudo systemctl restart systemd-zram-setup@zram0 &>/dev/null
@@ -187,13 +170,15 @@ frametime_fix() {
       red_msg "$(print_text frametime_fix_install)"
       sudo pacman -U --noconfirm ./packages/gamescope-3.16.14.5-1-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo pacman -U --noconfirm ./packages/vulkan-radeon-24.3.0-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
-      sudo pacman -S --noconfirm --needed lib32-vulkan-radeon >>"$LOG_FILE" 2>&1
+      install_local "lib32-vulkan-radeon"
       green_msg "$(print_text frametime_fix_success)"
       break
     elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
       green_msg "$(print_text skip)"
-      sudo pacman -S --noconfirm gamescope vulkan-radeon &>/dev/null
-      sudo pacman -S --noconfirm --needed lib32-vulkan-radeon >>"$LOG_FILE" 2>&1
+      # Stock fallback via local bundle
+      install_local "gamescope"
+      install_local "vulkan-radeon"
+      install_local "lib32-vulkan-radeon"
       break
     else
       red_msg "$(print_text invalid_input)"
@@ -278,6 +263,7 @@ sdkernel() {
       sudo pacman -R --noconfirm linux-neptune-611 >>"$LOG_FILE" 2>&1
       sudo pacman -U --noconfirm ./packages/linux-charcoal-611-6.11.11.valve27-1-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo pacman -R --noconfirm linux-neptune-611-headers >>"$LOG_FILE" 2>&1
+      install_local "clang" "clang-libs" "compiler-rt" "gcc" "libisl" "libmpc" "lld" "llvm" "pahole" "polly"
       sudo pacman -U --noconfirm ./packages/linux-charcoal-611-headers-6.11.11.valve27-1-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
       sudo grub-mkconfig -o "$GRUB_CFG" &>/dev/null
       check_file "./packages/thp-shrinker.conf"
@@ -290,7 +276,7 @@ sdkernel() {
       break
     elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
       green_msg "$(print_text skip)"
-      sudo pacman -S --noconfirm linux-neptune-611 >>"$LOG_FILE" 2>&1
+      install_local "linux-neptune-611"
       sudo pacman -R --noconfirm linux-neptune-611-headers >>"$LOG_FILE" 2>&1
       sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
       break

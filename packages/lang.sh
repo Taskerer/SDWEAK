@@ -22,6 +22,8 @@ texts["en_skip"]="Skipping..."
 texts["ru_skip"]="Пропуск..."
 texts["en_invalid_input"]="Invalid input. Please enter 'y' or 'n'."
 texts["ru_invalid_input"]="Неправильный ввод. Пожалуйста, введите 'y' или 'n'."
+texts["en_bundled_package_missing"]="Critical Error: Bundled package for '$pkg_name' not found in ./packages/"
+texts["ru_bundled_package_missing"]="Критическая ошибка: Пакет для '$pkg_name' не найден в ./packages/"
 
 texts["en_yet_mglru"]="MGLRU successfully activated."
 texts["ru_yet_mglru"]="MGLRU успешно активирован."

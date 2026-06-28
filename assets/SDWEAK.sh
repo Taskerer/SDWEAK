@@ -133,7 +133,6 @@ section "ZRAM"
 for QUEUE in /sys/block/zram*/queue; do
     [[ -d "$QUEUE" ]] || continue
 
-    write "$QUEUE/scheduler" none
     write "$QUEUE/read_ahead_kb" 0
     write "$QUEUE/nomerges" 2
     write "$QUEUE/add_random" 0

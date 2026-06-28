@@ -1,359 +1,273 @@
 #!/bin/bash
 
-# Connecting a file with translations
-source ./packages/lang.sh
+source ./assets/strings.sh
+source ./assets/common.sh
 
-# Connect a common script with functions and variables
-source ./scripts/common.sh
-
-# Root check
-check_root
-sudo steamos-readonly disable
-
-# Set up logging
-sudo rm -f "$HOME/SDWEAK-install.log"
-LOG_FILE="$HOME/SDWEAK-install.log"
+: > "$LOG_FILE"
 
 # Select_lang [ru|en]
 choose_language() {
-  clear
-  sleep 0.3
-  green_msg "Please select your language / Пожалуйста, выберите язык:"
-  red_msg "1. Русский"
-  red_msg "2. English"
-  read -p "Enter the needed number / Введите нужную цифру: " choice
-  case $choice in
-  1) selected_lang="ru" ;;
-  2) selected_lang="en" ;;
-  *) red_msg "Неверный выбор. По умолчанию выбран Русский."; selected_lang="ru" ;;
-  esac
-  red_msg "Language selected / Выбранный язык: $selected_lang"
-}
-
-# Localized echo
-print_text() {
-  local key=$1
-  echo "${texts[${selected_lang}_${key}]}"
+    clear; sleep 0.3
+    green_msg "Please select your language / Пожалуйста, выберите язык:"
+    yellow_msg "1. Русский"
+    yellow_msg "2. English"
+    read -rp "Enter number / Введите цифру: " choice
+    case $choice in
+        1) selected_lang="ru" ;;
+        2) selected_lang="en" ;;
+        *) yellow_msg "Default: Русский"; selected_lang="ru" ;;
+    esac
+    yellow_msg "Language selected / Выбранный язык: $selected_lang"
 }
 choose_language
+log "LANGUAGE: $selected_lang"
 
-# Checking Internet access
-if ping -c 1 8.8.8.8 &>/dev/null || ping -c 1 1.1.1.1 &>/dev/null || ping -c 1 208.67.222.222 &>/dev/null || ping -c 1 9.9.9.9 &>/dev/null || ping -c 1 94.140.14.14 &>/dev/null || ping -c 1 8.26.56.26 &>/dev/null; then
-  green_msg "$(print_text ping_success)"
-else
-  err_msg "$(print_text ping_fail)"
-  sleep 10
-  exit 1
-fi
-
-# Validation of checksums of binary files
-files=(
-  "./packages/linux-charcoal-611-headers-6.11.11.valve27-1-x86_64.pkg.tar.zst"
-  "./packages/linux-charcoal-611-6.11.11.valve27-1-x86_64.pkg.tar.zst"
-  "./packages/cachyos-ananicy-rules-git-latest-plus-SDWEAK.pkg.tar.zst"
-  "./packages/gamescope-3.16.14.5-1-SDWEAK.pkg.tar.zst"
-  "./packages/vulkan-radeon-24.3.0-SDWEAK.pkg.tar.zst"
-)
-checksums=(
-  "16b18039f90b3c7d3ee39045eb32311bfcdee8236ca38ce02b7b5854732c8a30"
-  "b4003e617cdbc2855cfbcdefe37e1794219fc23f3999d3e8332762fe501ca737"
-  "77340e7e86ad598ea42a19224ff9dd0c0c63ddd023d8b9e11eada2c8a2c3d6f6"
-  "c1250cb3ad97f296204e29b6f359dc6bd91c4cd0dc515cb0e8fd5f9e11616295"
-  "10f7cc049a6eaaa37f48a0ebfe309614a7959bf3818c5790e8c365506eec2772"
-)
-for i in "${!files[@]}"; do
-  file="${files[i]}"
-  [[ -f "$file" ]] || { err_msg "$(print_text integrity_fail)"; sleep 10; exit 1; }
-  [[ $(sha256sum "$file" | awk '{print $1}') == "${checksums[i]}" ]] \
-    || { err_msg "$(print_text integrity_fail)"; sleep 10; exit 1; }
-done
-
-# Function for checking the availability of files
-check_file() {
-  local file_path="$1"
-  if [[ ! -f "$file_path" ]]; then
-    err_msg "$(print_text integrity_fail)"
-    sleep 10
-    exit 1
-  fi
-}
-
-# --- Main ---
-check_file "./packages/lang.sh"
-start_time=$(date +%s)
 clear
-{
-log "DATE: $DATE"
-log "SDWEAK $SDWEAK_VERSION"
-log "STEAMOS: $steamos_version"
-log "MODEL: $MODEL"
-log "BIOS: $BIOS_VERSION"
-} >>"$LOG_FILE" 2>&1
-# Logo
 print_logo
 
+sudo steamos-readonly disable 2>/dev/null || die "$(print_text readonly_fail)"
+
 # Compatibility check
-if [[ "$MODEL" != "Jupiter" && "$MODEL" != "Galileo" ]]; then
-  err_msg "$(print_text compatible)"
-  sleep 10
-  exit 1
-fi
-if [ "$steamos_version" != "3.7" ]; then
-  err_msg "$(print_text old_steamos)"
-  sleep 10
-  exit 1
+[[ "$MODEL" == "Jupiter" || "$MODEL" == "Galileo" ]] || die "$(print_text compatible)"  10
+[[ "$steamos_version" == "3.8" ]]                    || die "$(print_text old_steamos)" 10
+
+# Checking Internet access
+if ping -c1 -W1 8.8.8.8   &>/dev/null ||
+   ping -c1 -W1 1.1.1.1   &>/dev/null ||
+   ping -c1 -W1 77.88.8.8 &>/dev/null ||
+   ping -c1 -W1 9.9.9.9   &>/dev/null; then
+    green_msg "$(print_text ping_success)"
+else
+    die "$(print_text ping_fail)" 10
 fi
 
-# -- Start --
+# Checksum validation
+declare -A CHECKSUMS=(
+    ["./assets/gamescope-3.16.23.2-1-SDWEAK.pkg.tar.zst"]="f77b6051d6ec65b5804f700a6c809bf3ca338aebdaab2f293247a1175a9ecb8e"
+    ["./assets/vulkan-radeon-SDWEAK.pkg.tar.zst"]="8ff7950a7fca82fe0f9b3c68581ac10ea7c8e74d90e5850b0ca18eb62296b839"
+)
+for f in "${!CHECKSUMS[@]}"; do
+    [[ -f "$f" ]]                                                  || die "$(print_text integrity_fail)" 10
+    [[ $(sha256sum "$f" | awk '{print $1}') == "${CHECKSUMS[$f]}" ]] || die "$(print_text integrity_fail)" 10
+done
+
+# Start
+{
+    log "DATE: $DATE"
+    log "SDWEAK $SDWEAK_VERSION"
+    log "STEAMOS: $steamos_version"
+    log "MODEL: $MODEL"
+    log "BIOS: $BIOS_VERSION"
+}
+
 green_msg "$(print_text installation_start)"
-sudo systemctl enable --now sshd >>"$LOG_FILE" 2>&1
+start_time=$(date +%s)
 
 # Pacman
-sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf &>/dev/null
-log "PACMAN INIT" >>"$LOG_FILE" 2>&1
-sudo rm -rf /home/.steamos/offload/var/cache/pacman/pkg/{*,.*} &>/dev/null
-sudo rm -rf /etc/pacman.d/gnupg &>/dev/null
+sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf
+log "PACMAN INIT"
+sudo rm -rf /home/.steamos/offload/var/cache/pacman/pkg/{*,.*} 2>/dev/null
+sudo rm -rf /etc/pacman.d/gnupg
 sudo pacman-key --init >>"$LOG_FILE" 2>&1
 sudo pacman-key --populate >>"$LOG_FILE" 2>&1
 
-install_local "sed"
+# Unlocking the memory lock
+printf '* hard memlock 2147484\n* soft memlock 2147484\n' | sudo tee /etc/security/limits.d/99-memlock.conf > /dev/null
+log "MEMLOCK: limits.d/99-memlock.conf installed"
 
-# Yet-tweak
-check_file "./scripts/yet-tweak.sh"
-sudo chmod 775 ./scripts/yet-tweak.sh &>/dev/null
-sudo --preserve-env=HOME ./scripts/yet-tweak.sh
-green_msg "$(print_text yet_mglru)"
-green_msg "$(print_text yet_input)"
-green_msg "$(print_text yet_services)"
+# Disable file access time tracking
+sudo mkdir -p /etc/systemd/system/home.mount.d
+printf '[Mount]\nOptions=defaults,nofail,x-systemd.growfs,noatime\n' | sudo tee /etc/systemd/system/home.mount.d/override.conf > /dev/null
+log "NOATIME: home.mount.d/override.conf installed"
 
-# Ananicy-cpp
-green_msg "$(print_text ananicy_install)"
-check_file "./scripts/daemon-install.sh"
-sudo chmod 775 ./scripts/daemon-install.sh &>/dev/null
-install_local "spdlog" "fmt"
-sudo --preserve-env=HOME ./scripts/daemon-install.sh
-green_msg "$(print_text daemon_ananicy)"
+# Input controller overclocking
+printf 'options usbhid jspoll=1 kbpoll=1 mousepoll=1\n' | sudo tee /etc/modprobe.d/usbhid.conf > /dev/null
+log "USBHID: 1000Hz polling enabled"
+green_msg "$(print_text usbhid_success)"
+
+# Remove gamemoded
+sudo pacman -Rdd --noconfirm gamemode &>/dev/null
+
+# scx-lavd
+check_file "./assets/scx"
+sudo cp -f ./assets/scx /etc/default/scx
+sudo systemctl unmask scx.service  >> "$LOG_FILE" 2>&1
+sudo systemctl restart scx.service >> "$LOG_FILE" 2>&1
+sleep 1
+if [[ "$(cat /sys/kernel/sched_ext/state 2>/dev/null)" == "enabled" ]] &&
+   grep -q "lavd" /sys/kernel/sched_ext/root/ops 2>/dev/null; then
+    log "SCX: lavd scheduler confirmed active"
+    green_msg "$(print_text scx_success)"
+else
+    log "SCX: verification failed, lavd scheduler not confirmed"
+    yellow_msg "$(print_text scx_warning)"
+fi
 
 # Sysctl Tweaks
-sudo rm -f $HOME/.local/tweak/SDWEAK.sh &>/dev/null
-sudo rm -rf $HOME/.local/tweak/ &>/dev/null
-sudo rm -f /etc/systemd/system/tweak.service &>/dev/null
-sudo mkdir -p $HOME/.local/tweak/ &>/dev/null
-check_file "./packages/SDWEAK.sh"
-sudo cp -f ./packages/SDWEAK.sh $HOME/.local/tweak/SDWEAK.sh &>/dev/null
-check_file "./packages/tweak.service"
-sudo cp -f ./packages/tweak.service /etc/systemd/system/tweak.service &>/dev/null
-sudo chmod 777 $HOME/.local/tweak/SDWEAK.sh &>/dev/null
+sudo rm -rf "$HOME/.local/tweak/"
+sudo rm -f /etc/systemd/system/sdweak.service
+sudo mkdir -p "$HOME/.local/tweak/"
+check_file "./assets/SDWEAK.sh"
+sudo cp -f ./assets/SDWEAK.sh "$HOME/.local/tweak/SDWEAK.sh"
+sudo chmod 755 "$HOME/.local/tweak/SDWEAK.sh"
+check_file "./assets/sdweak.service"
+sudo cp -f ./assets/sdweak.service /etc/systemd/system/sdweak.service
+log "SYSCTL: SDWEAK.sh + sdweak.service installed"
+green_msg "$(print_text sysctl_success)"
 
-# I/O schedulers
-sudo rm -f /etc/udev/rules.d/60-ioschedulers.rules &>/dev/null
-check_file "./packages/60-ioschedulers.rules"
-sudo cp ./packages/60-ioschedulers.rules /etc/udev/rules.d/60-ioschedulers.rules &>/dev/null
-green_msg "$(print_text sysfs_optimization)"
-
-# ZRAM Tweaks (LOCAL ONLY)
-install_local "holo-zram-swap"
-install_local "zram-generator"
-check_file "./packages/zram-generator.conf"
-sudo cp -f ./packages/zram-generator.conf /usr/lib/systemd/zram-generator.conf &>/dev/null
-sudo systemctl restart systemd-zram-setup@zram0 &>/dev/null
+# ZRAM Tweaks
+check_file "./assets/zram-generator.conf"
+sudo cp -f ./assets/zram-generator.conf /usr/lib/systemd/zram-generator.conf
+sudo systemctl restart systemd-zram-setup@zram0 >> "$LOG_FILE" 2>&1
+log "ZRAM: zram-generator.conf installed, zram0 restarted"
 green_msg "$(print_text zram_conf)"
+
+# Changing amdgpu parameters
+printf 'options gpu_sched sched_policy=0\noptions amdgpu moverate=256 lbpw=0\n' | sudo tee /etc/modprobe.d/amdgpu.conf > /dev/null
+log "AMDGPU: gpu_sched + amdgpu module parameters set"
+green_msg "$(print_text gpu_optimization_success)"
+
+# Mitigations off
+sudo mkdir -p /etc/default/grub.d
+echo 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT mitigations=off"' | sudo tee /etc/default/grub.d/99-mitigations.cfg > /dev/null
+log "MITIGATIONS: grub.d/99-mitigations.cfg installed"
 
 # Frametime fix
 frametime_fix() {
-  while true; do
-    tput setaf 3
-    read -p "$(print_text frametime_fix_prompt) [y/N]: " answer
-    tput sgr0
-    answer=${answer:-n}
-    if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-      red_msg "$(print_text frametime_fix_install)"
-      sudo pacman -U --noconfirm ./packages/gamescope-3.16.14.5-1-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
-      sudo pacman -U --noconfirm ./packages/vulkan-radeon-24.3.0-SDWEAK.pkg.tar.zst >>"$LOG_FILE" 2>&1
-      install_local "lib32-vulkan-radeon"
-      green_msg "$(print_text frametime_fix_success)"
-      break
-    elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-      green_msg "$(print_text skip)"
-      # Stock fallback via local bundle
-      install_local "gamescope"
-      install_local "vulkan-radeon"
-      install_local "lib32-vulkan-radeon"
-      break
-    else
-      red_msg "$(print_text invalid_input)"
-    fi
-  done
+    local answer
+    while true; do
+        printf '\033[0;33m'
+        read -rp "$(print_text frametime_fix_prompt) [y/N]: " answer
+        printf '\033[0m'
+        case "${answer,,}" in
+            y)
+                yellow_msg "$(print_text frametime_fix_install)"
+                sudo pacman -U --noconfirm ./assets/gamescope-3.16.23.2-1-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
+                sudo pacman -U --noconfirm ./assets/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
+                log "FRAMETIME FIX: custom gamescope/vulkan-radeon packages installed"
+                green_msg "$(print_text frametime_fix_success)"
+                return ;;
+            n|"")
+                green_msg "$(print_text skip)"
+                sudo pacman -S --noconfirm --needed gamescope vulkan-radeon lib32-vulkan-radeon >> "$LOG_FILE" 2>&1
+                log "FRAMETIME FIX: stock packages kept"
+                return ;;
+            *)
+                yellow_msg "$(print_text invalid_input)" ;;
+        esac
+    done
 }
 
 # Overclock LCD to 70Hz
 display_overclock() {
-  while true; do
-    tput setaf 3
-    read -p "$(print_text display_overclock_prompt) [y/N]: " answer
-    tput sgr0
-    answer=${answer:-n}
-    if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-      if ! grep -q "68, 69," "$LUA_PATH"; then
-        sudo sed -z -i.bak "s/$ORIGINAL_STRING/$MODIFIED_STRING/" "$LUA_PATH"
-      fi
-      green_msg "$(print_text display_overclock_success)"
-      break
-    elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-      green_msg "$(print_text skip)"
-      LUA_BAK_PATH="${LUA_PATH}.bak"
-      if [ -f "$LUA_BAK_PATH" ]; then
-        sudo mv "$LUA_BAK_PATH" "$LUA_PATH"
-      else
-        sudo sed -z -i "s/$MODIFIED_STRING/$ORIGINAL_STRING/" "$LUA_PATH"
-      fi
-      break
-    else
-      red_msg "$(print_text invalid_input)"
-    fi
-  done
+    local answer
+    while true; do
+        printf '\033[0;33m'
+        read -rp "$(print_text display_overclock_prompt) [y/N]: " answer
+        printf '\033[0m'
+        case "${answer,,}" in
+            y)
+                if grep -q "68, 69," "$LUA_PATH"; then
+                    log "DISPLAY OVERCLOCK: already applied, skipping"
+                else
+                    sudo sed -z -i.bak "s/$ORIGINAL_STRING/$MODIFIED_STRING/" "$LUA_PATH"
+                    log "DISPLAY OVERCLOCK: 70Hz patch applied"
+                fi
+                green_msg "$(print_text display_overclock_success)"
+                return ;;
+            n|"")
+                green_msg "$(print_text skip)"
+                local lua_bak="${LUA_PATH}.bak"
+                if [[ -f "$lua_bak" ]]; then
+                    sudo mv -f "$lua_bak" "$LUA_PATH"
+                    log "DISPLAY OVERCLOCK: restored from backup"
+                elif grep -q "68, 69," "$LUA_PATH"; then
+                    sudo sed -z -i "s/$MODIFIED_STRING/$ORIGINAL_STRING/" "$LUA_PATH"
+                    log "DISPLAY OVERCLOCK: reverted via sed (no backup found)"
+                else
+                    log "DISPLAY OVERCLOCK: already stock, nothing to do"
+                fi
+                return ;;
+            *)
+                yellow_msg "$(print_text invalid_input)" ;;
+        esac
+    done
 }
 
 # Power efficiency priority
 power_efficiency() {
-  while true; do
-    tput setaf 3
-    read -p "$(print_text power_efficiency_prompt) [y/N]: " answer
-    tput sgr0
-    answer=${answer:-n}
-    if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-      red_msg "$(print_text power_efficiency_install)"
-      sudo sed -i -E '/^GRUB_CMDLINE_LINUX_DEFAULT=/ {
-                s/(amd_pstate=)[^ "]*//g
-                s/(=")(.*")/\1amd_pstate=active \2/
-                s/  +/ /g
-                s/" /"/}' "$GRUB"
-      sudo rm -f /etc/systemd/system/energy.service &>/dev/null
-      check_file "./packages/energy.service"
-      sudo cp ./packages/energy.service /etc/systemd/system/energy.service &>/dev/null
-      sudo rm -f /etc/systemd/system/energy.timer &>/dev/null
-      check_file "./packages/energy.timer"
-      sudo cp ./packages/energy.timer /etc/systemd/system/energy.timer &>/dev/null
-      sudo systemctl daemon-reload &>/dev/null
-      sudo systemctl enable --now energy.timer &>/dev/null
-      green_msg "$(print_text power_efficiency_success)"
-      break
-    elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-      green_msg "$(print_text skip)"
-      sudo systemctl disable energy.timer &>/dev/null
-      sudo rm -f /etc/systemd/system/energy.service &>/dev/null
-      sudo rm -f /etc/systemd/system/energy.timer &>/dev/null
-      break
-    else
-      red_msg "$(print_text invalid_input)"
-    fi
-  done
+    local answer
+    while true; do
+        printf '\033[0;33m'
+        read -rp "$(print_text power_efficiency_prompt) [y/N]: " answer
+        printf '\033[0m'
+        case "${answer,,}" in
+            y)
+                yellow_msg "$(print_text power_efficiency_install)"
+                sudo mkdir -p /etc/default/grub.d
+                echo 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT amd_pstate=active"' | sudo tee /etc/default/grub.d/99-amd-pstate.cfg > /dev/null
+                sudo rm -f /etc/systemd/system/energy.service
+                check_file "./assets/energy.service"
+                sudo cp -f ./assets/energy.service /etc/systemd/system/energy.service
+                sudo rm -f /etc/systemd/system/energy.timer
+                check_file "./assets/energy.path"
+                sudo cp -f ./assets/energy.path /etc/systemd/system/energy.path
+                sudo systemctl daemon-reload >> "$LOG_FILE" 2>&1
+                sudo systemctl enable --now energy.path >> "$LOG_FILE" 2>&1
+                log "POWER EFFICIENCY: amd_pstate=active + energy.path enabled"
+                green_msg "$(print_text power_efficiency_success)"
+                return ;;
+            n|"")
+                green_msg "$(print_text skip)"
+                sudo rm -f /etc/default/grub.d/99-amd-pstate.cfg
+                sudo systemctl disable --now energy.path >> "$LOG_FILE" 2>&1
+                sudo rm -f /etc/systemd/system/energy.service
+                sudo rm -f /etc/systemd/system/energy.timer
+                sudo rm -f /etc/systemd/system/energy.path
+                sudo systemctl daemon-reload >> "$LOG_FILE" 2>&1
+                log "POWER EFFICIENCY: reverted to stock"
+                return ;;
+            *)
+                yellow_msg "$(print_text invalid_input)" ;;
+        esac
+    done
 }
-
-# SDKERNEL Install
-sdkernel() {
-  while true; do
-    tput setaf 3
-    read -p "$(print_text sdkernel_prompt) [Y/n]: " answer
-    tput sgr0
-    answer=${answer:-y}
-    if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-      red_msg "$(print_text sdkernel_install)"
-      log "SDKERNEL INSTALL" >>"$LOG_FILE" 2>&1
-      sudo pacman -R --noconfirm linux-neptune-611 >>"$LOG_FILE" 2>&1
-      sudo pacman -U --noconfirm ./packages/linux-charcoal-611-6.11.11.valve27-1-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
-      sudo pacman -R --noconfirm linux-neptune-611-headers >>"$LOG_FILE" 2>&1
-      install_local "clang" "clang-libs" "compiler-rt" "gcc" "libisl" "libmpc" "lld" "llvm" "pahole" "polly"
-      sudo pacman -U --noconfirm ./packages/linux-charcoal-611-headers-6.11.11.valve27-1-x86_64.pkg.tar.zst >>"$LOG_FILE" 2>&1
-      sudo grub-mkconfig -o "$GRUB_CFG" &>/dev/null
-      check_file "./packages/thp-shrinker.conf"
-      sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
-      sudo cp -f ./packages/thp-shrinker.conf /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
-      green_msg "$(print_text sdkernel_success)"
-      if [[ "$MODEL" = "Galileo" || ( "$MODEL" = "Jupiter" && ( "$BIOS_VERSION" = "F7A0131" || "$BIOS_VERSION" = "F7A0133" ) ) ]]; then
-        power_efficiency
-      fi
-      break
-    elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-      green_msg "$(print_text skip)"
-      install_local "linux-neptune-611"
-      sudo pacman -R --noconfirm linux-neptune-611-headers >>"$LOG_FILE" 2>&1
-      sudo rm -f /usr/lib/tmpfiles.d/thp-shrinker.conf &>/dev/null
-      break
-    else
-      red_msg "$(print_text invalid_input)"
-    fi
-  done
-}
-
-# AMDGPU optimization
-gpu_optimization() {
-  while true; do
-    tput setaf 3
-    read -p "$(print_text gpu_optimization_prompt) [Y/n]: " answer
-    tput sgr0
-    answer=${answer:-y}
-    if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-      # Changing amdgpu parameters
-      echo "options gpu_sched sched_policy=0" | sudo tee /etc/modprobe.d/amdgpu.conf &>/dev/null
-      echo "options amdgpu mes=1 moverate=128 uni_mes=1 lbpw=0 mes_kiq=1" | sudo tee -a /etc/modprobe.d/amdgpu.conf &>/dev/null
-      green_msg "$(print_text gpu_optimization_success)"
-      break
-    elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-      green_msg "$(print_text skip)"
-      sudo rm -f /etc/modprobe.d/amdgpu.conf &>/dev/null
-      break
-    else
-      red_msg "$(print_text invalid_input)"
-    fi
-  done
-}
-
-# System reboot
-sys-reboot() {
-  while true; do
-    tput setaf 3
-    read -p "$(print_text reboot_prompt) [Y/n]: " answer
-    tput sgr0
-    answer=${answer:-y}
-    if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-      sudo reboot
-      break
-    elif [[ "$answer" == "n" || "$answer" == "N" ]]; then
-      red_msg "$(print_text reboot_required)"
-      sleep 5
-      break
-    else
-      red_msg "$(print_text invalid_input)"
-    fi
-  done
-}
-
-# SDKERNEL and Frametime fix
-sdkernel
 
 # display overclock LCD
-if [ "$MODEL" = "Jupiter" ]; then
-  frametime_fix
-  display_overclock
+if [[ "$MODEL" == "Jupiter" ]]; then
+    display_overclock
 fi
+frametime_fix
+power_efficiency
 
-# GPU optimization
-gpu_optimization
+# Finalize
+sudo systemctl daemon-reload >> "$LOG_FILE" 2>&1
+sudo systemctl enable --now sdweak.service >> "$LOG_FILE" 2>&1
+sudo mkinitcpio -P >> "$LOG_FILE" 2>&1
+sudo grub-mkconfig -o "$GRUB_CFG" >> "$LOG_FILE" 2>&1
+log "FINALIZE: daemon-reload, sdweak.service enabled, initramfs + grub.cfg regenerated"
 
-sudo systemctl daemon-reload &>/dev/null
-sudo systemctl enable --now tweak.service &>/dev/null
-sudo mkinitcpio -P &>/dev/null
-sudo grub-mkconfig -o "$GRUB_CFG" &>/dev/null
-
-# Clean tmp files
-red_msg "$(print_text sdweak_success)"
+log "COMPLETE"
+green_msg "$(print_text sdweak_success)"
 sleep 3
+
 end_time=$(date +%s)
-elapsed_time=$((end_time - start_time))
-green_msg "$(print_text installation_time) $elapsed_time $(print_text seconds)"
-log "COMPLETE" >>"$LOG_FILE" 2>&1
+log "INSTALL TIME: $((end_time - start_time))s"
+green_msg "$(print_text installation_time) $((end_time - start_time)) $(print_text seconds)"
 sleep 1
 
-# reboot
-sys-reboot
+# Reboot
+sys_reboot() {
+    local answer
+    while true; do
+        printf '\033[0;33m'
+        read -rp "$(print_text reboot_prompt) [Y/n]: " answer
+        printf '\033[0m'
+        case "${answer,,}" in
+            y|"") sudo reboot; return ;;
+            n)    yellow_msg "$(print_text reboot_required)"; sleep 5; return ;;
+            *)    yellow_msg "$(print_text invalid_input)" ;;
+        esac
+    done
+}
+sys_reboot

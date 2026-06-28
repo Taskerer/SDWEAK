@@ -1,7 +1,10 @@
 [Desktop Entry]
-Name=Install SDWEAK
-Exec=bash -c 'wget -O /tmp/desktop-install.sh https://raw.githubusercontent.com/Taskerer/SDWEAK/main/desktop-install.sh && bash /tmp/desktop-install.sh'
-Icon=steamdeck-gaming-return
-Terminal=true
+Version=1.0
 Type=Application
+Name=Install SDWEAK
+Comment=Download and install SDWEAK for Steam Deck
+Icon=steamdeck-gaming-return
+Categories=Game;Settings;
+Exec=bash -c 'T=$(mktemp /tmp/sdweak-XXXXXX.sh) && chmod 600 "$T" && wget -q --show-progress --timeout=60 -O "$T" "https://raw.githubusercontent.com/Taskerer/SDWEAK/main/desktop-install.sh" && [ -s "$T" ] && bash "$T"; rm -f "$T"'
+Terminal=true
 StartupNotify=false

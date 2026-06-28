@@ -1,0 +1,20 @@
+[Unit]
+Description=Set AMD P-State EPP to power efficiency mode
+ConditionPathExists=/sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash -c '\
+  for f in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do \
+    echo power > "$f" \
+      && echo "EPP power → $f" \
+      || echo "FAIL: $f" >&2; \
+  done'
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=energy-epp
+
+[Install]
+WantedBy=multi-user.target

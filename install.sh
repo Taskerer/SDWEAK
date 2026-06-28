@@ -92,7 +92,7 @@ sudo pacman -Rdd --noconfirm gamemode &>/dev/null
 check_file "./assets/scx"
 sudo cp -f ./assets/scx /etc/default/scx
 sudo systemctl unmask scx.service  >> "$LOG_FILE" 2>&1
-sudo systemctl restart scx.service >> "$LOG_FILE" 2>&1
+sudo systemctl enable --now scx.service >> "$LOG_FILE" 2>&1
 sleep 1
 if [[ "$(cat /sys/kernel/sched_ext/state 2>/dev/null)" == "enabled" ]] &&
    grep -q "lavd" /sys/kernel/sched_ext/root/ops 2>/dev/null; then

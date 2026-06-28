@@ -167,23 +167,30 @@ display_overclock() {
         printf '\033[0m'
         case "${answer,,}" in
             y)
-                if grep -q "68, 69," "$LUA_PATH"; then
+                if grep -qF "68, 69," "$LCD_LUA_PATH"; then
                     log "DISPLAY OVERCLOCK: already applied, skipping"
                 else
-                    sudo sed -z -i.bak "s/$ORIGINAL_STRING/$MODIFIED_STRING/" "$LUA_PATH"
-                    log "DISPLAY OVERCLOCK: 70Hz patch applied"
+                    if sudo sed -z -i.bak "s/$ORIGINAL_STRING/$MODIFIED_STRING/" "$LCD_LUA_PATH"; then
+                        log "DISPLAY OVERCLOCK: 70Hz patch applied"
+                    else
+                        log "DISPLAY OVERCLOCK: sed failed — patch NOT applied"
+                        [[ -f "${LCD_LUA_PATH}.bak" ]] && sudo mv "${LCD_LUA_PATH}.bak" "$LCD_LUA_PATH"
+                    fi
                 fi
                 green_msg "$(print_text display_overclock_success)"
                 return ;;
             n|"")
                 green_msg "$(print_text skip)"
-                local lua_bak="${LUA_PATH}.bak"
+                local lua_bak="${LCD_LUA_PATH}.bak"
                 if [[ -f "$lua_bak" ]]; then
-                    sudo mv -f "$lua_bak" "$LUA_PATH"
+                    sudo mv -f "$lua_bak" "$LCD_LUA_PATH"
                     log "DISPLAY OVERCLOCK: restored from backup"
-                elif grep -q "68, 69," "$LUA_PATH"; then
-                    sudo sed -z -i "s/$MODIFIED_STRING/$ORIGINAL_STRING/" "$LUA_PATH"
-                    log "DISPLAY OVERCLOCK: reverted via sed (no backup found)"
+                elif grep -qF "68, 69," "$LCD_LUA_PATH"; then
+                    if sudo sed -z -i "s/$MODIFIED_STRING/$ORIGINAL_STRING/" "$LCD_LUA_PATH"; then
+                        log "DISPLAY OVERCLOCK: reverted via sed (no backup found)"
+                    else
+                        log "DISPLAY OVERCLOCK: sed revert failed"
+                    fi
                 else
                     log "DISPLAY OVERCLOCK: already stock, nothing to do"
                 fi

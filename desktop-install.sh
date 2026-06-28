@@ -51,8 +51,17 @@ unzip -q "$TMP_ZIP" -d "$HOME" \
     || die "install.sh not found in '$APP_DIR' — the archive may be incomplete."
 
 chmod +x "$APP_DIR/install.sh"
+chmod +x "$APP_DIR/uninstall.sh"
 
-# Create uninstaller shortcut
+# Create uninstaller launcher script
+cat > "$APP_DIR/uninstall-launcher.sh" << 'LAUNCHER'
+#!/bin/bash
+cd "$(dirname "$(readlink -f "$0")")"
+exec sudo --preserve-env=HOME ./uninstall.sh
+LAUNCHER
+chmod +x "$APP_DIR/uninstall-launcher.sh"
+
+# Create uninstaller shortcut on Desktop
 step "Creating uninstaller shortcut on Desktop..."
 cat > "$DESKTOP_DIR/SDWEAK-uninstaller.desktop" <<EOF
 [Desktop Entry]
@@ -61,7 +70,7 @@ Type=Application
 Name=Uninstall SDWEAK
 Comment=Remove SDWEAK
 Categories=Settings
-Exec=pkexec env HOME="$HOME" bash -c 'cd "$APP_DIR" && ./uninstall.sh'
+Exec=$APP_DIR/uninstall-launcher.sh
 Icon=delete
 StartupNotify=false
 Terminal=true

@@ -232,11 +232,11 @@ power_efficiency() {
     done
 }
 
+frametime_fix
 # display overclock LCD
 if [[ "$MODEL" == "Jupiter" ]]; then
     display_overclock
 fi
-frametime_fix
 power_efficiency
 
 # Finalize

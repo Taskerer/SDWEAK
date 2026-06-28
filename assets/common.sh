@@ -10,8 +10,8 @@ export LOG_FILE="$HOME/SDWEAK-install.log"
 export UNINSTALL_LOG_FILE="$HOME/SDWEAK-uninstall.log"
 export GRUB_CFG="/boot/efi/EFI/steamos/grub.cfg"
 export LCD_LUA_PATH="/usr/share/gamescope/scripts/00-gamescope/displays/valve.steamdeck.lcd.lua"
-export ORIGINAL_STRING=$'58, 59,\n        60'
-export MODIFIED_STRING=$'58, 59,\n        60, 61, 62, 63, 64, 65, 66, 67, 68, 69,\n        70'
+export ORIGINAL_STRING="58, 59,\n        60"
+export MODIFIED_STRING="58, 59,\n        60, 61, 62, 63, 64, 65, 66, 67, 68, 69,\n        70"
 
 
 green_msg()  { printf '\033[0;92m[*] --- %s\033[0m\n' "$1"; }

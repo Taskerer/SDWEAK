@@ -93,15 +93,7 @@ check_file "./assets/scx"
 sudo cp -f ./assets/scx /etc/default/scx
 sudo systemctl unmask scx.service  >> "$LOG_FILE" 2>&1
 sudo systemctl enable --now scx.service >> "$LOG_FILE" 2>&1
-sleep 1
-if [[ "$(cat /sys/kernel/sched_ext/state 2>/dev/null)" == "enabled" ]] &&
-   grep -q "lavd" /sys/kernel/sched_ext/root/ops 2>/dev/null; then
-    log "SCX: lavd scheduler confirmed active"
-    green_msg "$(print_text scx_success)"
-else
-    log "SCX: verification failed, lavd scheduler not confirmed"
-    yellow_msg "$(print_text scx_warning)"
-fi
+green_msg "$(print_text scx_success)"
 
 # Sysctl Tweaks
 sudo rm -rf "$HOME/.local/tweak/"

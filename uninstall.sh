@@ -211,4 +211,5 @@ sys_reboot() {
         esac
     done
 }
+rm -f "$DESKTOP_DIR/SDWEAK-uninstaller.desktop"
 sys_reboot

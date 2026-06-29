@@ -76,9 +76,21 @@ printf '* hard memlock 2147484\n* soft memlock 2147484\n' | sudo tee /etc/securi
 log "MEMLOCK: limits.d/99-memlock.conf installed"
 
 # Disable file access time tracking
-sudo mkdir -p /etc/systemd/system/home.mount.d
-printf '[Mount]\nOptions=defaults,nofail,x-systemd.growfs,noatime\n' | sudo tee /etc/systemd/system/home.mount.d/override.conf > /dev/null
-log "NOATIME: home.mount.d/override.conf installed"
+home_opts="$(findmnt -no OPTIONS --target /home 2>/dev/null)"
+if [[ -n "$home_opts" ]]; then
+    filtered_opts="$(printf '%s' "$home_opts" | tr ',' '\n' | grep -Ev '^(no)?(atime|relatime|strictatime|diratime)$' | paste -sd ',' -)"
+    if [[ -n "$filtered_opts" ]]; then
+        new_home_opts="${filtered_opts},noatime"
+    else
+        new_home_opts="noatime"
+    fi
+    sudo mkdir -p /etc/systemd/system/home.mount.d
+    printf '[Mount]\nOptions=%s\n' "$new_home_opts" | sudo tee /etc/systemd/system/home.mount.d/override.conf > /dev/null
+    log "NOATIME: home.mount.d override installed (options: $new_home_opts)"
+else
+    log "NOATIME: could not read current /home mount options via findmnt, skipping override to avoid breaking the mount"
+fi
+
 
 # Input controller overclocking
 printf 'options usbhid jspoll=1 kbpoll=1 mousepoll=1\n' | sudo tee /etc/modprobe.d/usbhid.conf > /dev/null

@@ -43,7 +43,7 @@ fi
 
 # Checksum validation
 declare -A CHECKSUMS=(
-    ["./assets/gamescope-3.16.23.2-1-SDWEAK.pkg.tar.zst"]="f77b6051d6ec65b5804f700a6c809bf3ca338aebdaab2f293247a1175a9ecb8e"
+    ["./assets/gamescope-3.16.23.2-1-SDWEAK.pkg.tar.zst"]="6303dcacdc3e82e5e9e183c343da85758ca643474406a520651be387898cca21"
     ["./assets/vulkan-radeon-SDWEAK.pkg.tar.zst"]="8ff7950a7fca82fe0f9b3c68581ac10ea7c8e74d90e5850b0ca18eb62296b839"
 )
 for f in "${!CHECKSUMS[@]}"; do

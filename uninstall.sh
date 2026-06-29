@@ -154,7 +154,9 @@ sudo rm -f /etc/default/grub.d/99-mitigations.cfg
 log_uninstall "MITIGATIONS: grub.d/99-mitigations.cfg removed"
 
 # Frametime fix (revert)
-sudo pacman -S --noconfirm gamescope vulkan-radeon >> "$UNINSTALL_LOG_FILE" 2>&1
+sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/vulkan-radeon-26.0.0_devel.214833.steamos_25.11.13-1-x86_64.pkg.tar.zst >> "$UNINSTALL_LOG_FILE" 2>&1
+sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/lib32-vulkan-radeon-26.0.0_devel.214833.steamos_25.11.13-1-x86_64.pkg.tar.zst >> "$UNINSTALL_LOG_FILE" 2>&1
+sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/gamescope-3.16.23.2-1-x86_64.pkg.tar.zst >> "$UNINSTALL_LOG_FILE" 2>&1
 log_uninstall "FRAMETIME FIX: stock gamescope/vulkan-radeon packages restored"
 green_msg "$(print_text frametime_reverted)"
 

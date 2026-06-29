@@ -141,7 +141,9 @@ frametime_fix() {
                 return ;;
             n|"")
                 green_msg "$(print_text skip)"
-                sudo pacman -S --noconfirm --needed gamescope vulkan-radeon lib32-vulkan-radeon >> "$LOG_FILE" 2>&1
+                sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/vulkan-radeon-26.0.0_devel.214833.steamos_25.11.13-1-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
+                sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/lib32-vulkan-radeon-26.0.0_devel.214833.steamos_25.11.13-1-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
+                sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/gamescope-3.16.23.2-1-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
                 log "FRAMETIME FIX: stock packages kept"
                 return ;;
             *)

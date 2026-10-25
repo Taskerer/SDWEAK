@@ -21,7 +21,7 @@
 ## 🚀 **Installation**
 
 > **Important:** Before installation, be sure to uninstall **Cryo Utility** if it was previously installed.  
-> **Only for SteamOS 3.8**!  
+> **Only for SteamOS 3.9**!  
 > **SDWEAK** updates can be installed over the old version. After updating **SteamOS**, it is necessary to reinstall **SDWEAK** over the old version as well.
 
 ### **Installation steps**:

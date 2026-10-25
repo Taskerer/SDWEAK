@@ -123,12 +123,6 @@ green_msg "$(print_text usbhid_reverted)"
 sudo pacman -S --noconfirm --needed gamemode >> "$UNINSTALL_LOG_FILE" 2>&1
 log_uninstall "GAMEMODE: reinstalled"
 
-# scx-lavd (revert)
-sudo systemctl stop scx.service >> "$UNINSTALL_LOG_FILE" 2>&1
-sudo systemctl disable scx.service >> "$UNINSTALL_LOG_FILE" 2>&1
-log_uninstall "SCX: stopped and disabled"
-green_msg "$(print_text scx_reverted)"
-
 # Sysctl Tweaks (revert)
 sudo systemctl disable --now sdweak.service >> "$UNINSTALL_LOG_FILE" 2>&1
 sudo rm -f /etc/systemd/system/sdweak.service
@@ -154,20 +148,19 @@ sudo rm -f /etc/default/grub.d/99-mitigations.cfg
 log_uninstall "MITIGATIONS: grub.d/99-mitigations.cfg removed"
 
 # Frametime fix (revert)
-sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/vulkan-radeon-26.0.0_devel.214833.steamos_25.11.13-1-x86_64.pkg.tar.zst >> "$UNINSTALL_LOG_FILE" 2>&1
-sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/lib32-vulkan-radeon-26.0.0_devel.214833.steamos_25.11.13-1-x86_64.pkg.tar.zst >> "$UNINSTALL_LOG_FILE" 2>&1
-sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/gamescope-3.16.23.2-1-x86_64.pkg.tar.zst >> "$UNINSTALL_LOG_FILE" 2>&1
+sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.9/os/x86_64/vulkan-radeon-26.2.0_devel.222147.steamos_26.05.19-1-x86_64.pkg.tar.zst >> "$UNINSTALL_LOG_FILE" 2>&1
+sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.9/os/x86_64/gamescope-3.16.30.1-2-x86_64.pkg.tar.zst >> "$UNINSTALL_LOG_FILE" 2>&1
 log_uninstall "FRAMETIME FIX: stock gamescope/vulkan-radeon packages restored"
 green_msg "$(print_text frametime_reverted)"
 
 # Overclock LCD to 70Hz (revert)
 if [[ "$MODEL" == "Jupiter" ]]; then
-    lua_bak="${LUA_PATH}.bak"
+    lua_bak="${LCD_LUA_PATH}.bak"
     if [[ -f "$lua_bak" ]]; then
-        sudo mv -f "$lua_bak" "$LUA_PATH"
+        sudo mv -f "$lua_bak" "$LCD_LUA_PATH"
         log_uninstall "DISPLAY OVERCLOCK: restored from backup"
-    elif grep -q "68, 69," "$LUA_PATH" 2>/dev/null; then
-        sudo sed -z -i "s/$MODIFIED_STRING/$ORIGINAL_STRING/" "$LUA_PATH"
+    elif grep -q "68, 69," "$LCD_LUA_PATH" 2>/dev/null; then
+        sudo sed -z -i "s/$MODIFIED_STRING/$ORIGINAL_STRING/" "$LCD_LUA_PATH"
         log_uninstall "DISPLAY OVERCLOCK: reverted via sed (no backup found)"
     else
         log_uninstall "DISPLAY OVERCLOCK: already stock, nothing to do"

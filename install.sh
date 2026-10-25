@@ -29,7 +29,7 @@ sudo steamos-readonly disable 2>/dev/null || die "$(print_text readonly_fail)"
 
 # Compatibility check
 [[ "$MODEL" == "Jupiter" || "$MODEL" == "Galileo" ]] || die "$(print_text compatible)"  10
-[[ "$steamos_version" == "3.8" ]]                    || die "$(print_text old_steamos)" 10
+[[ "$steamos_version" == "3.9" ]]                    || die "$(print_text old_steamos)" 10
 
 # Checking Internet access
 if ping -c1 -W1 8.8.8.8   &>/dev/null ||
@@ -43,8 +43,8 @@ fi
 
 # Checksum validation
 declare -A CHECKSUMS=(
-    ["./assets/gamescope-3.16.23.2-1-SDWEAK.pkg.tar.zst"]="6303dcacdc3e82e5e9e183c343da85758ca643474406a520651be387898cca21"
-    ["./assets/vulkan-radeon-SDWEAK.pkg.tar.zst"]="8ff7950a7fca82fe0f9b3c68581ac10ea7c8e74d90e5850b0ca18eb62296b839"
+    ["./assets/gamescope-3.16.30.1-2-SDWEAK.pkg.tar.zst"]="7901e0682807d3c48625ee730980201cc3524c7495fe368bfb5db7b23ef7470e"
+    ["./assets/vulkan-radeon-26.2.0.steamos_26.05-SDWEAK.pkg.tar.zst"]="235006f3c3e13e5a156eab74f01d81ccde961c8afe6479bacd7dbf3eec52ed0e"
 )
 for f in "${!CHECKSUMS[@]}"; do
     [[ -f "$f" ]]                                                  || die "$(print_text integrity_fail)" 10
@@ -100,13 +100,6 @@ green_msg "$(print_text usbhid_success)"
 # Remove gamemoded
 sudo pacman -Rdd --noconfirm gamemode &>/dev/null
 
-# scx-lavd
-check_file "./assets/scx"
-sudo cp -f ./assets/scx /etc/default/scx
-sudo systemctl unmask scx.service  >> "$LOG_FILE" 2>&1
-sudo systemctl enable --now scx.service >> "$LOG_FILE" 2>&1
-green_msg "$(print_text scx_success)"
-
 # Sysctl Tweaks
 sudo rm -rf "$HOME/.local/tweak/"
 sudo rm -f /etc/systemd/system/sdweak.service
@@ -146,16 +139,15 @@ frametime_fix() {
         case "${answer,,}" in
             y)
                 yellow_msg "$(print_text frametime_fix_install)"
-                sudo pacman -U --noconfirm ./assets/gamescope-3.16.23.2-1-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
-                sudo pacman -U --noconfirm ./assets/vulkan-radeon-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
+                sudo pacman -U --noconfirm ./assets/gamescope-3.16.30.1-2-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
+                sudo pacman -U --noconfirm ./assets/vulkan-radeon-26.2.0.steamos_26.05-SDWEAK.pkg.tar.zst >> "$LOG_FILE" 2>&1
                 log "FRAMETIME FIX: custom gamescope/vulkan-radeon packages installed"
                 green_msg "$(print_text frametime_fix_success)"
                 return ;;
             n|"")
                 green_msg "$(print_text skip)"
-                sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/vulkan-radeon-26.0.0_devel.214833.steamos_25.11.13-1-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
-                sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/lib32-vulkan-radeon-26.0.0_devel.214833.steamos_25.11.13-1-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
-                sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.8/os/x86_64/gamescope-3.16.23.2-1-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
+                sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.9/os/x86_64/vulkan-radeon-26.2.0_devel.222147.steamos_26.05.19-1-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
+                sudo pacman -U --noconfirm https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-3.9/os/x86_64/gamescope-3.16.30.1-2-x86_64.pkg.tar.zst >> "$LOG_FILE" 2>&1
                 log "FRAMETIME FIX: stock packages kept"
                 return ;;
             *)

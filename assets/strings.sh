@@ -11,8 +11,8 @@ texts["ru_integrity_fail"]="Проверка целостности SDWEAK не 
 texts["en_compatible"]="SDWEAK supports Steam Deck only (LCD / OLED)."
 texts["ru_compatible"]="SDWEAK поддерживает только Steam Deck (LCD / OLED)."
 
-texts["en_old_steamos"]="SDWEAK only supports SteamOS 3.8"
-texts["ru_old_steamos"]="SDWEAK поддерживает только SteamOS 3.8"
+texts["en_old_steamos"]="SDWEAK only supports SteamOS 3.9"
+texts["ru_old_steamos"]="SDWEAK поддерживает только SteamOS 3.9"
 
 texts["en_readonly_fail"]="Failed to disable read-only filesystem. Cannot continue."
 texts["ru_readonly_fail"]="Не удалось отключить файловую систему только для чтения. Продолжение невозможно."
@@ -28,11 +28,6 @@ texts["ru_invalid_input"]="Неверный ввод. Введите 'y' или 
 
 texts["en_usbhid_success"]="USB controller polling rate increased to 1000 Hz."
 texts["ru_usbhid_success"]="Частота опроса USB-контроллеров увеличена до 1000 Гц."
-
-texts["en_scx_success"]="LAVD scheduler (scx) enabled."
-texts["ru_scx_success"]="Планировщик LAVD (scx) включён."
-texts["en_scx_warning"]="Could not confirm the LAVD scheduler is active. Check the log file."
-texts["ru_scx_warning"]="Не удалось подтвердить активность планировщика LAVD. Проверьте лог-файл."
 
 texts["en_sysctl_success"]="Sysfs/sysctl performance tweaks installed."
 texts["ru_sysctl_success"]="Установлены sysfs/sysctl твики производительности."
@@ -82,9 +77,6 @@ texts["ru_uninstall_start"]="Начинается удаление SDWEAK..."
 
 texts["en_usbhid_reverted"]="USB controller polling rate restored to default."
 texts["ru_usbhid_reverted"]="Частота опроса USB-контроллеров возвращена к стандартной."
-
-texts["en_scx_reverted"]="LAVD scheduler disabled, stock scheduler restored."
-texts["ru_scx_reverted"]="Планировщик LAVD отключён, восстановлен стоковый планировщик."
 
 texts["en_sysctl_reverted"]="Sysfs/sysctl performance tweaks removed."
 texts["ru_sysctl_reverted"]="Sysfs/sysctl твики производительности удалены."

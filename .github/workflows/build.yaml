@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag (e.g. v2.0.0)'
+        description: 'Version tag (e.g. v2.2.0)'
         required: true
         type: string
-        default: 'v2.0.0'
+        default: 'v2.2.0'
       release_notes:
         description: 'Release notes'
         required: false

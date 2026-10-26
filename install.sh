@@ -64,7 +64,7 @@ green_msg "$(print_text installation_start)"
 start_time=$(date +%s)
 
 # Pacman
-sudo sed -i "s/Required DatabaseOptional/TrustAll/g" /etc/pacman.conf
+sudo sed -i -E '/^\[options\]/,/^\[/ s/^([[:space:]]*SigLevel[[:space:]]*=).*/\1 Optional TrustAll/' /etc/pacman.conf
 log "PACMAN INIT"
 sudo rm -rf /home/.steamos/offload/var/cache/pacman/pkg/{*,.*} 2>/dev/null
 sudo rm -rf /etc/pacman.d/gnupg

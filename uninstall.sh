@@ -98,7 +98,7 @@ green_msg "$(print_text uninstall_start)"
 start_time=$(date +%s)
 
 # Pacman
-sudo sed -i "s/TrustAll/Required DatabaseOptional/g" /etc/pacman.conf
+sudo sed -i -E '/^\[options\]/,/^\[/ s/^([[:space:]]*SigLevel[[:space:]]*=).*/\1 Required DatabaseOptional/' /etc/pacman.conf
 log_uninstall "PACMAN RESTORE: SigLevel reverted to Required DatabaseOptional"
 sudo rm -rf /home/.steamos/offload/var/cache/pacman/pkg/{*,.*} 2>/dev/null
 sudo rm -rf /etc/pacman.d/gnupg
